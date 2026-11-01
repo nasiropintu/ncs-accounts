@@ -816,12 +816,21 @@ function updateLiveWatch(now){
   var ampmBn=h<6?'রাত':h<12?'সকাল':h<15?'দুপুর':h<18?'বিকাল':'রাত';
   var isBn=S.lang==='bn';
   
-  var timeStr=isBn
-    ?(toBnNum(h12)+':'+toBnNum(String(m).padStart(2,'0'))+':'+toBnNum(String(s).padStart(2,'0'))+' '+ampmBn)
-    :(String(h12)+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')+' '+ampmEn);
+  var digitsStr=isBn
+    ?(toBnNum(h12)+':'+toBnNum(String(m).padStart(2,'0'))+':'+toBnNum(String(s).padStart(2,'0')))
+    :(String(h12)+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0'));
+  var ampmStr=isBn?ampmBn:ampmEn;
     
   var timeEl=$('hwTime');
-  if(timeEl&&timeEl.textContent!==timeStr)timeEl.textContent=timeStr;
+  if(timeEl){
+    var timeHtml='<span class="hw-time-val">'+digitsStr+'</span><span class="hw-ampm" id="hwAmPm">'+ampmStr+'</span>';
+    if(timeEl.innerHTML!==timeHtml){
+      timeEl.innerHTML=timeHtml;
+      timeEl.classList.remove('tick-pulse');
+      void timeEl.offsetWidth;
+      timeEl.classList.add('tick-pulse');
+    }
+  }
   
   var dow=now.getDay();
   var dColor=DAY_COLORS[dow];
@@ -849,11 +858,24 @@ function updateLiveWatch(now){
     if(bngEl.textContent!==bnDate.text)bngEl.textContent=bnDate.text;
   }
 
-  /* Bismillah banner & Shop name text */
+  var hijriEl=$('hwHijri');
+  if(hijriEl&&typeof getHijriDate==='function'){
+    var hijri=getHijriDate(now);
+    var hijriLang=S.hijriLang||(typeof localStorage!=='undefined'&&localStorage.getItem('ncs_hijri_lang'))||'bn';
+    var hijriText=hijriLang==='en'?hijri.textEn:hijri.textBn;
+    if(hijriEl.textContent!==hijriText)hijriEl.textContent=hijriText;
+  }
+
+  /* Bismillah banner & Greeting & Shop name text */
   var bisEl=$('bismillahText');
   if(bisEl){
     var bisStr=isBn?'বিসমিল্লাহির রাহমানির রাহীম':'بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ';
     if(bisEl.textContent!==bisStr)bisEl.textContent=bisStr;
+  }
+  var grEl=$('hdrGreeting');
+  if(grEl){
+    var grText=h<6?(isBn?'শুভ রাত্রি':'Good Night'):h<12?(isBn?'শুভ সকাল':'Good Morning'):h<17?(isBn?'শুভ দুপুর':'Good Afternoon'):h<20?(isBn?'শুভ বিকাল':'Good Evening'):(isBn?'শুভ রাত্রি':'Good Night');
+    if(grEl.textContent!==grText)grEl.textContent=grText;
   }
   var snEl=$('shopNameTitle');
   if(snEl){
@@ -917,3 +939,77 @@ function restoreEntry(id){var e=S.entries.find(function(x){return x.id===id});if
 })();
 
 /* ---------- v9.22: sound engine, motion & wrapper download safety ---------- */
+
+
+/* Header Interactions: Role Dropdown, Hijri Toggle & Date Copy */
+if(typeof document!=='undefined'){
+  document.addEventListener('click',function(e){
+    /* 1. Toggle Role Dropdown */
+    var brandClick=e.target.closest('#tsub, #shopNameTitle, #topBrandMark');
+    var rdEl=$('roleDropdown');
+    if(brandClick){
+      e.stopPropagation();
+      if(rdEl){
+        var isHidden=rdEl.hasAttribute('hidden');
+        if(isHidden){
+          rdEl.removeAttribute('hidden');
+          /* Highlight active role in list */
+          var curR=typeof role==='function'?role():'admin';
+          document.querySelectorAll('.rd-role-btn').forEach(function(btn){
+            var btnR=btn.getAttribute('data-role');
+            var match=btnR===curR||(btnR==='manager'&&curR==='admin');
+            btn.classList.toggle('active',match);
+          });
+        }else{
+          rdEl.setAttribute('hidden','');
+        }
+      }
+      return;
+    }
+    
+    /* 2. Role Selection Click */
+    var roleBtn=e.target.closest('.rd-role-btn');
+    if(roleBtn){
+      var selRole=roleBtn.getAttribute('data-role');
+      if(selRole&&typeof U!=='undefined'&&U){
+        var mappedRole=selRole==='manager'?'admin':selRole;
+        U.role=mappedRole;
+        U.name=mappedRole.charAt(0).toUpperCase()+mappedRole.slice(1);
+        if(typeof buildTabs==='function')buildTabs();
+        try{sessionStorage.setItem('ncs_user_role_v1',mappedRole)}catch(err){}
+        if(typeof toast==='function')toast(lb('Switched role to '+selRole,'ভূমিকা পরিবর্তিত: '+selRole));
+      }
+      if(rdEl)rdEl.setAttribute('hidden','');
+      return;
+    }
+
+    /* 3. Close Dropdown on outside click */
+    if(rdEl&&!rdEl.hasAttribute('hidden')&&!e.target.closest('#roleDropdown')){
+      rdEl.setAttribute('hidden','');
+    }
+
+    /* 4. Hijri Date Click to Toggle BN/EN */
+    var hijriClick=e.target.closest('#hwHijri');
+    if(hijriClick){
+      S.hijriLang=(S.hijriLang==='en'?'bn':'en');
+      try{localStorage.setItem('ncs_hijri_lang',S.hijriLang)}catch(err){}
+      updateLiveWatch(new Date());
+      if(typeof toast==='function'){
+        toast(lb('Hijri date set to '+(S.hijriLang==='en'?'English':'Bengali'),'হিজরি তারিখ '+(S.hijriLang==='en'?'ইংরেজিতে':'বাংলায়')+' দেখানো হচ্ছে'));
+      }
+      return;
+    }
+
+    /* 5. Date Click to Copy */
+    var dateClick=e.target.closest('#hwDate');
+    if(dateClick){
+      var dtStr=dateClick.textContent;
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(dtStr).then(function(){
+          if(typeof toast==='function')toast(lb('Date copied: '+dtStr,'তারিখ কপি হয়েছে: '+dtStr));
+        }).catch(function(){});
+      }
+      return;
+    }
+  });
+}

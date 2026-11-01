@@ -1,25 +1,74 @@
 
 <aside class="tabs" id="tabs" hidden></aside>
 <header class="top" id="top">
-  <div class="top-brand">
-    <span class="top-brand-mark" aria-hidden="true">
-      <img class="lg-b" src="logo-icon-black.png" alt="">
-      <img class="lg-w" src="logo-icon-white.png" alt="">
+  <div class="top-brand" id="topBrand">
+    <span class="top-brand-mark" id="topBrandMark" aria-label="Shop Logo" role="button" tabindex="0" title="Click for Shop Profile & Role Switcher">
+      <svg class="top-brand-svg" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="2.5" y="4.5" width="31" height="22" rx="3" stroke="currentColor" stroke-width="2.3" fill="none"/>
+        <rect x="4.5" y="6.5" width="27" height="18" rx="1.5" fill="var(--soft)" opacity="0.65"/>
+        <path d="M16 26.5v3h4v-3" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M11 29.5h14" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/>
+        <rect x="8.5" y="8.5" width="11" height="14" rx="1" stroke="currentColor" stroke-width="1.3" fill="var(--card)"/>
+        <circle cx="14" cy="12" r="1.8" stroke="currentColor" stroke-width="1.2" fill="none"/>
+        <path d="M11.5 16c0-1.2 1.1-2 2.5-2s2.5.8 2.5 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M10.5 18.5h7M10.5 20.5h5" stroke="var(--mut)" stroke-width="1" stroke-linecap="round"/>
+        <rect x="22.5" y="17" width="2" height="5.5" rx="0.5" fill="var(--acc)"/>
+        <rect x="25.5" y="13" width="2" height="9.5" rx="0.5" fill="var(--pos)"/>
+      </svg>
     </span>
     <div class="tt">
-      <span class="shop-name-title" id="shopNameTitle">Nur Computer &amp; Stationery</span>
-      <div class="top-brand-sub"><span class="tsub-pill" id="tsub">admin</span></div>
+      <span class="shop-name-title" id="shopNameTitle" role="button" tabindex="0" title="Click for Shop Profile & Role Switcher">Nur Computer &amp; Stationery</span>
+      <div class="top-brand-sub">
+        <span class="tsub-pill" id="tsub" role="button" tabindex="0" title="Click to switch active role">
+          <span class="tsub-dot" aria-hidden="true"></span>
+          <span class="tsub-text" id="tsubText">admin</span>
+          <svg class="tsub-arr" viewBox="0 0 16 16" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg>
+        </span>
+      </div>
+    </div>
+    <!-- Role Switcher & Shop Profile Dropdown -->
+    <div class="role-dropdown" id="roleDropdown" hidden>
+      <div class="rd-head">
+        <div class="rd-head-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <div>
+          <div class="rd-head-title" id="rdShopName">Nur Computer &amp; Stationery</div>
+          <div class="rd-head-sub" id="rdRoleSubtitle">Shop Profile &amp; Role Switcher</div>
+        </div>
+      </div>
+      <div class="rd-roles" id="rdRolesList">
+        <button type="button" class="rd-role-btn" data-role="admin">
+          <span class="rd-role-name">Admin</span>
+          <svg class="rd-check" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+        <button type="button" class="rd-role-btn" data-role="manager">
+          <span class="rd-role-name">Manager</span>
+          <svg class="rd-check" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+        <button type="button" class="rd-role-btn" data-role="cashier">
+          <span class="rd-role-name">Cashier</span>
+          <svg class="rd-check" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+        <button type="button" class="rd-role-btn" data-role="accountant">
+          <span class="rd-role-name">Accountant</span>
+          <svg class="rd-check" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+      </div>
     </div>
   </div>
   <div class="hdr-center" id="hdrCenter">
-    <div class="bismillah-txt" id="bismillahText">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</div>
+    <div class="bismillah-txt" id="bismillahText">بِسْمِ اللّٰهِ الرَّحْمٰনِ الرَّحِيْمِ</div>
+    <div class="hdr-greeting" id="hdrGreeting" aria-live="polite"></div>
     <div class="hdr-watch" id="hdrWatch" aria-label="Live Clock">
       <div class="hw-time" id="hwTime">--:--:--</div>
       <div class="hw-meta">
         <span class="hw-day" id="hwDay"></span>
-        <span class="hw-date" id="hwDate"></span>
+        <span class="hw-date" id="hwDate" role="button" tabindex="0" title="Click to copy date"></span>
         <span class="hw-sep">·</span>
         <span class="hw-bng" id="hwBng"></span>
+        <span class="hw-sep">·</span>
+        <span class="hw-hijri" id="hwHijri" role="button" tabindex="0" title="Click to toggle English / Bengali Hijri date"></span>
         <span class="hw-sep hw-weather-sep" aria-hidden="true">·</span>
         <span class="hdr-weather" id="hdrWeather" title="Click for weather & air quality" role="button" tabindex="0">
           <span class="hw-icon" id="hwIcon"></span>
@@ -31,7 +80,9 @@
   <div class="sp" id="topR">
     <div class="hdr-prayer-wrap" id="hdrPrayerWrap">
       <button type="button" class="hdr-prayer-btn" id="hdrPrayerBtn" aria-label="Prayer Times" aria-haspopup="dialog" title="Click to view full prayer times">
-        <svg class="hp-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 21h20M7 21v-8c0-3.2 2.2-6 5-6.8 2.8.8 5 3.6 5 6.8v8M10 21v-3.8a2 2 0 0 1 4 0V21M12 2.5a1.8 1.8 0 1 0 1.5 1.7M4 21V9.5L5 7l1 2.5V21M18 21V9.5L19 7l1 2.5V21"/></svg>
+        <span class="hdr-prayer-dot active" aria-hidden="true"></span>
+        <svg class="hp-icon" viewBox="0 0 800 800" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M 72.297 84.384 C 53.820 95.776, 34.666 113.390, 23.154 129.577 C 12.086 145.138, 3.878 164.697, 1.016 182.332 C 0.466 185.724, 0.012 200.088, 0.008 214.250 L 0 240 80.112 240 L 160.224 240 159.715 211.750 C 159.290 188.152, 158.873 182.090, 157.187 174.936 C 150.158 145.117, 131.283 117.138, 103.715 95.676 C 95.695 89.433, 81.426 80, 80 80 C 79.674 80, 76.208 81.973, 72.297 84.384 M 491.596 90.050 C 480.355 104.184, 461.505 124.493, 446.439 138.703 C 420.936 162.756, 396.349 181.803, 358.500 206.825 C 344.750 215.915, 328.421 227.146, 322.214 231.782 C 269.084 271.470, 240 318.224, 240 363.947 C 240 389.068, 247.892 408.144, 267.951 431.511 L 275.239 440 499.563 440 L 723.887 440 729.193 434.403 C 742.492 420.378, 752.698 403.294, 757.213 387.500 C 760.162 377.185, 760.362 356.119, 757.635 343 C 747.498 294.224, 713.673 253.628, 647.807 211.186 C 589.820 173.820, 544.419 134.637, 510.870 93.003 C 505.166 85.926, 500.275 80.130, 500 80.123 C 499.725 80.117, 495.943 84.584, 491.596 90.050 M 0 482.895 C 0 683.164, 0.026 685.872, 2.005 692.145 C 5.727 703.946, 14.911 713.398, 26.699 717.558 C 33.499 719.957, 33.510 719.958, 79.782 719.979 C 123.947 719.999, 126.344 719.906, 132.199 717.933 C 143.575 714.101, 151.043 707.346, 156.397 696.047 L 159.500 689.500 159.759 484.750 L 160.019 280 80.009 280 L 0 280 0 482.895 M 227.678 481.968 C 217.222 485.309, 208.601 492.977, 203.421 503.542 L 200.500 509.500 200.229 597.500 C 199.964 683.381, 200.006 685.656, 201.977 692 C 205.675 703.898, 214.840 713.372, 226.699 717.558 C 233.120 719.824, 234.796 719.959, 256.702 719.979 L 279.904 720 280.202 675.196 L 280.500 630.391 284.272 622.761 C 290.270 610.629, 300.098 603.348, 313.954 600.771 C 328.880 597.996, 345.715 605.773, 353.708 619.137 C 359.703 629.161, 360 631.949, 360 678.210 L 360 720 399.943 720 L 439.887 720 440.243 667.250 C 440.584 616.753, 440.691 614.201, 442.739 607.500 C 450.510 582.071, 469.167 558.710, 493.520 543.915 L 500.060 539.942 507.280 544.611 C 533.069 561.287, 550.584 583.957, 557.169 609.182 C 559.231 617.080, 559.361 620.087, 559.742 668.750 L 560.144 720 600.024 720 L 639.904 720 640.202 675.196 L 640.500 630.391 644.272 622.761 C 650.270 610.629, 660.098 603.348, 673.954 600.771 C 688.880 597.996, 705.715 605.773, 713.708 619.137 C 719.703 629.161, 720 631.949, 720 678.210 L 720 720 743.032 720 C 763.666 720, 766.702 719.785, 772.199 717.933 C 783.575 714.101, 791.043 707.346, 796.397 696.047 L 799.500 689.500 799.500 600 L 799.500 510.500 796.397 503.953 C 791.043 492.654, 783.575 485.899, 772.199 482.067 L 766.063 480 499.782 480.054 C 242.994 480.106, 233.292 480.174, 227.678 481.968" fill="currentColor" fill-rule="evenodd"/></svg>
+        <span class="hdr-prayer-label" id="hdrPrayerLabel">Prayer</span>
       </button>
       <div class="hdr-prayer-popover" id="hdrPrayerPopover"></div>
     </div>

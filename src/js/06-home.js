@@ -640,6 +640,17 @@ function updateHeaderSalat(timings){
     var nextDesc = nextP ? ((isBn ? nextP.bn : nextP.en) + ' ' + t12(nextP.t)) : '';
     prayerBtn.setAttribute('aria-label', headerLabel + ' · ' + activeDesc + ' · ' + (isBn ? 'পরবর্তী: ' : 'Next: ') + nextDesc);
     prayerBtn.title = headerLabel + ' (' + locName + ') — ' + activeDesc + ' · ' + (isBn ? 'পরবর্তী: ' : 'Next: ') + nextDesc;
+
+    var dotEl = prayerBtn.querySelector('.hdr-prayer-dot');
+    if(dotEl){
+      dotEl.className = 'hdr-prayer-dot' + (activeP ? ' active' : '');
+    }
+    var lblEl = prayerBtn.querySelector('.hdr-prayer-label');
+    if(lblEl){
+      lblEl.textContent = activeP
+        ? (isBn ? activeP.bn + ' চলমান' : activeP.en + ' Active')
+        : (nextP ? (isBn ? nextP.bn + ' ' + diffStr : nextP.en + ' ' + diffStr) : (isBn ? 'নামাজ' : 'Prayer'));
+    }
   }
 
   if(popover){

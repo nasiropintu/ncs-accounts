@@ -43,7 +43,7 @@ function buildTabs(){
   const T=TABS[role()];
   $('tabs').innerHTML=T.map(k=>`<button data-v="${k}" title="${TL[k]}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICO[k]}</svg><span class="t-lbl">${(S.lang==='bn'&&TL_BN[k])?TL_BN[k]:TL[k]}</span></button>`).join('');
   $('tabs').hidden=false;
-  $('tsub').textContent=(U.name.toLowerCase()===role()?'':U.name+' · ')+role();
+  var tsubTxt=$('tsubText')||$('tsub'); if(tsubTxt) tsubTxt.textContent=(U.name.toLowerCase()===role()?'':U.name+' · ')+role();
   let saved=CUR;
   try{if(!saved)saved=sessionStorage.getItem('ncs_active_view_v1_'+role())}catch(e){}
   go(saved&&T.includes(saved)?saved:T[0])

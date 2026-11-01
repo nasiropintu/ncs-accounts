@@ -233,6 +233,35 @@ function getBengaliDate(d){
   return{day:bDay,month:bMonthName,year:bnYear,text:toBnNum(bDay)+' '+bMonthName+' '+toBnNum(bnYear)+' বঙ্গাব্দ'};
 }
 
+var HIJRI_MONTHS_BN=['মুহররম','সফর','রবিউল আউয়াল','রবিউস সানি','জুমাদাল উলা','জুমাদাস সানিয়া','রজব','শাবান','রমজান','শাওয়াল','জিলকদ','জিলহজ্জ'];
+var HIJRI_MONTHS_EN=['Muharram','Safar','Rabi\' al-Awwal','Rabi\' al-Thani','Jumada al-Awwal','Jumada al-Thani','Rajab','Sha\'ban','Ramadan','Shawwal','Dhu al-Qi\'dah','Dhu al-Hijjah'];
+
+function getHijriDate(d){
+  var date=d?(typeof d==='string'?new Date(d+'T00:00:00'):d):new Date();
+  try{
+    var formatter=new Intl.DateTimeFormat('en-u-ca-islamic-umalqura',{day:'numeric',month:'numeric',year:'numeric'});
+    var parts=formatter.formatToParts(date);
+    var dayPart=(parts.find(function(p){return p.type==='day'})||{}).value||'16';
+    var monthPart=(parts.find(function(p){return p.type==='month'})||{}).value||'5';
+    var yearPart=(parts.find(function(p){return p.type==='year'})||{}).value||'1448';
+    var hDay=parseInt(dayPart,10);
+    var hMonthIdx=(parseInt(monthPart,10)-1+12)%12;
+    var hYear=parseInt(yearPart,10);
+    var monthBn=HIJRI_MONTHS_BN[hMonthIdx]||'জুমাদাল উলা';
+    var monthEn=HIJRI_MONTHS_EN[hMonthIdx]||'Jumada al-Awwal';
+    return{
+      day:hDay,
+      monthBn:monthBn,
+      monthEn:monthEn,
+      year:hYear,
+      textBn:toBnNum(hDay)+' '+monthBn+' '+toBnNum(hYear)+' হিজরি',
+      textEn:hDay+' '+monthEn+' '+hYear+' AH'
+    };
+  }catch(e){
+    return{day:16,monthBn:'জুমাদাল উলা',monthEn:'Jumada al-Awwal',year:1448,textBn:'১৬ জুমাদাল উলা ১৪৪৮ হিজরি',textEn:'16 Jumada al-Awwal 1448 AH'};
+  }
+}
+
 function dayColor(d){
   var x=typeof d==='number'?d:(new Date((typeof d==='string'?d:iso(d))+'T00:00:00')).getDay();
   return DAY_COLORS[x]||DAY_COLORS[0];

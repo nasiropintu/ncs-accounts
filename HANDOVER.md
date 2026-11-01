@@ -3,9 +3,9 @@
 | | |
 |---|---|
 | **Shop** | Nur Computer & Stationery |
-| **Current version** | **v11.4.0** (`versionCode 110400`) |
-| **Service worker cache** | `ncs-v70` |
-| **Last entry** | 2026-10-31 12:28 (UTC+6) |
+| **Current version** | **v11.6.0** (`versionCode 110600`) |
+| **Service worker cache** | `ncs-v72` |
+| **Last entry** | 2026-11-02 00:30 (UTC+6)
 | **Contributors** | Claude profiles, Antigravity, Manus |
 
 Two Claude profiles work on this app and **do not share memory**. This file is their shared memory.
@@ -350,6 +350,19 @@ The five-colour chart palette (formerly Phase 1b) was delivered in v10.4.0.
 ## 7. Session Log
 *Newest first. Each entry is a version, a timestamp (UTC+6) and an author.*
 
+### v11.6.0 · 2026-11-02 00:30 · Antigravity
+**Figma header redesign, authentic solid Mosque icon, role switcher and AM/PM typography split.**
+- Replaced previous prayer icon with authentic solid silhouette Mosque vector SVG (viewBox 0 0 800 800) matching user reference, with dynamic theme coloring (`fill="currentColor"`).
+- Clock typographic hierarchy overhaul: Split hours/minutes/seconds digits from AM/PM into separate `<span>` elements (`hw-time-val` at 44 px Lora, `hw-ampm` at 58% proportional font size) with smooth CSS second tick pulse.
+- Added interactive Role Switcher dropdown panel in header branding: 1-click switching between Admin, Manager, Cashier, and Accountant modes with instant tab bar and permission rebuild.
+- Enhanced Role pill (`tsub-pill`) with active glowing emerald pulse dot and chevron indicator; click opens role switcher.
+- Vectorized Shop Logo SVG replacing legacy PNGs: features monitor casing, glass reflection, ledger document with user profile avatar and business analytics bar charts, fully reactive to light and dark themes.
+- Added 1-click Hijri calendar toggle (`hwHijri`) supporting seamless switching between Bengali and English Hijri dates, saved in `localStorage`.
+- Added 1-tap Gregorian date copy to clipboard with toast notification.
+- Added subtle cultural time-based greeting whisper under Bismillah (`hdrGreeting`: শুভ সকাল / শুভ দুপুর / শুভ বিকাল / শুভ রাত্রি).
+- Expanded header container radius to 24 px (`border-radius: 24px`) on desktop and 20 px on mobile.
+- Version 11.6.0 (`versionCode 110600`), cache `ncs-v72`. Compiled with `npm run prepare-www`; mirrored per Rule 39.
+
 ### v11.5.0 · 2026-10-31 17:25 · Antigravity
 **Executive header redesign, minimal weather, Air Quality (AQI) and Mosque prayer times.**
 - Rebuilt `.top` header as a centered rounded island card (`border-radius: 20px`, `1fr auto 1fr` symmetric grid, `max-width: 1360px`, `margin: 10px auto 14px`).
@@ -489,6 +502,11 @@ The five-colour chart palette (formerly Phase 1b) was delivered in v10.4.0.
 
 ## 8. Bug Fix History
 *Newest first. Canonical single-line format: `YYYY-MM-DD HH:MM (UTC+6) — version — who — what was wrong — cause — fix`. Entries made before this rule are recorded as `--:--`.*
+
+### v11.6.0 · 2026-11-02 00:30 · Antigravity
+- **Symptom:** header lacked role switcher; clock AM/PM rendered at full 44 px causing visual imbalance; prayer icon used generic outline rather than authentic architectural silhouette; shop logo PNG lacked theme reactivity.
+- **Cause:** (1) outline prayer icon did not reflect authentic local architectural style; (2) clock rendered AM/PM at full size without visual hierarchy; (3) role was static text pill without switcher; (4) header card radius was 20 px; (5) Hijri date lacked English toggle.
+- **Fix:** (1) integrated solid silhouette Mosque SVG from user reference; (2) split clock AM/PM into refined 58% proportional badge with subtle tick pulse; (3) built sliding Role Switcher dropdown supporting Admin, Manager, Cashier, Accountant; (4) upgraded to 24 px card radius; (5) added click-to-toggle BN/EN Hijri date, 1-tap date clipboard copy, vector shop logo, and time-based greeting.
 
 ### v11.5.0 · 2026-10-31 17:15 · Antigravity
 - **Symptom:** header stuck to the right edge; clock and store name were small with a basic font; weather used emoji; duplicate sync button appeared in the header bar; prayer icon resembled a steeple.

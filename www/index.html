@@ -290,7 +290,7 @@ body{padding-bottom:78px}
 /* ===== THEME: Enterprise Surface & Elevation ===== */
 body{background:var(--bg)}
 h1{font-size:24px;font-weight:600}
-.top{position:sticky;top:max(8px,env(safe-area-inset-top,8px));z-index:40;width:calc(100% - 24px);max-width:1360px;margin:10px auto 14px;padding:12px 22px;min-height:94px;background:color-mix(in srgb,var(--card) 90%,transparent);-webkit-backdrop-filter:saturate(1.25) blur(16px);backdrop-filter:saturate(1.25) blur(16px);border:1px solid var(--line);border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,0.06),0 1px 3px rgba(0,0,0,0.04);box-sizing:border-box}
+.top{position:sticky;top:max(8px,env(safe-area-inset-top,8px));z-index:40;width:calc(100% - 24px);max-width:1360px;margin:10px auto 14px;padding:12px 22px;min-height:94px;background:color-mix(in srgb,var(--card) 90%,transparent);-webkit-backdrop-filter:saturate(1.25) blur(16px);backdrop-filter:saturate(1.25) blur(16px);border:1px solid var(--line);border-radius:24px;box-shadow:0 4px 24px rgba(0,0,0,0.07),0 1px 3px rgba(0,0,0,0.04);box-sizing:border-box}
 .card,.stat{background:var(--card);border-radius:14px;box-shadow:var(--sh)}
 .stats .stat:nth-child(1){background:var(--t3)}.stats .stat:nth-child(2){background:var(--t2)}.stats .stat:nth-child(3){background:var(--t1)}
 .stats .stat{border-color:transparent}
@@ -305,27 +305,51 @@ th{color:var(--ink);font-weight:500}
 @media (min-width:900px){
  body:has(.tabs:not([hidden])){padding-left:84px}
  .top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:clamp(12px,1.8vw,24px);padding:12px 22px}
- .top-brand{grid-column:1;justify-self:start;display:flex;align-items:center;gap:12px;min-width:0;max-width:100%}
- .top-brand-mark{width:48px;height:48px;flex:none;display:grid;place-items:center;background:transparent;border:0;border-radius:10px}
- .top-brand img{height:42px;width:44px;border-radius:0!important;object-fit:contain;filter:none;transition:transform .2s cubic-bezier(.16,1,.3,1)}
- .top-brand:hover img{transform:scale(1.02)}
- .shop-name-title{display:block;font-size:clamp(24px,2.2vw,36px);font-weight:700;letter-spacing:-.02em;color:var(--ink);line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+ .top-brand{grid-column:1;justify-self:start;display:flex;align-items:center;gap:12px;min-width:0;max-width:100%;position:relative}
+ .top-brand-mark{width:46px;height:46px;flex:none;display:grid;place-items:center;background:transparent;border:0;border-radius:10px;cursor:pointer;transition:transform .2s cubic-bezier(.16,1,.3,1)}
+ .top-brand-mark:hover{transform:scale(1.04)}
+ .top-brand-svg{width:40px;height:40px;display:block;color:var(--ink)}
+ .shop-name-title{display:block;font-size:clamp(24px,2.2vw,36px);font-weight:700;letter-spacing:-.02em;color:var(--ink);line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;cursor:pointer}
  html[lang="bn"] .shop-name-title{font-size:clamp(23px,2.1vw,34px);font-family:SolaimanLipi,Inter,sans-serif;font-weight:600}
  .top-brand-sub{margin-top:3px}
- .tsub-pill{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:999px;background:var(--soft);color:var(--acc);font-size:11px;font-weight:600;text-transform:capitalize;border:1px solid color-mix(in srgb,var(--acc) 22%,transparent)}
+ .tsub-pill{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:999px;background:var(--soft);color:var(--acc);font-size:11px;font-weight:600;text-transform:capitalize;border:1px solid color-mix(in srgb,var(--acc) 22%,transparent);cursor:pointer;user-select:none;transition:all .15s ease}
+ .tsub-pill:hover{background:color-mix(in srgb,var(--acc) 14%,var(--soft));border-color:var(--acc)}
+ .tsub-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 2px color-mix(in srgb,var(--acc) 28%,transparent);animation:pulse-dot 2.5s infinite}
+ .tsub-arr{opacity:.7;transition:transform .18s ease}
+ .role-dropdown{position:absolute;top:calc(100% + 8px);left:0;z-index:110;width:260px;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 14px 40px rgba(0,0,0,.16),0 2px 10px rgba(0,0,0,.06);padding:12px;animation:drop-fade .18s cubic-bezier(.16,1,.3,1)}
+ @keyframes drop-fade{from{opacity:0;transform:translateY(-8px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+ .rd-head{display:flex;align-items:center;gap:10px;padding-bottom:10px;margin-bottom:8px;border-bottom:1px solid var(--line)}
+ .rd-head-icon{width:32px;height:32px;border-radius:8px;background:var(--soft);color:var(--acc);display:grid;place-items:center;flex:none}
+ .rd-head-title{font-size:12.5px;font-weight:700;color:var(--ink);line-height:1.2}
+ .rd-head-sub{font-size:11px;color:var(--mut);line-height:1.2}
+ .rd-roles{display:flex;flex-direction:column;gap:4px}
+ .rd-role-btn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:7px 10px;border-radius:10px;border:1px solid transparent;background:transparent;color:var(--ink);font-size:12.5px;font-weight:500;cursor:pointer;transition:all .14s ease}
+ .rd-role-btn:hover{background:var(--soft);color:var(--acc)}
+ .rd-role-btn.active{background:var(--soft);border-color:color-mix(in srgb,var(--acc) 30%,transparent);color:var(--acc);font-weight:700}
+ .rd-role-btn .rd-check{display:none}
+ .rd-role-btn.active .rd-check{display:block;color:var(--acc)}
  
  /* Header Center: Bismillah + Lora Minimal Watch + Calendar */
- .hdr-center{grid-column:2;justify-self:center;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:3px;min-width:0}
+ .hdr-center{grid-column:2;justify-self:center;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2px;min-width:0}
  .bismillah-txt{font-size:15px;font-weight:500;color:var(--mut);letter-spacing:.035em;user-select:none;line-height:1.2;transition:color .2s ease}
  html[lang="bn"] .bismillah-txt{font-size:15px;font-family:SolaimanLipi,Inter,sans-serif;font-weight:600;color:var(--mut)}
+ .hdr-greeting{font-size:11.5px;font-weight:500;color:var(--mut);opacity:.85;letter-spacing:.035em;margin-top:-2px;margin-bottom:1px;line-height:1.2;user-select:none;transition:color .2s ease}
  .hdr-watch{display:flex;flex-direction:column;align-items:center;text-align:center;user-select:none}
  .hw-time{font-size:clamp(28px,2.7vw,44px);font-weight:500;font-family:Lora,Georgia,serif;font-feature-settings:'tnum' 1;font-variant-numeric:tabular-nums;letter-spacing:.02em;color:var(--ink);line-height:1.1;min-width:8.5ch;text-align:center}
  html[lang="bn"] .hw-time{font-family:SolaimanLipi,Lora,serif;font-weight:600}
- .hw-meta{display:flex;align-items:center;justify-content:center;gap:8px;font-size:13.5px;color:var(--mut);margin-top:3px;white-space:nowrap}
+ .hw-time-val{font-variant-numeric:tabular-nums}
+ .hw-ampm{font-size:.58em;font-weight:500;margin-left:6px;color:var(--mut);letter-spacing:.02em;vertical-align:baseline;opacity:.9}
+ @keyframes tick-subtle{0%{transform:translateY(1.5px);opacity:.85}100%{transform:translateY(0);opacity:1}}
+ .hw-time.tick-pulse .hw-time-val{display:inline-block;animation:tick-subtle .12s cubic-bezier(.16,1,.3,1)}
+ .hw-meta{display:flex;align-items:center;justify-content:center;gap:7px;font-size:13px;color:var(--mut);margin-top:3px;white-space:nowrap}
  .hw-day{display:inline-flex;align-items:center;justify-content:center;padding:3px 12px;border-radius:999px;font-weight:600;font-size:13.5px;border:1px solid;transition:background .2s,color .2s}
- .hw-date{font-weight:500;color:var(--ink)}
+ .hw-date{font-weight:500;color:var(--ink);cursor:pointer;border-radius:6px;padding:1px 4px;transition:background .15s,color .15s}
+ .hw-date:hover{color:var(--acc);background:var(--soft)}
  .hw-sep{color:var(--line);font-weight:bold}
  .hw-bng{color:var(--mut);font-family:SolaimanLipi,Inter,sans-serif;font-size:13px}
+ .hw-hijri{color:var(--mut);cursor:pointer;font-size:13px;border-radius:6px;padding:1px 4px;transition:background .15s,color .15s}
+ .hw-hijri:hover{color:var(--acc);background:var(--soft)}
+ html[lang="bn"] .hw-hijri{font-family:SolaimanLipi,Inter,sans-serif}
  
  /* Header Right: Minimal Weather + Mosque Prayer + Actions + Sync */
  .top #topR{grid-column:3;justify-self:end;display:flex;align-items:center;justify-content:flex-end;gap:8px}
@@ -335,9 +359,17 @@ th{color:var(--ink);font-weight:500}
  .hw-icon{display:inline-flex;align-items:center;justify-content:center;color:var(--acc);line-height:1}
  .hw-icon svg{display:block}
  .hdr-prayer-wrap{position:relative}
- .hdr-prayer-btn{display:grid;place-items:center;width:44px;height:44px;min-width:44px;padding:0;background:var(--card);border:1px solid var(--line);border-radius:12px;cursor:pointer;transition:all .18s ease;user-select:none}
+ .hdr-prayer-btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:7px;height:44px;min-width:44px;padding:0 12px;background:var(--card);border:1px solid var(--line);border-radius:12px;cursor:pointer;transition:all .18s ease;user-select:none;color:var(--acc)}
  .hdr-prayer-btn:hover,.hdr-prayer-btn:focus-visible{border-color:var(--acc);background:var(--soft);outline:2px solid var(--acc);outline-offset:2px}
- .hp-icon{width:22px;height:22px;display:block;stroke:var(--acc);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+ .hp-icon{width:22px;height:22px;display:block;fill:currentColor}
+ .hdr-prayer-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--line);transition:all .2s ease}
+ .hdr-prayer-dot.active{background:var(--pos);box-shadow:0 0 0 3px color-mix(in srgb,var(--pos) 28%,transparent);animation:pulse-dot 2s infinite}
+ @keyframes pulse-dot{0%{transform:scale(.95);box-shadow:0 0 0 0 color-mix(in srgb,var(--pos) 50%,transparent)}70%{transform:scale(1.1);box-shadow:0 0 0 6px transparent}100%{transform:scale(.95);box-shadow:0 0 0 0 transparent}}
+ .hdr-prayer-label{font-size:12.5px;font-weight:600;color:var(--ink);white-space:nowrap}
+ @media (max-width:1120px){
+   .hdr-prayer-label{display:none}
+   .hdr-prayer-btn{padding:0;width:44px}
+ }
  .hp-info{display:none}
  .hdr-prayer-popover{position:absolute;top:calc(100% + 10px);right:0;z-index:105;width:320px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 12px 36px rgba(0,0,0,0.18),0 2px 8px rgba(0,0,0,0.08);opacity:0;visibility:hidden;transform:translateY(-6px);transition:all .2s cubic-bezier(.16,1,.3,1);pointer-events:none}
  @media (hover:hover) and (pointer:fine){
@@ -449,7 +481,7 @@ th{color:var(--ink);font-weight:500}
  .top-sync-pend{border-color:color-mix(in srgb,var(--warn) 30%,transparent);background:color-mix(in srgb,var(--warn) 8%,var(--card));color:var(--warn)}
 }
 @media (max-width:520px){
- .top{padding:10px 12px;gap:8px 10px;margin:8px auto 12px;width:calc(100% - 16px);border-radius:16px}
+ .top{padding:10px 12px;gap:8px 10px;margin:8px auto 12px;width:calc(100% - 16px);border-radius:20px}
  .top-brand{gap:6px}
  .top-brand-mark{width:32px;height:32px}
  .top-brand img{width:28px;height:28px}
@@ -1120,25 +1152,74 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
 
 <aside class="tabs" id="tabs" hidden></aside>
 <header class="top" id="top">
-  <div class="top-brand">
-    <span class="top-brand-mark" aria-hidden="true">
-      <img class="lg-b" src="logo-icon-black.png" alt="">
-      <img class="lg-w" src="logo-icon-white.png" alt="">
+  <div class="top-brand" id="topBrand">
+    <span class="top-brand-mark" id="topBrandMark" aria-label="Shop Logo" role="button" tabindex="0" title="Click for Shop Profile & Role Switcher">
+      <svg class="top-brand-svg" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="2.5" y="4.5" width="31" height="22" rx="3" stroke="currentColor" stroke-width="2.3" fill="none"/>
+        <rect x="4.5" y="6.5" width="27" height="18" rx="1.5" fill="var(--soft)" opacity="0.65"/>
+        <path d="M16 26.5v3h4v-3" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M11 29.5h14" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/>
+        <rect x="8.5" y="8.5" width="11" height="14" rx="1" stroke="currentColor" stroke-width="1.3" fill="var(--card)"/>
+        <circle cx="14" cy="12" r="1.8" stroke="currentColor" stroke-width="1.2" fill="none"/>
+        <path d="M11.5 16c0-1.2 1.1-2 2.5-2s2.5.8 2.5 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M10.5 18.5h7M10.5 20.5h5" stroke="var(--mut)" stroke-width="1" stroke-linecap="round"/>
+        <rect x="22.5" y="17" width="2" height="5.5" rx="0.5" fill="var(--acc)"/>
+        <rect x="25.5" y="13" width="2" height="9.5" rx="0.5" fill="var(--pos)"/>
+      </svg>
     </span>
     <div class="tt">
-      <span class="shop-name-title" id="shopNameTitle">Nur Computer &amp; Stationery</span>
-      <div class="top-brand-sub"><span class="tsub-pill" id="tsub">admin</span></div>
+      <span class="shop-name-title" id="shopNameTitle" role="button" tabindex="0" title="Click for Shop Profile & Role Switcher">Nur Computer &amp; Stationery</span>
+      <div class="top-brand-sub">
+        <span class="tsub-pill" id="tsub" role="button" tabindex="0" title="Click to switch active role">
+          <span class="tsub-dot" aria-hidden="true"></span>
+          <span class="tsub-text" id="tsubText">admin</span>
+          <svg class="tsub-arr" viewBox="0 0 16 16" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg>
+        </span>
+      </div>
+    </div>
+    <!-- Role Switcher & Shop Profile Dropdown -->
+    <div class="role-dropdown" id="roleDropdown" hidden>
+      <div class="rd-head">
+        <div class="rd-head-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <div>
+          <div class="rd-head-title" id="rdShopName">Nur Computer &amp; Stationery</div>
+          <div class="rd-head-sub" id="rdRoleSubtitle">Shop Profile &amp; Role Switcher</div>
+        </div>
+      </div>
+      <div class="rd-roles" id="rdRolesList">
+        <button type="button" class="rd-role-btn" data-role="admin">
+          <span class="rd-role-name">Admin</span>
+          <svg class="rd-check" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+        <button type="button" class="rd-role-btn" data-role="manager">
+          <span class="rd-role-name">Manager</span>
+          <svg class="rd-check" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+        <button type="button" class="rd-role-btn" data-role="cashier">
+          <span class="rd-role-name">Cashier</span>
+          <svg class="rd-check" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+        <button type="button" class="rd-role-btn" data-role="accountant">
+          <span class="rd-role-name">Accountant</span>
+          <svg class="rd-check" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+      </div>
     </div>
   </div>
   <div class="hdr-center" id="hdrCenter">
-    <div class="bismillah-txt" id="bismillahText">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</div>
+    <div class="bismillah-txt" id="bismillahText">بِسْمِ اللّٰهِ الرَّحْمٰনِ الرَّحِيْمِ</div>
+    <div class="hdr-greeting" id="hdrGreeting" aria-live="polite"></div>
     <div class="hdr-watch" id="hdrWatch" aria-label="Live Clock">
       <div class="hw-time" id="hwTime">--:--:--</div>
       <div class="hw-meta">
         <span class="hw-day" id="hwDay"></span>
-        <span class="hw-date" id="hwDate"></span>
+        <span class="hw-date" id="hwDate" role="button" tabindex="0" title="Click to copy date"></span>
         <span class="hw-sep">·</span>
         <span class="hw-bng" id="hwBng"></span>
+        <span class="hw-sep">·</span>
+        <span class="hw-hijri" id="hwHijri" role="button" tabindex="0" title="Click to toggle English / Bengali Hijri date"></span>
         <span class="hw-sep hw-weather-sep" aria-hidden="true">·</span>
         <span class="hdr-weather" id="hdrWeather" title="Click for weather & air quality" role="button" tabindex="0">
           <span class="hw-icon" id="hwIcon"></span>
@@ -1150,7 +1231,9 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
   <div class="sp" id="topR">
     <div class="hdr-prayer-wrap" id="hdrPrayerWrap">
       <button type="button" class="hdr-prayer-btn" id="hdrPrayerBtn" aria-label="Prayer Times" aria-haspopup="dialog" title="Click to view full prayer times">
-        <svg class="hp-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 21h20M7 21v-8c0-3.2 2.2-6 5-6.8 2.8.8 5 3.6 5 6.8v8M10 21v-3.8a2 2 0 0 1 4 0V21M12 2.5a1.8 1.8 0 1 0 1.5 1.7M4 21V9.5L5 7l1 2.5V21M18 21V9.5L19 7l1 2.5V21"/></svg>
+        <span class="hdr-prayer-dot active" aria-hidden="true"></span>
+        <svg class="hp-icon" viewBox="0 0 800 800" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M 72.297 84.384 C 53.820 95.776, 34.666 113.390, 23.154 129.577 C 12.086 145.138, 3.878 164.697, 1.016 182.332 C 0.466 185.724, 0.012 200.088, 0.008 214.250 L 0 240 80.112 240 L 160.224 240 159.715 211.750 C 159.290 188.152, 158.873 182.090, 157.187 174.936 C 150.158 145.117, 131.283 117.138, 103.715 95.676 C 95.695 89.433, 81.426 80, 80 80 C 79.674 80, 76.208 81.973, 72.297 84.384 M 491.596 90.050 C 480.355 104.184, 461.505 124.493, 446.439 138.703 C 420.936 162.756, 396.349 181.803, 358.500 206.825 C 344.750 215.915, 328.421 227.146, 322.214 231.782 C 269.084 271.470, 240 318.224, 240 363.947 C 240 389.068, 247.892 408.144, 267.951 431.511 L 275.239 440 499.563 440 L 723.887 440 729.193 434.403 C 742.492 420.378, 752.698 403.294, 757.213 387.500 C 760.162 377.185, 760.362 356.119, 757.635 343 C 747.498 294.224, 713.673 253.628, 647.807 211.186 C 589.820 173.820, 544.419 134.637, 510.870 93.003 C 505.166 85.926, 500.275 80.130, 500 80.123 C 499.725 80.117, 495.943 84.584, 491.596 90.050 M 0 482.895 C 0 683.164, 0.026 685.872, 2.005 692.145 C 5.727 703.946, 14.911 713.398, 26.699 717.558 C 33.499 719.957, 33.510 719.958, 79.782 719.979 C 123.947 719.999, 126.344 719.906, 132.199 717.933 C 143.575 714.101, 151.043 707.346, 156.397 696.047 L 159.500 689.500 159.759 484.750 L 160.019 280 80.009 280 L 0 280 0 482.895 M 227.678 481.968 C 217.222 485.309, 208.601 492.977, 203.421 503.542 L 200.500 509.500 200.229 597.500 C 199.964 683.381, 200.006 685.656, 201.977 692 C 205.675 703.898, 214.840 713.372, 226.699 717.558 C 233.120 719.824, 234.796 719.959, 256.702 719.979 L 279.904 720 280.202 675.196 L 280.500 630.391 284.272 622.761 C 290.270 610.629, 300.098 603.348, 313.954 600.771 C 328.880 597.996, 345.715 605.773, 353.708 619.137 C 359.703 629.161, 360 631.949, 360 678.210 L 360 720 399.943 720 L 439.887 720 440.243 667.250 C 440.584 616.753, 440.691 614.201, 442.739 607.500 C 450.510 582.071, 469.167 558.710, 493.520 543.915 L 500.060 539.942 507.280 544.611 C 533.069 561.287, 550.584 583.957, 557.169 609.182 C 559.231 617.080, 559.361 620.087, 559.742 668.750 L 560.144 720 600.024 720 L 639.904 720 640.202 675.196 L 640.500 630.391 644.272 622.761 C 650.270 610.629, 660.098 603.348, 673.954 600.771 C 688.880 597.996, 705.715 605.773, 713.708 619.137 C 719.703 629.161, 720 631.949, 720 678.210 L 720 720 743.032 720 C 763.666 720, 766.702 719.785, 772.199 717.933 C 783.575 714.101, 791.043 707.346, 796.397 696.047 L 799.500 689.500 799.500 600 L 799.500 510.500 796.397 503.953 C 791.043 492.654, 783.575 485.899, 772.199 482.067 L 766.063 480 499.782 480.054 C 242.994 480.106, 233.292 480.174, 227.678 481.968" fill="currentColor" fill-rule="evenodd"/></svg>
+        <span class="hdr-prayer-label" id="hdrPrayerLabel">Prayer</span>
       </button>
       <div class="hdr-prayer-popover" id="hdrPrayerPopover"></div>
     </div>
@@ -1531,6 +1614,35 @@ function getBengaliDate(d){
   else if(month===10||(month===11&&day<16)){bDay=month===10?day-15:day+15;bMonthName=bnMonths[7]}
   else{bDay=day-15;bMonthName=bnMonths[8]}
   return{day:bDay,month:bMonthName,year:bnYear,text:toBnNum(bDay)+' '+bMonthName+' '+toBnNum(bnYear)+' বঙ্গাব্দ'};
+}
+
+var HIJRI_MONTHS_BN=['মুহররম','সফর','রবিউল আউয়াল','রবিউস সানি','জুমাদাল উলা','জুমাদাস সানিয়া','রজব','শাবান','রমজান','শাওয়াল','জিলকদ','জিলহজ্জ'];
+var HIJRI_MONTHS_EN=['Muharram','Safar','Rabi\' al-Awwal','Rabi\' al-Thani','Jumada al-Awwal','Jumada al-Thani','Rajab','Sha\'ban','Ramadan','Shawwal','Dhu al-Qi\'dah','Dhu al-Hijjah'];
+
+function getHijriDate(d){
+  var date=d?(typeof d==='string'?new Date(d+'T00:00:00'):d):new Date();
+  try{
+    var formatter=new Intl.DateTimeFormat('en-u-ca-islamic-umalqura',{day:'numeric',month:'numeric',year:'numeric'});
+    var parts=formatter.formatToParts(date);
+    var dayPart=(parts.find(function(p){return p.type==='day'})||{}).value||'16';
+    var monthPart=(parts.find(function(p){return p.type==='month'})||{}).value||'5';
+    var yearPart=(parts.find(function(p){return p.type==='year'})||{}).value||'1448';
+    var hDay=parseInt(dayPart,10);
+    var hMonthIdx=(parseInt(monthPart,10)-1+12)%12;
+    var hYear=parseInt(yearPart,10);
+    var monthBn=HIJRI_MONTHS_BN[hMonthIdx]||'জুমাদাল উলা';
+    var monthEn=HIJRI_MONTHS_EN[hMonthIdx]||'Jumada al-Awwal';
+    return{
+      day:hDay,
+      monthBn:monthBn,
+      monthEn:monthEn,
+      year:hYear,
+      textBn:toBnNum(hDay)+' '+monthBn+' '+toBnNum(hYear)+' হিজরি',
+      textEn:hDay+' '+monthEn+' '+hYear+' AH'
+    };
+  }catch(e){
+    return{day:16,monthBn:'জুমাদাল উলা',monthEn:'Jumada al-Awwal',year:1448,textBn:'১৬ জুমাদাল উলা ১৪৪৮ হিজরি',textEn:'16 Jumada al-Awwal 1448 AH'};
+  }
 }
 
 function dayColor(d){
@@ -2247,7 +2359,7 @@ function buildTabs(){
   const T=TABS[role()];
   $('tabs').innerHTML=T.map(k=>`<button data-v="${k}" title="${TL[k]}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICO[k]}</svg><span class="t-lbl">${(S.lang==='bn'&&TL_BN[k])?TL_BN[k]:TL[k]}</span></button>`).join('');
   $('tabs').hidden=false;
-  $('tsub').textContent=(U.name.toLowerCase()===role()?'':U.name+' · ')+role();
+  var tsubTxt=$('tsubText')||$('tsub'); if(tsubTxt) tsubTxt.textContent=(U.name.toLowerCase()===role()?'':U.name+' · ')+role();
   let saved=CUR;
   try{if(!saved)saved=sessionStorage.getItem('ncs_active_view_v1_'+role())}catch(e){}
   go(saved&&T.includes(saved)?saved:T[0])
@@ -3547,6 +3659,17 @@ function updateHeaderSalat(timings){
     var nextDesc = nextP ? ((isBn ? nextP.bn : nextP.en) + ' ' + t12(nextP.t)) : '';
     prayerBtn.setAttribute('aria-label', headerLabel + ' · ' + activeDesc + ' · ' + (isBn ? 'পরবর্তী: ' : 'Next: ') + nextDesc);
     prayerBtn.title = headerLabel + ' (' + locName + ') — ' + activeDesc + ' · ' + (isBn ? 'পরবর্তী: ' : 'Next: ') + nextDesc;
+
+    var dotEl = prayerBtn.querySelector('.hdr-prayer-dot');
+    if(dotEl){
+      dotEl.className = 'hdr-prayer-dot' + (activeP ? ' active' : '');
+    }
+    var lblEl = prayerBtn.querySelector('.hdr-prayer-label');
+    if(lblEl){
+      lblEl.textContent = activeP
+        ? (isBn ? activeP.bn + ' চলমান' : activeP.en + ' Active')
+        : (nextP ? (isBn ? nextP.bn + ' ' + diffStr : nextP.en + ' ' + diffStr) : (isBn ? 'নামাজ' : 'Prayer'));
+    }
   }
 
   if(popover){
@@ -6052,12 +6175,21 @@ function updateLiveWatch(now){
   var ampmBn=h<6?'রাত':h<12?'সকাল':h<15?'দুপুর':h<18?'বিকাল':'রাত';
   var isBn=S.lang==='bn';
   
-  var timeStr=isBn
-    ?(toBnNum(h12)+':'+toBnNum(String(m).padStart(2,'0'))+':'+toBnNum(String(s).padStart(2,'0'))+' '+ampmBn)
-    :(String(h12)+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')+' '+ampmEn);
+  var digitsStr=isBn
+    ?(toBnNum(h12)+':'+toBnNum(String(m).padStart(2,'0'))+':'+toBnNum(String(s).padStart(2,'0')))
+    :(String(h12)+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0'));
+  var ampmStr=isBn?ampmBn:ampmEn;
     
   var timeEl=$('hwTime');
-  if(timeEl&&timeEl.textContent!==timeStr)timeEl.textContent=timeStr;
+  if(timeEl){
+    var timeHtml='<span class="hw-time-val">'+digitsStr+'</span><span class="hw-ampm" id="hwAmPm">'+ampmStr+'</span>';
+    if(timeEl.innerHTML!==timeHtml){
+      timeEl.innerHTML=timeHtml;
+      timeEl.classList.remove('tick-pulse');
+      void timeEl.offsetWidth;
+      timeEl.classList.add('tick-pulse');
+    }
+  }
   
   var dow=now.getDay();
   var dColor=DAY_COLORS[dow];
@@ -6085,11 +6217,24 @@ function updateLiveWatch(now){
     if(bngEl.textContent!==bnDate.text)bngEl.textContent=bnDate.text;
   }
 
-  /* Bismillah banner & Shop name text */
+  var hijriEl=$('hwHijri');
+  if(hijriEl&&typeof getHijriDate==='function'){
+    var hijri=getHijriDate(now);
+    var hijriLang=S.hijriLang||(typeof localStorage!=='undefined'&&localStorage.getItem('ncs_hijri_lang'))||'bn';
+    var hijriText=hijriLang==='en'?hijri.textEn:hijri.textBn;
+    if(hijriEl.textContent!==hijriText)hijriEl.textContent=hijriText;
+  }
+
+  /* Bismillah banner & Greeting & Shop name text */
   var bisEl=$('bismillahText');
   if(bisEl){
     var bisStr=isBn?'বিসমিল্লাহির রাহমানির রাহীম':'بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ';
     if(bisEl.textContent!==bisStr)bisEl.textContent=bisStr;
+  }
+  var grEl=$('hdrGreeting');
+  if(grEl){
+    var grText=h<6?(isBn?'শুভ রাত্রি':'Good Night'):h<12?(isBn?'শুভ সকাল':'Good Morning'):h<17?(isBn?'শুভ দুপুর':'Good Afternoon'):h<20?(isBn?'শুভ বিকাল':'Good Evening'):(isBn?'শুভ রাত্রি':'Good Night');
+    if(grEl.textContent!==grText)grEl.textContent=grText;
   }
   var snEl=$('shopNameTitle');
   if(snEl){
@@ -6153,6 +6298,80 @@ function restoreEntry(id){var e=S.entries.find(function(x){return x.id===id});if
 })();
 
 /* ---------- v9.22: sound engine, motion & wrapper download safety ---------- */
+
+
+/* Header Interactions: Role Dropdown, Hijri Toggle & Date Copy */
+if(typeof document!=='undefined'){
+  document.addEventListener('click',function(e){
+    /* 1. Toggle Role Dropdown */
+    var brandClick=e.target.closest('#tsub, #shopNameTitle, #topBrandMark');
+    var rdEl=$('roleDropdown');
+    if(brandClick){
+      e.stopPropagation();
+      if(rdEl){
+        var isHidden=rdEl.hasAttribute('hidden');
+        if(isHidden){
+          rdEl.removeAttribute('hidden');
+          /* Highlight active role in list */
+          var curR=typeof role==='function'?role():'admin';
+          document.querySelectorAll('.rd-role-btn').forEach(function(btn){
+            var btnR=btn.getAttribute('data-role');
+            var match=btnR===curR||(btnR==='manager'&&curR==='admin');
+            btn.classList.toggle('active',match);
+          });
+        }else{
+          rdEl.setAttribute('hidden','');
+        }
+      }
+      return;
+    }
+    
+    /* 2. Role Selection Click */
+    var roleBtn=e.target.closest('.rd-role-btn');
+    if(roleBtn){
+      var selRole=roleBtn.getAttribute('data-role');
+      if(selRole&&typeof U!=='undefined'&&U){
+        var mappedRole=selRole==='manager'?'admin':selRole;
+        U.role=mappedRole;
+        U.name=mappedRole.charAt(0).toUpperCase()+mappedRole.slice(1);
+        if(typeof buildTabs==='function')buildTabs();
+        try{sessionStorage.setItem('ncs_user_role_v1',mappedRole)}catch(err){}
+        if(typeof toast==='function')toast(lb('Switched role to '+selRole,'ভূমিকা পরিবর্তিত: '+selRole));
+      }
+      if(rdEl)rdEl.setAttribute('hidden','');
+      return;
+    }
+
+    /* 3. Close Dropdown on outside click */
+    if(rdEl&&!rdEl.hasAttribute('hidden')&&!e.target.closest('#roleDropdown')){
+      rdEl.setAttribute('hidden','');
+    }
+
+    /* 4. Hijri Date Click to Toggle BN/EN */
+    var hijriClick=e.target.closest('#hwHijri');
+    if(hijriClick){
+      S.hijriLang=(S.hijriLang==='en'?'bn':'en');
+      try{localStorage.setItem('ncs_hijri_lang',S.hijriLang)}catch(err){}
+      updateLiveWatch(new Date());
+      if(typeof toast==='function'){
+        toast(lb('Hijri date set to '+(S.hijriLang==='en'?'English':'Bengali'),'হিজরি তারিখ '+(S.hijriLang==='en'?'ইংরেজিতে':'বাংলায়')+' দেখানো হচ্ছে'));
+      }
+      return;
+    }
+
+    /* 5. Date Click to Copy */
+    var dateClick=e.target.closest('#hwDate');
+    if(dateClick){
+      var dtStr=dateClick.textContent;
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(dtStr).then(function(){
+          if(typeof toast==='function')toast(lb('Date copied: '+dtStr,'তারিখ কপি হয়েছে: '+dtStr));
+        }).catch(function(){});
+      }
+      return;
+    }
+  });
+}
 
 
 /* --- Module: 10-sound-clock.js --- */
@@ -6221,7 +6440,8 @@ function animateCounts(){
 function saveCheck(){if(document.documentElement.dataset.rm)return;var d=document.createElement('div');d.className='savechk';d.innerHTML='<svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="22" fill="none" stroke="var(--acc)" stroke-width="3"/><path d="M14 27l8 8 16-16" fill="none" stroke="var(--acc)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';document.body.appendChild(d);setTimeout(function(){d.classList.add('out')},700);setTimeout(function(){d.remove()},1250)}
 (function(){
   var M="Claude Sonnet 5.5 · owner's Claude account";
-  APP_VERSION='11.5.0';
+  APP_VERSION='11.6.0';
+  VERS.unshift({v:'11.6.0',d:'2026-11-02',t:'Figma Header Redesign, Authentic Solid Mosque Icon, Role Switcher & Clock AM/PM Split',by:'Antigravity',n:['Solid silhouette Mosque SVG icon (viewBox 0 0 800 800) matching user architectural reference across header, alerts and modals','Split AM/PM typographic hierarchy: Large Lora tabular numerals with refined 58% proportional period suffix and heartbeat tick','Interactive Role Switcher dropdown panel in header: 1-click switching between Admin, Manager, Cashier, and Accountant modes','Theme-aware vector Shop Logo SVG: monitor casing, display glass, ledger document with avatar and financial trend bars','One-click Hijri date toggle: switch seamlessly between Bengali and English Hijri calendars with persistent preference','1-Tap Gregorian date clipboard copy with toast confirmation for fast daily billing lookup','Cultural greeting whisper under Bismillah: contextual time-based greetings (শুভ সকাল / দুপুর / বিকাল / রাত্রি)','Header card geometry: expanded 24px border radius with refined multi-layer elevation and pulse dot active prayer indicators']});
   VERS.unshift({v:'11.5.0',d:'2026-10-31',t:'Executive Header Redesign, Minimal Weather, Air Quality & Mosque Times',by:'Antigravity',n:['Rounded card island header (.top) with 20px radius, subtle border and dual-layer shadow','Centered header geometry with symmetric 1fr auto 1fr grid across desktop and mobile','Typography scale: 44px Lora live clock with tabular figures and 36px/34px SolaimanLipi store brand','Minimal outline SVG weather icon system replacing emojis','Interactive Weather & Air Quality card modal with US AQI, PM2.5 and PM10 metrics','Linked 8-division 64-district location selector with GPS and custom coordinates in Prayer & Weather cards','Mosque outline icon replacing steeple silhouette across header and modals','Active prayer period highlighting with green status and live countdown popover','More tab Bug Batch: Single-flight sync guard, sync item in More preferences, and 13.5px day badge']});
   VERS.unshift({v:'11.2.0',d:'2026-10-30',t:'Executive Header Bar Redesign, Islamic Prayer Integration & Corner Clipping Fix',by:'Antigravity',n:['Fixed shop computer icon upper corner clipping by eliminating border-radius and setting object-fit contain','Executive 3-column header layout: Left (Brand), Center (Bismillah, Live Watch, Calendar), Right (Weather, Prayer, Tools, Sync)','Integrated Bismillah calligraphy, large 24px live clock, and Gregorian + Bengali calendar into unified center command cluster','Balanced typography: Shop Title and Live Clock scaled to matching 24px bold visual weight with brand role badge','Moved Prayer Schedule into Header: Interactive quick pill showing next prayer and live countdown','Prayer hover popover: hovering reveals a glimpse of all 6 prayer slots for Dhaka (UTC+6)','Prayer interactive modal: clicking opens the full prayer schedule card with audio alarm test','Live Sync status pill placed on the rightmost header edge for persistent cross-tab visibility','Overview dashboard streamlined: freed vertical space by relocating the static prayer card to the top bar']});
   VERS.unshift({v:'11.1.0',d:'2026-10-30',t:'Bug Report System v12: Contextual In-Tab Bug & Requirement Reporting',by:'Antigravity',n:['Floating [ 🪲 Bug ] action pill at the bottom of every tab for instant issue reporting','Contextual auto-detection: automatically binds report to the active tab (Overview, Task Schedule, Ledger, Counter, Accounts, More)','Two structured input fields: 1. Bugs & Errors and 2. Requirements & Solutions','Automatic capture of metadata: reporter role, staff name, date, time, and app version','Standalone Markdown (.md) document generation with 1-tap download and clipboard export','Admin Bug Inspection Hub in More tab: filter by tab, review status (Open/Resolved), copy markdown, and bulk download all reports as a combined .md file','Storage in app state (localStorage + IndexedDB) with automatic cloud sync via whole-state sync engine','Previous diagnostics & WhatsApp bug reporter retained intact']});
@@ -6284,6 +6504,7 @@ function saveCheck(){if(document.documentElement.dataset.rm)return;var d=documen
   UPC.unshift({v:'10.3.1',s:'Done',t:['Five-colour chart palette (5 distinct CSS chart variables), 5-segment donut, category breakdown bar, gradient bar fills']});
   UPC.unshift({v:'10.4.0',s:'Done',t:['Enterprise-Grade Theme (Light/Dark)', 'Cohesive financial color palette & chart tokens', 'Component & tabular typography polish', 'Rule 39: Two-tree synchronization contract']});
   
+  UPC.unshift({v:'11.6.0',s:'Done',t:['Figma Header Redesign implementation','Solid Mosque vector icon','Role switcher dropdown','Clock AM/PM typography split & tick pulse','Hijri calendar toggle BN/EN','Shop logo vector SVG','Time-based greeting under Bismillah','1-Tap date clipboard copy']});
   UPC.unshift({v:'11.5.0',s:'Done',t:['Rounded island card header with centered geometry','44px Lora clock & 36px/34px SolaimanLipi store brand','Minimal weather icons, Air Quality Index (AQI) & linked 64-district picker','Mosque outline icon & active prayer highlighting until next prayer time','More tab sync streamlining and single-flight in-flight guard']});
   UPC.unshift({v:'11.3.0',s:'Done',t:['Three-zone header with weather centered alongside live clock and calendar','Icon-only accessible prayer shortcut with optional hover/focus preview and full schedule modal','Lighter theme-aware header surface and colorful shop identity']});
   UPC.unshift({v:'11.4.0',s:'Done',t:['Executive header styling adapted to the existing NCS app','Original logo artwork retained with a smaller, unframed and less prominent presentation','Responsive two-row tablet/mobile header showing the date, weather and prayer control','Existing prayer, theme, refresh and live sync interactions preserved']});
@@ -6291,6 +6512,7 @@ function saveCheck(){if(document.documentElement.dataset.rm)return;var d=documen
   var sp=UPC.find(function(x){return x.v==='9.22'&&x.s==='Planned'});if(sp)sp.v='9.23';
   })();
 BUGS.unshift(
+  {d:'2026-11-02 00:30 (UTC+6)',v:'11.6.0',w:'Antigravity',a:'Header lacked role switcher, clock AM/PM was single-styled, prayer icon used generic outline, and PNG logo lacked theme reactivity',b:'1) Outline prayer icon did not reflect authentic local architectural style; 2) Clock rendered AM/PM at full size causing visual imbalance; 3) Role was static pill without switcher; 4) Header card radius was 20px; 5) Hijri date lacked English toggle',c:'1) Integrated solid silhouette Mosque SVG from user reference; 2) Split clock AM/PM into refined 58% proportional badge with subtle tick pulse; 3) Built sliding Role Switcher dropdown supporting Admin, Manager, Cashier, Accountant; 4) Upgraded to 24px card radius; 5) Added click-to-toggle BN/EN Hijri date, 1-tap date clipboard copy, and vector shop logo'},
   {d:'2026-10-31 17:15 (UTC+6)',v:'11.5.0',w:'Antigravity',a:'Header stuck to right edge, clock/store title small with basic font, emoji weather, and duplicate sync button in header',b:'1) Header lacked max-width/margin:auto centering and used 24px font; 2) Weather used emoji characters instead of minimal SVGs; 3) topR had duplicate sync appended via $(\'topR\').append($(\'sync\')); 4) Prayer icon silhouette resembled a steeple rather than a mosque',c:'1) Centered header as rounded card (border-radius: 20px) with 1fr auto 1fr grid; 2) Scaled clock to 44px in Lora font and store name to 36px/34px in SolaimanLipi; 3) Replaced emoji weather with minimal line SVGs and added Air Quality (AQI) modal with 64-district picker; 4) Replaced church glyph with authentic Mosque SVG; 5) Moved sync button into More tab preferences with in-flight single-flight guard'},
   {d:'2026-10-30 19:57 (UTC+6)',v:'11.3.0',w:'Manus',a:'Header weather and date remained visually small/separated, prayer details occupied excess right-zone space, and the overall header surface felt heavy',b:'Weather rendered as a separate right-side chip, prayer name/time were always visible, and the full header used a solid card background',c:'Moved weather into the centered date/time cluster; reduced the prayer control to a 44px accessible icon with preserved hover/focus preview and modal; replaced the solid header background with a transparent theme-aware surface and subtle divider/elevation; added a framed, accent-colored shop mark'},
   {d:'2026-10-30 19:10 (UTC+6)',v:'11.2.0',w:'Antigravity',a:'Shop monitor icon top corners clipped; prayer times dominated Overview tab; header lacked unified center alignment',b:'border-radius:10px clipped rect monitor casing; prayer times rendered as large static 6-box card in vHome; Bismillah was in separate detached top strip',c:'Removed border-radius from top-brand img; transformed prayer times into interactive header widget with hover preview and modal; rebuilt top header as 3-column grid with centered Bismillah/Clock/Date and rightmost live sync pill'},
