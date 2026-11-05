@@ -3,9 +3,9 @@
 | | |
 |---|---|
 | **Shop** | Nur Computer & Stationery |
-| **Current version** | **v11.12.0** (`versionCode 111200`) |
-| **Service worker cache** | `ncs-v80` |
-| **Last entry** | 2026-11-05 15:40 (UTC+6)
+| **Current version** | **v11.13.0** (`versionCode 111300`) |
+| **Service worker cache** | `ncs-v81` |
+| **Last entry** | 2026-11-05 15:55 (UTC+6)
 | **Contributors** | Claude profiles, Antigravity, Manus |
 
 Two Claude profiles work on this app and **do not share memory**. This file is their shared memory.
@@ -348,6 +348,13 @@ The five-colour chart palette (formerly Phase 1b) was delivered in v10.4.0.
 ## 7. Session Log
 *Newest first. Each entry is a version, a timestamp (UTC+6) and an author.*
 
+### v11.13.0 · 2026-11-05 15:55 · Codex
+**Landscape desktop date card with side-by-side calendar and daily activity.**
+- Desktop and browser PWA show the clock and calendar dates in a compact horizontal strip, with the month on the left and selected-day activity on the right.
+- Mobile PWA and Android keep the existing vertical date card layout.
+- Bumped the service worker cache to ncs-v81.
+- Verification: `npm run prepare-www` completed with the built-in syntax validator; `node --check` passed for both modified JavaScript modules; `git diff --check` passed with only Windows CRLF notices.
+
 ### v11.12.0 · 2026-11-05 15:40 · Codex
 **One header date, on-screen mobile theme picker and Bangladesh 2026 holidays.**
 - Header now shows one locale-appropriate date with its weekday (Gregorian in English, Bengali calendar in Bangla); the date card groups Gregorian, Bengali and Hijri dates with a digital clock.
@@ -547,6 +554,11 @@ The five-colour chart palette (formerly Phase 1b) was delivered in v10.4.0.
 
 ## 8. Bug Fix History
 *Newest first. Canonical single-line format: `YYYY-MM-DD HH:MM (UTC+6) — version — who — what was wrong — cause — fix`. Entries made before this rule are recorded as `--:--`.*
+
+### v11.13.0 · 2026-11-05 15:55 · Codex
+- **Symptom:** the desktop date and monthly calendar dialog was too tall and used a single narrow column.
+- **Cause:** the clock, month view and selected-day transaction details were stacked at every viewport size.
+- **Fix:** use a compact horizontal date strip above side-by-side month and day panels on desktop; retain the original vertical layout on mobile.
 
 ### v11.12.0 · 2026-11-05 15:40 · Codex
 - **Symptom:** the shop title and weekday collided in the PWA header, multiple date systems crowded the header, the mobile theme picker opened outside the visible screen, and the calendar did not mark official holidays.
