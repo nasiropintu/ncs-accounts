@@ -150,14 +150,24 @@ function applyTheme(){
 (function(){
   var btn=$('themeBtn'),panel=$('tppPanel'),wrap=$('tppWrap'),closeBtn=$('tppClose');
   if(!btn||!panel) return;
-  function open(){panel.hidden=false;btn.setAttribute('aria-expanded','true');}
-  function close(){panel.hidden=true;btn.setAttribute('aria-expanded','false');}
+  var panelHome=panel.parentNode,portal=false;
+  function usePortal(){return window.matchMedia&&window.matchMedia('(max-width: 899px)').matches}
+  function open(){
+    portal=usePortal();
+    if(portal){panel.classList.add('tpp-portal');document.body.appendChild(panel)}
+    panel.hidden=false;btn.setAttribute('aria-expanded','true');
+  }
+  function close(){
+    panel.hidden=true;btn.setAttribute('aria-expanded','false');
+    if(panel.parentNode!==panelHome){panel.classList.remove('tpp-portal');panelHome.appendChild(panel)}
+    portal=false;
+  }
   btn.onclick=function(e){e.stopPropagation();panel.hidden?open():close();};
   if(closeBtn) closeBtn.onclick=function(e){e.stopPropagation();close();};
   panel.querySelectorAll('.tpp-opt').forEach(function(opt){
     opt.onclick=function(e){e.stopPropagation();S.theme=opt.dataset.tv||'auto';save();applyTheme();close();};
   });
-  document.addEventListener('click',function(e){if(wrap&&!wrap.contains(e.target))close();});
+  document.addEventListener('click',function(e){if(wrap&&!wrap.contains(e.target)&&!panel.contains(e.target))close();});
   document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
 })();
  $('set').onclick=()=>ask('Settings',`<div class="f"><label>Starting cash</label><input id="s1" type="number" min="0" step="any" value="${S.start||0}"></div><div class="f"><label class="tg" style="justify-content:space-between"><span>Sound effects <small class="mut">(tick, cha-ching, buzz, chime)</small></span><input type="checkbox" id="snd" ${S.sound?'checked':''}></label><button type="button" class="ghost" id="sndTest" style="margin-top:6px;height:32px;font-size:13px">▶ Test sound</button></div><div class="f"><label>Reason for changing opening cash (required when changed)</label><input id="s1r" maxlength="160"></div><div class="f"><label>Google Sheet sync URL</label><input id="s4" value="${esc(S.sync?S.sync.url:'')}"></div><div class="f"><label>Sync key</label><input id="s5" type="password" value="${esc(S.sync?S.sync.key:'')}"></div><button type="button" class="ghost" id="setpin">Change admin PIN</button> <button type="button" class="ghost" id="ssu">Secure sync setup</button> <button type="button" class="ghost" id="sfr" style="color:var(--neg)">Start fresh (carry forward balances)</button> <button type="button" class="ghost" id="backupJson">Download data backup</button> <button type="button" class="ghost" id="restoreJson">Restore from backup</button><p class="mut" style="font-size:12.5px;margin:8px 0 0">${lb('Backups are files you download; the app does not back up by itself. Data lives in this browser, and in the Google Sheet only if sync is on. Keep a recent download off this device (for example in Drive).','ব্যাকআপ হলো ডাউনলোড করা ফাইল; অ্যাপ নিজে ব্যাকআপ নেয় না। তথ্য এই ব্রাউজারে থাকে, আর সিঙ্ক চালু থাকলে গুগল শিটে। সাম্প্রতিক একটি ডাউনলোড এই ডিভাইসের বাইরে রাখুন (যেমন ড্রাইভে)।')} ${S.lastBackup?lb('Last download from this device: ','এই ডিভাইস থেকে শেষ ডাউনলোড: ')+sd(iso(new Date(S.lastBackup))):lb('No backup downloaded from this device yet.','এই ডিভাইস থেকে এখনো ব্যাকআপ ডাউনলোড হয়নি।')}</p>`,()=>{const before={start:S.start,sync:S.sync,sound:S.sound},raw=$('s1').value.trim(),start=raw===''?NaN:Number(raw),old=+S.start||0,reason=$('s1r').value.trim();if(!Number.isFinite(start)||start<0)return false;if(start!==old){if(!reason){$('s1r').style.borderColor='var(--neg)';return false}lg('Opening cash changed',old+' → '+start+' · '+reason);S.start=start}S.sync=$('s4').value.trim()&&$('s5').value.trim()?{url:$('s4').value.trim(),key:$('s5').value.trim()}:null;S.sound=!!$('snd').checked;if(!save()){Object.assign(S,before);if(start!==old)S.log.shift();return false}pull();applyTheme();render()},'Save');

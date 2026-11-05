@@ -3,9 +3,9 @@
 | | |
 |---|---|
 | **Shop** | Nur Computer & Stationery |
-| **Current version** | **v11.6.0** (`versionCode 110600`) |
-| **Service worker cache** | `ncs-v72` |
-| **Last entry** | 2026-11-02 00:30 (UTC+6)
+| **Current version** | **v11.12.0** (`versionCode 111200`) |
+| **Service worker cache** | `ncs-v80` |
+| **Last entry** | 2026-11-05 15:40 (UTC+6)
 | **Contributors** | Claude profiles, Antigravity, Manus |
 
 Two Claude profiles work on this app and **do not share memory**. This file is their shared memory.
@@ -58,14 +58,12 @@ Prepend it to **Section 8** of this document **and** to the in-app `BUGS` array.
 - `diag.js` keeps a rolling 200-event buffer in `localStorage` key `ncs_diag_v1`.
 
 ### 0.5 Main Push and Commit Contract (permanent)
-At the completion of any task, feature or fix, always end the handover with these exact GitHub Desktop steps:
+At the completion of any task, feature or fix, always provide the full Git commands using the exact changed-file list, commit summary, and `git push origin main`. Do not replace commands with GitHub Desktop steps.
 
 ```
-🚀 What to do next:
-Open GitHub Desktop.
-You will see the [count] changed files listed on the left panel.
-Enter your commit summary (e.g. feat: <concise summary of changes>).
-Click "Commit to main" and then "Push origin".
+git add <all changed files>
+git commit -m "<commit summary>"
+git push origin main
 ```
 
 ---
@@ -350,6 +348,15 @@ The five-colour chart palette (formerly Phase 1b) was delivered in v10.4.0.
 ## 7. Session Log
 *Newest first. Each entry is a version, a timestamp (UTC+6) and an author.*
 
+### v11.12.0 · 2026-11-05 15:40 · Codex
+**One header date, on-screen mobile theme picker and Bangladesh 2026 holidays.**
+- Header now shows one locale-appropriate date with its weekday (Gregorian in English, Bengali calendar in Bangla); the date card groups Gregorian, Bengali and Hijri dates with a digital clock.
+- Fixed the shop title wrapping and tablet header collision; kept the role directly below the title.
+- Moved the mobile theme picker to the page viewport so the blurred header cannot clip it in PWA or native apps.
+- Calendar marks every Friday and each date/range in the supplied 2026 holiday list red. Explicit workdays are green unless the date is a listed holiday.
+- Bumped the service worker cache to ncs-v80.
+- Verification: `npm run prepare-www` completed with the built-in syntax validator; `node --check` passed for the modified JavaScript modules; `git diff --check` passed with only Windows CRLF notices.
+
 ### v11.11.0 · 2026-11-05 · Codex
 **Unified date card, monthly calendar, persistent location, and two-line shop title.**
 - Added a clickable date card with live clock and Gregorian, Bengali and Hijri dates; monthly calendar supports day summaries and opening a date in Accounts.
@@ -540,6 +547,11 @@ The five-colour chart palette (formerly Phase 1b) was delivered in v10.4.0.
 
 ## 8. Bug Fix History
 *Newest first. Canonical single-line format: `YYYY-MM-DD HH:MM (UTC+6) — version — who — what was wrong — cause — fix`. Entries made before this rule are recorded as `--:--`.*
+
+### v11.12.0 · 2026-11-05 15:40 · Codex
+- **Symptom:** the shop title and weekday collided in the PWA header, multiple date systems crowded the header, the mobile theme picker opened outside the visible screen, and the calendar did not mark official holidays.
+- **Cause:** the header rendered weekday, Gregorian, Bengali and Hijri dates together; the fixed theme panel was inside the blurred header's positioning context; the calendar only read manually saved holiday flags.
+- **Fix:** show one locale-appropriate date in the header (Gregorian in English, Bengali calendar in Bangla) and all three calendars with the clock in its date card; constrain the shop title and use a two-row tablet header; portal the mobile picker to `document.body`; mark all Fridays and the supplied 2026 holiday dates/ranges red, with workdays green.
 
 ### v11.6.0 · 2026-11-02 00:30 · Antigravity
 - **Symptom:** header lacked role switcher; clock AM/PM rendered at full 44 px causing visual imbalance; prayer icon used generic outline rather than authentic architectural silhouette; shop logo PNG lacked theme reactivity.

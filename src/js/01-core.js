@@ -198,9 +198,8 @@ function selectAccountsDate(date){
   if(date<NCS_MIN_DATE){if(typeof ltoast==='function')ltoast(lb('Date cannot be before November 2020','নভেম্বর ২০২০ এর আগের তারিখ গ্রহণযোগ্য নয়'));return false}
   cur=date;
   if(typeof U!=='undefined'&&U&&typeof go==='function'){
-    window._ncsDateTarget=true;
-    if(typeof CUR!=='undefined'&&CUR!=='acc')go('acc');
-    else{window._ncsDateTarget=false;if(typeof reset==='function')reset();if(typeof render==='function')render()}
+    if(typeof CUR!=='undefined'&&CUR!=='acc'){window._ncsDateTarget=true;go('acc')}
+    else{if(typeof reset==='function')reset();if(typeof render==='function')render()}
   }else{if(typeof reset==='function')reset();if(typeof render==='function')render()}
   return true;
 }

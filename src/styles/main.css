@@ -1209,19 +1209,20 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
 .hcal-day:disabled{opacity:.35;cursor:not-allowed}
 .hcal-day.selected{outline:2px solid var(--acc);outline-offset:1px;background:var(--soft)}
 .hcal-day i{position:absolute;bottom:4px;width:4px;height:4px;border-radius:50%;background:var(--acc)}
-.hcal-day.activity i{background:#2563eb}.hcal-day.workday{border-color:#16a34a}.hcal-day.holiday{border-color:#dc2626;color:#dc2626}.hcal-day.closed{border-color:var(--mut)}
+.hcal-day.activity i{background:#2563eb}.hcal-day.workday{border-color:#16a34a;color:#15803d;background:color-mix(in srgb,#16a34a 10%,var(--card))}.hcal-day.holiday{border-color:#dc2626;color:#b91c1c;background:color-mix(in srgb,#dc2626 10%,var(--card))}.hcal-day.closed{border-color:var(--mut)}
 .hcal-summary{margin-top:12px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--bg);font-size:12px}
 .hcal-summary ul{max-height:110px;overflow:auto;margin:6px 0 0;padding-left:18px}.hcal-summary li{margin:3px 0}
 .hcal-legend{display:flex;justify-content:center;gap:12px;margin-top:8px;color:var(--mut);font-size:10px}.hcal-legend span::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;background:#2563eb}.hcal-legend .workday::before{background:#16a34a}.hcal-legend .holiday::before{background:#dc2626}
 .hcal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
-@media(min-width:900px){.top-brand .tt{min-width:0}.shop-name-title{white-space:normal;overflow:visible;text-overflow:clip;max-width:220px}.shop-name-title br{display:block}.top-brand-sub{margin-top:3px}}
-@media(max-width:899px){.top-brand .tt{min-width:0}.shop-name-title{white-space:normal;overflow:visible;text-overflow:clip;max-width:190px;line-height:1.08}.shop-name-title br{display:block}.top-brand-sub{margin-top:3px}}
+@media(min-width:900px){.top-brand .tt{min-width:0}.shop-name-title{white-space:normal;overflow:visible;text-overflow:clip;max-width:220px;overflow-wrap:normal}.shop-name-title br{display:block}.top-brand-sub{margin-top:3px}}
+@media(max-width:899px){.top-brand .tt{min-width:0}.shop-name-title{white-space:normal;overflow:visible;text-overflow:clip;max-width:190px;line-height:1.08;overflow-wrap:normal}.shop-name-title br{display:block}.top-brand-sub{margin-top:3px}}
 @media(max-width:380px){.shop-name-title{max-width:150px}}
 
-/* Mobile: panel pops up from bottom so it's never clipped by header */
-@media(max-width:899px){
-  .tpp-panel{position:fixed;top:auto;bottom:calc(78px + env(safe-area-inset-bottom,0px));right:12px;left:12px;width:auto;z-index:39;max-height:70vh;overflow-y:auto}
-}
+/* Keep the header to one locale-specific date; the date card contains all calendars. */
+.hw-meta .hw-bng,.hw-meta .hw-hijri,.hw-meta .hw-sep{display:none!important}
+
+/* The header blur creates a fixed-position containing block. The mobile picker is portaled to body. */
+.tpp-panel.tpp-portal{position:fixed!important;top:auto!important;bottom:calc(112px + env(safe-area-inset-bottom,0px))!important;left:12px!important;right:12px!important;width:auto!important;max-height:min(70dvh,calc(100dvh - 136px - env(safe-area-inset-bottom,0px)))!important;overflow-y:auto!important;overscroll-behavior:contain;z-index:1200!important}
 
 /* Mobile header repair: keep controls in one row and move theme picker below it. */
 @media(max-width:899px){
@@ -1257,6 +1258,14 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
   .top .ic,.hdr-prayer-btn{width:30px;height:30px;min-width:30px}
   .bismillah-txt,.hdr-greeting{font-size:10px}
   .hw-meta{font-size:9px}
+}
+@media(min-width:981px) and (max-width:1120px){
+  .top{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"brand tools" "center center";gap:8px 12px}
+  .top-brand{grid-area:brand;min-width:0}
+  .top #topR{grid-area:tools;grid-column:auto;min-width:0}
+  .hdr-center{grid-area:center;grid-column:auto;width:100%;margin:0}
+  .hdr-greetline{display:flex;align-items:baseline;justify-content:center;gap:5px;line-height:1.15}
+  .shop-name-title{overflow-wrap:normal;max-width:190px}
 }
 
 /* ============================================================

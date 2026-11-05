@@ -1217,19 +1217,20 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
 .hcal-day:disabled{opacity:.35;cursor:not-allowed}
 .hcal-day.selected{outline:2px solid var(--acc);outline-offset:1px;background:var(--soft)}
 .hcal-day i{position:absolute;bottom:4px;width:4px;height:4px;border-radius:50%;background:var(--acc)}
-.hcal-day.activity i{background:#2563eb}.hcal-day.workday{border-color:#16a34a}.hcal-day.holiday{border-color:#dc2626;color:#dc2626}.hcal-day.closed{border-color:var(--mut)}
+.hcal-day.activity i{background:#2563eb}.hcal-day.workday{border-color:#16a34a;color:#15803d;background:color-mix(in srgb,#16a34a 10%,var(--card))}.hcal-day.holiday{border-color:#dc2626;color:#b91c1c;background:color-mix(in srgb,#dc2626 10%,var(--card))}.hcal-day.closed{border-color:var(--mut)}
 .hcal-summary{margin-top:12px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--bg);font-size:12px}
 .hcal-summary ul{max-height:110px;overflow:auto;margin:6px 0 0;padding-left:18px}.hcal-summary li{margin:3px 0}
 .hcal-legend{display:flex;justify-content:center;gap:12px;margin-top:8px;color:var(--mut);font-size:10px}.hcal-legend span::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;background:#2563eb}.hcal-legend .workday::before{background:#16a34a}.hcal-legend .holiday::before{background:#dc2626}
 .hcal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
-@media(min-width:900px){.top-brand .tt{min-width:0}.shop-name-title{white-space:normal;overflow:visible;text-overflow:clip;max-width:220px}.shop-name-title br{display:block}.top-brand-sub{margin-top:3px}}
-@media(max-width:899px){.top-brand .tt{min-width:0}.shop-name-title{white-space:normal;overflow:visible;text-overflow:clip;max-width:190px;line-height:1.08}.shop-name-title br{display:block}.top-brand-sub{margin-top:3px}}
+@media(min-width:900px){.top-brand .tt{min-width:0}.shop-name-title{white-space:normal;overflow:visible;text-overflow:clip;max-width:220px;overflow-wrap:normal}.shop-name-title br{display:block}.top-brand-sub{margin-top:3px}}
+@media(max-width:899px){.top-brand .tt{min-width:0}.shop-name-title{white-space:normal;overflow:visible;text-overflow:clip;max-width:190px;line-height:1.08;overflow-wrap:normal}.shop-name-title br{display:block}.top-brand-sub{margin-top:3px}}
 @media(max-width:380px){.shop-name-title{max-width:150px}}
 
-/* Mobile: panel pops up from bottom so it's never clipped by header */
-@media(max-width:899px){
-  .tpp-panel{position:fixed;top:auto;bottom:calc(78px + env(safe-area-inset-bottom,0px));right:12px;left:12px;width:auto;z-index:39;max-height:70vh;overflow-y:auto}
-}
+/* Keep the header to one locale-specific date; the date card contains all calendars. */
+.hw-meta .hw-bng,.hw-meta .hw-hijri,.hw-meta .hw-sep{display:none!important}
+
+/* The header blur creates a fixed-position containing block. The mobile picker is portaled to body. */
+.tpp-panel.tpp-portal{position:fixed!important;top:auto!important;bottom:calc(112px + env(safe-area-inset-bottom,0px))!important;left:12px!important;right:12px!important;width:auto!important;max-height:min(70dvh,calc(100dvh - 136px - env(safe-area-inset-bottom,0px)))!important;overflow-y:auto!important;overscroll-behavior:contain;z-index:1200!important}
 
 /* Mobile header repair: keep controls in one row and move theme picker below it. */
 @media(max-width:899px){
@@ -1265,6 +1266,14 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
   .top .ic,.hdr-prayer-btn{width:30px;height:30px;min-width:30px}
   .bismillah-txt,.hdr-greeting{font-size:10px}
   .hw-meta{font-size:9px}
+}
+@media(min-width:981px) and (max-width:1120px){
+  .top{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"brand tools" "center center";gap:8px 12px}
+  .top-brand{grid-area:brand;min-width:0}
+  .top #topR{grid-area:tools;grid-column:auto;min-width:0}
+  .hdr-center{grid-area:center;grid-column:auto;width:100%;margin:0}
+  .hdr-greetline{display:flex;align-items:baseline;justify-content:center;gap:5px;line-height:1.15}
+  .shop-name-title{overflow-wrap:normal;max-width:190px}
 }
 
 /* ============================================================
@@ -2091,9 +2100,8 @@ function selectAccountsDate(date){
   if(date<NCS_MIN_DATE){if(typeof ltoast==='function')ltoast(lb('Date cannot be before November 2020','নভেম্বর ২০২০ এর আগের তারিখ গ্রহণযোগ্য নয়'));return false}
   cur=date;
   if(typeof U!=='undefined'&&U&&typeof go==='function'){
-    window._ncsDateTarget=true;
-    if(typeof CUR!=='undefined'&&CUR!=='acc')go('acc');
-    else{window._ncsDateTarget=false;if(typeof reset==='function')reset();if(typeof render==='function')render()}
+    if(typeof CUR!=='undefined'&&CUR!=='acc'){window._ncsDateTarget=true;go('acc')}
+    else{if(typeof reset==='function')reset();if(typeof render==='function')render()}
   }else{if(typeof reset==='function')reset();if(typeof render==='function')render()}
   return true;
 }
@@ -2440,14 +2448,24 @@ function applyTheme(){
 (function(){
   var btn=$('themeBtn'),panel=$('tppPanel'),wrap=$('tppWrap'),closeBtn=$('tppClose');
   if(!btn||!panel) return;
-  function open(){panel.hidden=false;btn.setAttribute('aria-expanded','true');}
-  function close(){panel.hidden=true;btn.setAttribute('aria-expanded','false');}
+  var panelHome=panel.parentNode,portal=false;
+  function usePortal(){return window.matchMedia&&window.matchMedia('(max-width: 899px)').matches}
+  function open(){
+    portal=usePortal();
+    if(portal){panel.classList.add('tpp-portal');document.body.appendChild(panel)}
+    panel.hidden=false;btn.setAttribute('aria-expanded','true');
+  }
+  function close(){
+    panel.hidden=true;btn.setAttribute('aria-expanded','false');
+    if(panel.parentNode!==panelHome){panel.classList.remove('tpp-portal');panelHome.appendChild(panel)}
+    portal=false;
+  }
   btn.onclick=function(e){e.stopPropagation();panel.hidden?open():close();};
   if(closeBtn) closeBtn.onclick=function(e){e.stopPropagation();close();};
   panel.querySelectorAll('.tpp-opt').forEach(function(opt){
     opt.onclick=function(e){e.stopPropagation();S.theme=opt.dataset.tv||'auto';save();applyTheme();close();};
   });
-  document.addEventListener('click',function(e){if(wrap&&!wrap.contains(e.target))close();});
+  document.addEventListener('click',function(e){if(wrap&&!wrap.contains(e.target)&&!panel.contains(e.target))close();});
   document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
 })();
  $('set').onclick=()=>ask('Settings',`<div class="f"><label>Starting cash</label><input id="s1" type="number" min="0" step="any" value="${S.start||0}"></div><div class="f"><label class="tg" style="justify-content:space-between"><span>Sound effects <small class="mut">(tick, cha-ching, buzz, chime)</small></span><input type="checkbox" id="snd" ${S.sound?'checked':''}></label><button type="button" class="ghost" id="sndTest" style="margin-top:6px;height:32px;font-size:13px">▶ Test sound</button></div><div class="f"><label>Reason for changing opening cash (required when changed)</label><input id="s1r" maxlength="160"></div><div class="f"><label>Google Sheet sync URL</label><input id="s4" value="${esc(S.sync?S.sync.url:'')}"></div><div class="f"><label>Sync key</label><input id="s5" type="password" value="${esc(S.sync?S.sync.key:'')}"></div><button type="button" class="ghost" id="setpin">Change admin PIN</button> <button type="button" class="ghost" id="ssu">Secure sync setup</button> <button type="button" class="ghost" id="sfr" style="color:var(--neg)">Start fresh (carry forward balances)</button> <button type="button" class="ghost" id="backupJson">Download data backup</button> <button type="button" class="ghost" id="restoreJson">Restore from backup</button><p class="mut" style="font-size:12.5px;margin:8px 0 0">${lb('Backups are files you download; the app does not back up by itself. Data lives in this browser, and in the Google Sheet only if sync is on. Keep a recent download off this device (for example in Drive).','ব্যাকআপ হলো ডাউনলোড করা ফাইল; অ্যাপ নিজে ব্যাকআপ নেয় না। তথ্য এই ব্রাউজারে থাকে, আর সিঙ্ক চালু থাকলে গুগল শিটে। সাম্প্রতিক একটি ডাউনলোড এই ডিভাইসের বাইরে রাখুন (যেমন ড্রাইভে)।')} ${S.lastBackup?lb('Last download from this device: ','এই ডিভাইস থেকে শেষ ডাউনলোড: ')+sd(iso(new Date(S.lastBackup))):lb('No backup downloaded from this device yet.','এই ডিভাইস থেকে এখনো ব্যাকআপ ডাউনলোড হয়নি।')}</p>`,()=>{const before={start:S.start,sync:S.sync,sound:S.sound},raw=$('s1').value.trim(),start=raw===''?NaN:Number(raw),old=+S.start||0,reason=$('s1r').value.trim();if(!Number.isFinite(start)||start<0)return false;if(start!==old){if(!reason){$('s1r').style.borderColor='var(--neg)';return false}lg('Opening cash changed',old+' → '+start+' · '+reason);S.start=start}S.sync=$('s4').value.trim()&&$('s5').value.trim()?{url:$('s4').value.trim(),key:$('s5').value.trim()}:null;S.sound=!!$('snd').checked;if(!save()){Object.assign(S,before);if(start!==old)S.log.shift();return false}pull();applyTheme();render()},'Save');
@@ -2918,7 +2936,7 @@ function go(v){
     POS.refresh();
     if(isCounterStock())POS.prodUI();
   }
-  if(v==='acc'){AV=false;if(!window._ncsDateTarget)cur=iso(new Date());reset();render();try{applyCardSettings()}catch(e){}}
+  if(v==='acc'){AV=false;if(!window._ncsDateTarget)cur=iso(new Date());window._ncsDateTarget=false;reset();render();try{applyCardSettings()}catch(e){}}
   if(v==='led')ledUI();
   if(v==='task'){if(typeof taskUI==='function')taskUI();}
   if(v==='more')updateMoreTab();
@@ -6752,7 +6770,7 @@ function updateLiveWatch(now){
   var dateEl=$('hwDate');
   if(dateEl){
     var gDate=isBn
-      ?(toBnNum(now.getDate())+' '+(['জানু','ফেব্রু','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টে','অক্টো','নভে','ডিসে'][now.getMonth()])+' '+toBnNum(now.getFullYear()))
+      ?getBengaliDate(now).text
       :(now.getDate()+' '+(['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][now.getMonth()])+' '+now.getFullYear());
     if(dateEl.textContent!==gDate)dateEl.textContent=gDate;
     dateEl.title=isBn?'তারিখের বিবরণ ও ক্যালেন্ডার খুলুন':'Open date details and calendar';
@@ -6923,6 +6941,41 @@ if(typeof document!=='undefined'){
   document.addEventListener('keydown',function(e){if((e.key==='Enter'||e.key===' ')&&e.target.closest('#hwDate,#hwBng')){e.preventDefault();if(typeof openHeaderCalendar==='function')openHeaderCalendar(new Date())}});
 }
 
+var BD_GOV_HOLIDAYS_2026=(function(){
+  var days={};
+  function range(from,to,en,bn){var a=new Date(from+'T00:00:00'),z=new Date(to+'T00:00:00');for(var d=new Date(a);d<=z;d.setDate(d.getDate()+1))days[iso(d)]={en:en,bn:bn}}
+  range('2026-01-23','2026-01-23','Birthday of Netaji & Saraswati Puja (Sree Panchami)','নেতাজির জন্মদিন ও সরস্বতী পূজা (শ্রীপঞ্চমী)');
+  range('2026-01-26','2026-01-26','Republic Day of India','ভারতের প্রজাতন্ত্র দিবস');
+  range('2026-02-04','2026-02-04','Shab-e-Barat','শবে বরাত');
+  range('2026-02-21','2026-02-21','Shaheed Dibosh & International Mother Language Day','শহীদ দিবস ও আন্তর্জাতিক মাতৃভাষা দিবস');
+  range('2026-03-03','2026-03-03','Dol Jatra','দোলযাত্রা');
+  range('2026-03-17','2026-03-17','Shab-e-Qadar','শবে কদর');
+  range('2026-03-20','2026-03-20','Jumat-ul-Wida','জুমাতুল বিদা');
+  range('2026-03-19','2026-03-23','Eid-ul-Fitr','ঈদুল ফিতর');
+  range('2026-03-26','2026-03-26','Independence & National Day of Bangladesh','বাংলাদেশের স্বাধীনতা ও জাতীয় দিবস');
+  range('2026-04-14','2026-04-14','Bangla New Year','বাংলা নববর্ষ');
+  range('2026-05-01','2026-05-01','May Day & Buddha Purnima (Boishakhi Purnama)','মে দিবস ও বুদ্ধ পূর্ণিমা');
+  range('2026-05-26','2026-05-31','Eid-ul-Azha','ঈদুল আজহা');
+  range('2026-06-26','2026-06-26','Ashura (Muharram)','আশুরা (মহররম)');
+  range('2026-08-05','2026-08-05','July Uprising Day','জুলাই গণঅভ্যুত্থান দিবস');
+  range('2026-08-15','2026-08-15','Independence Day of India','ভারতের স্বাধীনতা দিবস');
+  range('2026-08-26','2026-08-26','Eid-e-Miladunnabi (Sm.)','ঈদে মিলাদুন্নবী (সা.)');
+  range('2026-09-04','2026-09-04','Janmashtami','জন্মাষ্টমী');
+  range('2026-10-02','2026-10-02','Birthday of Gandhiji','গান্ধীজির জন্মদিন');
+  range('2026-10-20','2026-10-21','Durga Puja (Nabami & Bijaya Dasami)','দুর্গাপূজা (নবমী ও বিজয়া দশমী)');
+  range('2026-10-25','2026-10-25','Lakshmi Puja','লক্ষ্মীপূজা');
+  range('2026-11-08','2026-11-08','Kali Puja','কালীপূজা');
+  range('2026-12-16','2026-12-16','Victory Day of Bangladesh','বাংলাদেশের বিজয় দিবস');
+  range('2026-12-25','2026-12-25','Christmas Day','বড়দিন');
+  return days;
+})();
+function bdHolidayInfo(key){
+  var listed=BD_GOV_HOLIDAYS_2026[key];
+  if(listed)return listed;
+  var d=new Date(key+'T00:00:00');
+  return !isNaN(d.getTime())&&d.getDay()===5?{en:'Weekly Friday holiday',bn:'সাপ্তাহিক শুক্রবারের ছুটি'}:null;
+}
+
 function openHeaderCalendar(initialDate){
   var isBn=S.lang==='bn',view=new Date(initialDate||new Date());view.setDate(1);
   var selected=new Date(initialDate||new Date());
@@ -6932,27 +6985,27 @@ function openHeaderCalendar(initialDate){
     var title=(isBn?mnBn[view.getMonth()]:mnEn[view.getMonth()])+' '+(isBn?toBnNum(view.getFullYear()):view.getFullYear());
     var first=(new Date(view.getFullYear(),view.getMonth(),1).getDay()+6)%7,days=new Date(view.getFullYear(),view.getMonth()+1,0).getDate();
     var weekdays=isBn?['সো','ম','বু','বৃ','শু','শ','র']:['Mo','Tu','We','Th','Fr','Sa','Su'];
-    var greg=selected.toLocaleDateString(isBn?'en-GB':'en-GB',{day:'numeric',month:'long',year:'numeric'}),bn=getBengaliDate(selected),hij=getHijriDate(selected),now=new Date(),clock=now.toLocaleTimeString(isBn?'bn-BD':'en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});
-    var dateCard='<div class="hcal-datecard"><div class="hcal-clock" id="hcalClock">'+clock+'</div><div><b>Gregorian</b> · '+greg+'</div><div><b>বাংলা</b> · '+bn.text+'</div><div><b>Hijri</b> · '+(isBn?hij.textBn:hij.textEn)+'</div></div>';
+    var greg=selected.toLocaleDateString(isBn?'bn-BD':'en-GB',{day:'numeric',month:'long',year:'numeric'}),bn=getBengaliDate(selected),hij=getHijriDate(selected),now=new Date(),clock=now.toLocaleTimeString(isBn?'bn-BD':'en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});
+    var dateCard='<div class="hcal-datecard"><div class="hcal-clock" id="hcalClock">'+clock+'</div><div><b>'+(isBn?'গ্রেগরিয়ান':'Gregorian')+'</b> · '+greg+'</div><div><b>বাংলা</b> · '+bn.text+'</div><div><b>'+(isBn?'হিজরি':'Hijri')+'</b> · '+(isBn?hij.textBn:hij.textEn)+'</div></div>';
     var html=dateCard+'<div class="hcal-top"><button type="button" class="ghost" data-hcal="prev" aria-label="Previous month">‹</button><b>'+title+'</b><button type="button" class="ghost" data-hcal="next" aria-label="Next month">›</button></div><div class="hcal-grid">'+weekdays.map(function(x){return '<span class="hcal-week">'+x+'</span>'}).join('');
     for(var i=0;i<first;i++)html+='<span class="hcal-empty"></span>';
     for(var day=1;day<=days;day++){
-      var d=new Date(view.getFullYear(),view.getMonth(),day),key=iso(d),entries=S.entries.filter(function(e){return e.d===key&&!e.void}),state=S.days&&S.days[key],status=state&&state.holiday?'holiday':state&&state.workday?'workday':state&&state.closed?'closed':entries.length?'activity':'',cls=(key===iso(selected)?' selected':'')+(status?' '+status:'');
-      html+='<button type="button" class="hcal-day'+cls+'" data-hcal-date="'+key+'"'+(key>todayIso()?' disabled':'')+'><span>'+ (isBn?toBnNum(day):day)+'</span>'+(entries.length?'<i aria-hidden="true"></i>':'')+'</button>';
+      var d=new Date(view.getFullYear(),view.getMonth(),day),key=iso(d),entries=S.entries.filter(function(e){return e.d===key&&!e.void}),state=S.days&&S.days[key],holiday=bdHolidayInfo(key),status=holiday?'holiday':state&&state.holiday?'holiday':state&&state.workday?'workday':state&&state.closed?'closed':entries.length?'activity':'',cls=(key===iso(selected)?' selected':'')+(status?' '+status:''),holidayName=holiday?(isBn?holiday.bn:holiday.en):state&&state.holiday?(isBn?'সরকারি ছুটি':'Government holiday'):'';
+      html+='<button type="button" class="hcal-day'+cls+'" data-hcal-date="'+key+'"'+(holidayName?' title="'+esc(holidayName)+'"':'')+(key>todayIso()?' disabled':'')+'><span>'+ (isBn?toBnNum(day):day)+'</span>'+(entries.length?'<i aria-hidden="true"></i>':'')+'</button>';
     }
     html+='</div><div class="hcal-legend"><span class="activity">'+(isBn?'লেনদেন':'Activity')+'</span><span class="workday">'+(isBn?'কর্মদিবস':'Workday')+'</span><span class="holiday">'+(isBn?'ছুটি':'Holiday')+'</span></div><div class="hcal-summary" id="hcalSummary"></div><div class="hcal-actions"><button type="button" class="ghost" data-hcal="today">'+(isBn?'আজ':'Today')+'</button><button type="button" class="go" data-hcal="open">'+(isBn?'এই দিনের হিসাব দেখুন':'Open this day in Accounts')+'</button></div>';
     $('ob').innerHTML=html;updateSummary();
   }
   function updateSummary(){
-    var key=iso(selected),entries=S.entries.filter(function(e){return e.d===key&&!e.void}),dayState=S.days&&S.days[key]||{},summary=$('hcalSummary');if(!summary)return;
+    var key=iso(selected),entries=S.entries.filter(function(e){return e.d===key&&!e.void}),dayState=S.days&&S.days[key]||{},holiday=bdHolidayInfo(key),summary=$('hcalSummary');if(!summary)return;
     var selectedDateName=selected.toLocaleDateString(isBn?'bn-BD':'en-GB',{weekday:'long',day:'numeric',month:'short',year:'numeric'});
-    summary.innerHTML='<b>'+selectedDateName+'</b><div>'+ (isBn?'লেনদেন':'Transactions')+': '+(isBn?toBnNum(entries.length):entries.length)+' · '+(dayState.holiday?(isBn?'সরকারি ছুটি':'Government holiday'):dayState.workday?(isBn?'কর্মদিবস':'Workday'):dayState.closed?(isBn?'দিন বন্ধ':'Day closed'):dayState.prep?(isBn?'প্রস্তুত':'Prepared'):(isBn?'খোলা':'Open'))+'</div>'+(entries.length?'<ul>'+entries.slice(0,12).map(function(e){return '<li>'+esc(e.t||'')+' · '+esc(e.type||'')+' · '+esc(e.desc||'')+'</li>'}).join('')+'</ul>':'<div class="mut">'+(isBn?'এই দিনে কোনো লেনদেন নেই':'No transactions on this day')+'</div>');
+    summary.innerHTML='<b>'+selectedDateName+'</b><div>'+ (isBn?'লেনদেন':'Transactions')+': '+(isBn?toBnNum(entries.length):entries.length)+' · '+(holiday?(isBn?holiday.bn:holiday.en):dayState.holiday?(isBn?'সরকারি ছুটি':'Government holiday'):dayState.workday?(isBn?'কর্মদিবস':'Workday'):dayState.closed?(isBn?'দিন বন্ধ':'Day closed'):dayState.prep?(isBn?'প্রস্তুত':'Prepared'):(isBn?'খোলা':'Open'))+'</div>'+(entries.length?'<ul>'+entries.slice(0,12).map(function(e){return '<li>'+esc(e.t||'')+' · '+esc(e.type||'')+' · '+esc(e.desc||'')+'</li>'}).join('')+'</ul>':'<div class="mut">'+(isBn?'এই দিনে কোনো লেনদেন নেই':'No transactions on this day')+'</div>');
   }
   ask(isBn?'তারিখ ও মাসিক ক্যালেন্ডার':'Date & Monthly Calendar','',function(){return false},isBn?'বন্ধ':'Close');
   $('ot').textContent=isBn?'তারিখ ও মাসিক ক্যালেন্ডার':'Date & Monthly Calendar';
   renderCalendar();
   var clockTimer=setInterval(function(){var clock=$('hcalClock');if(!clock||$('ov').hidden){clearInterval(clockTimer);return}clock.textContent=new Date().toLocaleTimeString(isBn?'bn-BD':'en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true})},1000);
-  $('ob').onclick=function(e){var nav=e.target.closest('[data-hcal]'),dateBtn=e.target.closest('[data-hcal-date]');if(dateBtn){selected=new Date(dateBtn.dataset.hcalDate+'T00:00:00');renderCalendar();return}if(!nav)return;if(nav.dataset.hcal==='prev'||nav.dataset.hcal==='next'){view.setMonth(view.getMonth()+(nav.dataset.hcal==='prev'?-1:1));renderCalendar()}else if(nav.dataset.hcal==='today'){selected=new Date();view=new Date(selected.getFullYear(),selected.getMonth(),1);renderCalendar()}else if(nav.dataset.hcal==='open'){var key=iso(selected);if(selectAccountsDate(key)){window._ncsDateTarget=true;if(CUR!=='acc')go('acc');else window._ncsDateTarget=false;$('ov').hidden=true}}};
+  $('ob').onclick=function(e){var nav=e.target.closest('[data-hcal]'),dateBtn=e.target.closest('[data-hcal-date]');if(dateBtn){selected=new Date(dateBtn.dataset.hcalDate+'T00:00:00');renderCalendar();return}if(!nav)return;if(nav.dataset.hcal==='prev'||nav.dataset.hcal==='next'){view.setMonth(view.getMonth()+(nav.dataset.hcal==='prev'?-1:1));renderCalendar()}else if(nav.dataset.hcal==='today'){selected=new Date();view=new Date(selected.getFullYear(),selected.getMonth(),1);renderCalendar()}else if(nav.dataset.hcal==='open'){if(selectAccountsDate(iso(selected)))$('ov').hidden=true}};
 }
 
 
@@ -7022,7 +7075,10 @@ function animateCounts(){
 function saveCheck(){if(document.documentElement.dataset.rm)return;var d=document.createElement('div');d.className='savechk';d.innerHTML='<svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="22" fill="none" stroke="var(--acc)" stroke-width="3"/><path d="M14 27l8 8 16-16" fill="none" stroke="var(--acc)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';document.body.appendChild(d);setTimeout(function(){d.classList.add('out')},700);setTimeout(function(){d.remove()},1250)}
 (function(){
   var M="Claude Sonnet 5.5 · owner's Claude account";
-  APP_VERSION='11.11.0';
+  APP_VERSION='11.12.0';
+  VERS.unshift({v:'11.12.0',d:'2026-11-05',t:'Single Header Date, Mobile Theme Picker and Bangladesh Holidays',by:'Codex',n:['Kept one date in the header, using the Gregorian calendar in English and the Bengali calendar in Bangla; the date card shows all three calendars with a digital clock','Constrained the mobile theme picker to the visible screen in PWA and native apps','Marked every Friday and all dates and date ranges from the supplied 2026 holiday list in red; workdays appear green']});
+  UPC.unshift({v:'11.12.0',s:'Done',t:['One language-appropriate date in the header; all three calendars and clock in the date card','Theme picker stays on screen in mobile PWA and native apps','Friday and listed 2026 holidays are red; workdays are green']});
+  BUGS.unshift({d:'2026-11-05 --:-- (UTC+6)',v:'11.12.0',w:'Codex',a:'Header showed multiple date formats and the shop name collided with the weekday; the mobile theme picker opened partly outside the screen; the calendar did not mark Bangladesh holidays automatically',b:'The header displayed weekday, Gregorian, Bengali and Hijri values together; the fixed picker was trapped by the blurred header containing block; dates had only manually saved holiday status',c:'Reduced the header to one locale-appropriate date (Gregorian in English, Bengali calendar in Bangla), constrained the shop title, portaled the picker to the page viewport on mobile, and added Friday plus supplied 2026 government holidays to the calendar'});
   VERS.unshift({v:'11.11.0',d:'2026-11-05',t:'Unified Date Card, Monthly Calendar and Persistent Location',by:'Codex',n:['Added a clickable date card with a live clock and Gregorian, Bengali and Hijri dates','Added monthly calendar navigation, daily transaction summaries, and Accounts day drilldown','Added saved Workday and Government holiday markers to calendar dates','Persisted prayer and weather location in app data across sign-outs and reloads','Set the shop title in two fixed lines with the role control beneath it']});
   UPC.unshift({v:'11.11.0',s:'Done',t:['Unified clickable date and three-calendar details','Monthly calendar with transaction/day-status summary and Accounts drilldown','Persistent prayer and weather location','Two-line shop name with role below']});
   BUGS.unshift({d:'2026-11-05 --:-- (UTC+6)',v:'11.11.0',w:'Codex',a:'Header date showed inconsistent calendar formats; selecting a calendar day could not open that day in Accounts; saved location reverted; shop title wrapped unpredictably',b:'Dates were separately displayed without a shared calendar; tab navigation reset Accounts date; location was stored only in a standalone browser key; shop name used a single unbroken line',c:'Added a shared date details and month calendar, connected selected days to Accounts, saved location in application state with legacy fallback, and forced the shop title to two lines'});
@@ -7216,7 +7272,7 @@ if ('serviceWorker' in navigator) {
 
 </script>
 <!-- NCS v10 Sync Engine -->
-<script src="diag.js?v=11.11.0"></script>
-<script src="sync.js?v=11.11.0"></script>
+<script src="diag.js?v=11.12.0"></script>
+<script src="sync.js?v=11.12.0"></script>
 </body>
 </html>

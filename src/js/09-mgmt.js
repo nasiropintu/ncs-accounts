@@ -847,7 +847,7 @@ function updateLiveWatch(now){
   var dateEl=$('hwDate');
   if(dateEl){
     var gDate=isBn
-      ?(toBnNum(now.getDate())+' '+(['জানু','ফেব্রু','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টে','অক্টো','নভে','ডিসে'][now.getMonth()])+' '+toBnNum(now.getFullYear()))
+      ?getBengaliDate(now).text
       :(now.getDate()+' '+(['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][now.getMonth()])+' '+now.getFullYear());
     if(dateEl.textContent!==gDate)dateEl.textContent=gDate;
     dateEl.title=isBn?'তারিখের বিবরণ ও ক্যালেন্ডার খুলুন':'Open date details and calendar';
@@ -1018,6 +1018,41 @@ if(typeof document!=='undefined'){
   document.addEventListener('keydown',function(e){if((e.key==='Enter'||e.key===' ')&&e.target.closest('#hwDate,#hwBng')){e.preventDefault();if(typeof openHeaderCalendar==='function')openHeaderCalendar(new Date())}});
 }
 
+var BD_GOV_HOLIDAYS_2026=(function(){
+  var days={};
+  function range(from,to,en,bn){var a=new Date(from+'T00:00:00'),z=new Date(to+'T00:00:00');for(var d=new Date(a);d<=z;d.setDate(d.getDate()+1))days[iso(d)]={en:en,bn:bn}}
+  range('2026-01-23','2026-01-23','Birthday of Netaji & Saraswati Puja (Sree Panchami)','নেতাজির জন্মদিন ও সরস্বতী পূজা (শ্রীপঞ্চমী)');
+  range('2026-01-26','2026-01-26','Republic Day of India','ভারতের প্রজাতন্ত্র দিবস');
+  range('2026-02-04','2026-02-04','Shab-e-Barat','শবে বরাত');
+  range('2026-02-21','2026-02-21','Shaheed Dibosh & International Mother Language Day','শহীদ দিবস ও আন্তর্জাতিক মাতৃভাষা দিবস');
+  range('2026-03-03','2026-03-03','Dol Jatra','দোলযাত্রা');
+  range('2026-03-17','2026-03-17','Shab-e-Qadar','শবে কদর');
+  range('2026-03-20','2026-03-20','Jumat-ul-Wida','জুমাতুল বিদা');
+  range('2026-03-19','2026-03-23','Eid-ul-Fitr','ঈদুল ফিতর');
+  range('2026-03-26','2026-03-26','Independence & National Day of Bangladesh','বাংলাদেশের স্বাধীনতা ও জাতীয় দিবস');
+  range('2026-04-14','2026-04-14','Bangla New Year','বাংলা নববর্ষ');
+  range('2026-05-01','2026-05-01','May Day & Buddha Purnima (Boishakhi Purnama)','মে দিবস ও বুদ্ধ পূর্ণিমা');
+  range('2026-05-26','2026-05-31','Eid-ul-Azha','ঈদুল আজহা');
+  range('2026-06-26','2026-06-26','Ashura (Muharram)','আশুরা (মহররম)');
+  range('2026-08-05','2026-08-05','July Uprising Day','জুলাই গণঅভ্যুত্থান দিবস');
+  range('2026-08-15','2026-08-15','Independence Day of India','ভারতের স্বাধীনতা দিবস');
+  range('2026-08-26','2026-08-26','Eid-e-Miladunnabi (Sm.)','ঈদে মিলাদুন্নবী (সা.)');
+  range('2026-09-04','2026-09-04','Janmashtami','জন্মাষ্টমী');
+  range('2026-10-02','2026-10-02','Birthday of Gandhiji','গান্ধীজির জন্মদিন');
+  range('2026-10-20','2026-10-21','Durga Puja (Nabami & Bijaya Dasami)','দুর্গাপূজা (নবমী ও বিজয়া দশমী)');
+  range('2026-10-25','2026-10-25','Lakshmi Puja','লক্ষ্মীপূজা');
+  range('2026-11-08','2026-11-08','Kali Puja','কালীপূজা');
+  range('2026-12-16','2026-12-16','Victory Day of Bangladesh','বাংলাদেশের বিজয় দিবস');
+  range('2026-12-25','2026-12-25','Christmas Day','বড়দিন');
+  return days;
+})();
+function bdHolidayInfo(key){
+  var listed=BD_GOV_HOLIDAYS_2026[key];
+  if(listed)return listed;
+  var d=new Date(key+'T00:00:00');
+  return !isNaN(d.getTime())&&d.getDay()===5?{en:'Weekly Friday holiday',bn:'সাপ্তাহিক শুক্রবারের ছুটি'}:null;
+}
+
 function openHeaderCalendar(initialDate){
   var isBn=S.lang==='bn',view=new Date(initialDate||new Date());view.setDate(1);
   var selected=new Date(initialDate||new Date());
@@ -1027,25 +1062,25 @@ function openHeaderCalendar(initialDate){
     var title=(isBn?mnBn[view.getMonth()]:mnEn[view.getMonth()])+' '+(isBn?toBnNum(view.getFullYear()):view.getFullYear());
     var first=(new Date(view.getFullYear(),view.getMonth(),1).getDay()+6)%7,days=new Date(view.getFullYear(),view.getMonth()+1,0).getDate();
     var weekdays=isBn?['সো','ম','বু','বৃ','শু','শ','র']:['Mo','Tu','We','Th','Fr','Sa','Su'];
-    var greg=selected.toLocaleDateString(isBn?'en-GB':'en-GB',{day:'numeric',month:'long',year:'numeric'}),bn=getBengaliDate(selected),hij=getHijriDate(selected),now=new Date(),clock=now.toLocaleTimeString(isBn?'bn-BD':'en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});
-    var dateCard='<div class="hcal-datecard"><div class="hcal-clock" id="hcalClock">'+clock+'</div><div><b>Gregorian</b> · '+greg+'</div><div><b>বাংলা</b> · '+bn.text+'</div><div><b>Hijri</b> · '+(isBn?hij.textBn:hij.textEn)+'</div></div>';
+    var greg=selected.toLocaleDateString(isBn?'bn-BD':'en-GB',{day:'numeric',month:'long',year:'numeric'}),bn=getBengaliDate(selected),hij=getHijriDate(selected),now=new Date(),clock=now.toLocaleTimeString(isBn?'bn-BD':'en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});
+    var dateCard='<div class="hcal-datecard"><div class="hcal-clock" id="hcalClock">'+clock+'</div><div><b>'+(isBn?'গ্রেগরিয়ান':'Gregorian')+'</b> · '+greg+'</div><div><b>বাংলা</b> · '+bn.text+'</div><div><b>'+(isBn?'হিজরি':'Hijri')+'</b> · '+(isBn?hij.textBn:hij.textEn)+'</div></div>';
     var html=dateCard+'<div class="hcal-top"><button type="button" class="ghost" data-hcal="prev" aria-label="Previous month">‹</button><b>'+title+'</b><button type="button" class="ghost" data-hcal="next" aria-label="Next month">›</button></div><div class="hcal-grid">'+weekdays.map(function(x){return '<span class="hcal-week">'+x+'</span>'}).join('');
     for(var i=0;i<first;i++)html+='<span class="hcal-empty"></span>';
     for(var day=1;day<=days;day++){
-      var d=new Date(view.getFullYear(),view.getMonth(),day),key=iso(d),entries=S.entries.filter(function(e){return e.d===key&&!e.void}),state=S.days&&S.days[key],status=state&&state.holiday?'holiday':state&&state.workday?'workday':state&&state.closed?'closed':entries.length?'activity':'',cls=(key===iso(selected)?' selected':'')+(status?' '+status:'');
-      html+='<button type="button" class="hcal-day'+cls+'" data-hcal-date="'+key+'"'+(key>todayIso()?' disabled':'')+'><span>'+ (isBn?toBnNum(day):day)+'</span>'+(entries.length?'<i aria-hidden="true"></i>':'')+'</button>';
+      var d=new Date(view.getFullYear(),view.getMonth(),day),key=iso(d),entries=S.entries.filter(function(e){return e.d===key&&!e.void}),state=S.days&&S.days[key],holiday=bdHolidayInfo(key),status=holiday?'holiday':state&&state.holiday?'holiday':state&&state.workday?'workday':state&&state.closed?'closed':entries.length?'activity':'',cls=(key===iso(selected)?' selected':'')+(status?' '+status:''),holidayName=holiday?(isBn?holiday.bn:holiday.en):state&&state.holiday?(isBn?'সরকারি ছুটি':'Government holiday'):'';
+      html+='<button type="button" class="hcal-day'+cls+'" data-hcal-date="'+key+'"'+(holidayName?' title="'+esc(holidayName)+'"':'')+(key>todayIso()?' disabled':'')+'><span>'+ (isBn?toBnNum(day):day)+'</span>'+(entries.length?'<i aria-hidden="true"></i>':'')+'</button>';
     }
     html+='</div><div class="hcal-legend"><span class="activity">'+(isBn?'লেনদেন':'Activity')+'</span><span class="workday">'+(isBn?'কর্মদিবস':'Workday')+'</span><span class="holiday">'+(isBn?'ছুটি':'Holiday')+'</span></div><div class="hcal-summary" id="hcalSummary"></div><div class="hcal-actions"><button type="button" class="ghost" data-hcal="today">'+(isBn?'আজ':'Today')+'</button><button type="button" class="go" data-hcal="open">'+(isBn?'এই দিনের হিসাব দেখুন':'Open this day in Accounts')+'</button></div>';
     $('ob').innerHTML=html;updateSummary();
   }
   function updateSummary(){
-    var key=iso(selected),entries=S.entries.filter(function(e){return e.d===key&&!e.void}),dayState=S.days&&S.days[key]||{},summary=$('hcalSummary');if(!summary)return;
+    var key=iso(selected),entries=S.entries.filter(function(e){return e.d===key&&!e.void}),dayState=S.days&&S.days[key]||{},holiday=bdHolidayInfo(key),summary=$('hcalSummary');if(!summary)return;
     var selectedDateName=selected.toLocaleDateString(isBn?'bn-BD':'en-GB',{weekday:'long',day:'numeric',month:'short',year:'numeric'});
-    summary.innerHTML='<b>'+selectedDateName+'</b><div>'+ (isBn?'লেনদেন':'Transactions')+': '+(isBn?toBnNum(entries.length):entries.length)+' · '+(dayState.holiday?(isBn?'সরকারি ছুটি':'Government holiday'):dayState.workday?(isBn?'কর্মদিবস':'Workday'):dayState.closed?(isBn?'দিন বন্ধ':'Day closed'):dayState.prep?(isBn?'প্রস্তুত':'Prepared'):(isBn?'খোলা':'Open'))+'</div>'+(entries.length?'<ul>'+entries.slice(0,12).map(function(e){return '<li>'+esc(e.t||'')+' · '+esc(e.type||'')+' · '+esc(e.desc||'')+'</li>'}).join('')+'</ul>':'<div class="mut">'+(isBn?'এই দিনে কোনো লেনদেন নেই':'No transactions on this day')+'</div>');
+    summary.innerHTML='<b>'+selectedDateName+'</b><div>'+ (isBn?'লেনদেন':'Transactions')+': '+(isBn?toBnNum(entries.length):entries.length)+' · '+(holiday?(isBn?holiday.bn:holiday.en):dayState.holiday?(isBn?'সরকারি ছুটি':'Government holiday'):dayState.workday?(isBn?'কর্মদিবস':'Workday'):dayState.closed?(isBn?'দিন বন্ধ':'Day closed'):dayState.prep?(isBn?'প্রস্তুত':'Prepared'):(isBn?'খোলা':'Open'))+'</div>'+(entries.length?'<ul>'+entries.slice(0,12).map(function(e){return '<li>'+esc(e.t||'')+' · '+esc(e.type||'')+' · '+esc(e.desc||'')+'</li>'}).join('')+'</ul>':'<div class="mut">'+(isBn?'এই দিনে কোনো লেনদেন নেই':'No transactions on this day')+'</div>');
   }
   ask(isBn?'তারিখ ও মাসিক ক্যালেন্ডার':'Date & Monthly Calendar','',function(){return false},isBn?'বন্ধ':'Close');
   $('ot').textContent=isBn?'তারিখ ও মাসিক ক্যালেন্ডার':'Date & Monthly Calendar';
   renderCalendar();
   var clockTimer=setInterval(function(){var clock=$('hcalClock');if(!clock||$('ov').hidden){clearInterval(clockTimer);return}clock.textContent=new Date().toLocaleTimeString(isBn?'bn-BD':'en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true})},1000);
-  $('ob').onclick=function(e){var nav=e.target.closest('[data-hcal]'),dateBtn=e.target.closest('[data-hcal-date]');if(dateBtn){selected=new Date(dateBtn.dataset.hcalDate+'T00:00:00');renderCalendar();return}if(!nav)return;if(nav.dataset.hcal==='prev'||nav.dataset.hcal==='next'){view.setMonth(view.getMonth()+(nav.dataset.hcal==='prev'?-1:1));renderCalendar()}else if(nav.dataset.hcal==='today'){selected=new Date();view=new Date(selected.getFullYear(),selected.getMonth(),1);renderCalendar()}else if(nav.dataset.hcal==='open'){var key=iso(selected);if(selectAccountsDate(key)){window._ncsDateTarget=true;if(CUR!=='acc')go('acc');else window._ncsDateTarget=false;$('ov').hidden=true}}};
+  $('ob').onclick=function(e){var nav=e.target.closest('[data-hcal]'),dateBtn=e.target.closest('[data-hcal-date]');if(dateBtn){selected=new Date(dateBtn.dataset.hcalDate+'T00:00:00');renderCalendar();return}if(!nav)return;if(nav.dataset.hcal==='prev'||nav.dataset.hcal==='next'){view.setMonth(view.getMonth()+(nav.dataset.hcal==='prev'?-1:1));renderCalendar()}else if(nav.dataset.hcal==='today'){selected=new Date();view=new Date(selected.getFullYear(),selected.getMonth(),1);renderCalendar()}else if(nav.dataset.hcal==='open'){if(selectAccountsDate(iso(selected)))$('ov').hidden=true}};
 }
