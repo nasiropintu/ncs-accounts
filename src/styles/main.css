@@ -328,7 +328,7 @@ th{color:var(--ink);font-weight:500}
  .rd-role-btn.active .rd-check{display:block;color:var(--acc)}
  
  /* Header Center: Bismillah + Lora Minimal Watch + Calendar */
- .hdr-greetline{display:contents}
+ .hdr-greetline{display:flex;align-items:baseline;justify-content:center;gap:10px;max-width:100%}
  .hdr-center{grid-column:2;justify-self:center;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2px;min-width:0}
  .bismillah-txt{font-size:15px;font-weight:500;color:var(--mut);letter-spacing:.035em;user-select:none;line-height:1.2;transition:color .2s ease}
  html[lang="bn"] .bismillah-txt{font-size:15px;font-family:SolaimanLipi,Inter,sans-serif;font-weight:600;color:var(--mut)}
@@ -341,7 +341,7 @@ th{color:var(--ink);font-weight:500}
  @keyframes tick-subtle{0%{transform:translateY(1.5px);opacity:.85}100%{transform:translateY(0);opacity:1}}
  .hw-time.tick-pulse .hw-time-val{display:inline-block;animation:tick-subtle .12s cubic-bezier(.16,1,.3,1)}
  .hw-meta{display:flex;align-items:center;justify-content:center;gap:7px;font-size:13px;color:var(--mut);margin-top:3px;white-space:nowrap}
- .hw-day{display:inline-flex;align-items:center;justify-content:center;padding:3px 12px;border-radius:999px;font-weight:600;font-size:13.5px;border:1px solid;transition:background .2s,color .2s}
+ .hw-day{display:inline-flex;align-items:center;justify-content:center;padding:0;border:0;border-radius:0;background:transparent!important;font-weight:500;font-size:13.5px}
  .hw-date{font-weight:500;color:var(--ink);cursor:pointer;border-radius:6px;padding:1px 4px;transition:background .15s,color .15s}
  .hw-date:hover{color:var(--acc);background:var(--soft)}
  .hw-sep{color:var(--line);font-weight:bold}
@@ -352,8 +352,8 @@ th{color:var(--ink);font-weight:500}
  
  /* Header Right: Minimal Weather + Mosque Prayer + Actions + Sync */
  .top #topR{grid-column:3;justify-self:end;display:flex;align-items:center;justify-content:flex-end;gap:8px}
- .hdr-weather{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;background:var(--soft);border:1px solid color-mix(in srgb,var(--acc) 22%,transparent);border-radius:999px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;user-select:none;transition:all .18s ease}
- .hdr-weather:hover{border-color:var(--acc);transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+ .hdr-weather{display:inline-flex;align-items:center;gap:6px;padding:0;background:transparent;border:0;border-radius:0;font-size:13px;font-weight:500;color:var(--ink);cursor:pointer;user-select:none;transition:color .18s ease}
+ .hdr-weather:hover{color:var(--acc)}
  .hw-weather-sep{display:none}
  .hw-icon{display:inline-flex;align-items:center;justify-content:center;color:var(--acc);line-height:1}
  .hw-icon svg{display:block}
@@ -364,7 +364,7 @@ th{color:var(--ink);font-weight:500}
  .hdr-prayer-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--line);transition:all .2s ease}
  .hdr-prayer-dot.active{background:var(--pos);box-shadow:0 0 0 3px color-mix(in srgb,var(--pos) 28%,transparent);animation:pulse-dot 2s infinite}
  @keyframes pulse-dot{0%{transform:scale(.95);box-shadow:0 0 0 0 color-mix(in srgb,var(--pos) 50%,transparent)}70%{transform:scale(1.1);box-shadow:0 0 0 6px transparent}100%{transform:scale(.95);box-shadow:0 0 0 0 transparent}}
- .hdr-prayer-label{font-size:12.5px;font-weight:600;color:var(--ink);white-space:nowrap}
+ .hdr-prayer-label{font-size:12.5px;font-weight:500;color:var(--ink);white-space:nowrap}
  @media (max-width:1120px){
    .hdr-prayer-label{display:none}
    .hdr-prayer-btn{padding:0;width:44px}
@@ -447,7 +447,7 @@ th{color:var(--ink);font-weight:500}
  .top-brand-sub{margin-top:2px}
  .tsub-pill{display:inline-flex;align-items:center;padding:1px 7px;border-radius:999px;background:var(--soft);color:var(--acc);font-size:10px;font-weight:600}
  .hdr-center{grid-area:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:100%;min-width:0;text-align:center;margin-top:0}
- .hdr-greetline{display:flex;align-items:baseline;justify-content:center;gap:5px;max-width:100%;flex-wrap:wrap;line-height:1.15}
+ .hdr-greetline{display:flex;align-items:baseline;justify-content:center;gap:10px;max-width:100%;flex-wrap:wrap;line-height:1.15}
  .bismillah-txt{font-size:12px;font-weight:500;color:var(--mut);letter-spacing:.035em;line-height:1.2}
  html[lang="bn"] .bismillah-txt{font-family:SolaimanLipi,Inter,sans-serif}
  .hdr-watch{display:flex;flex-direction:column;align-items:center;text-align:center;user-select:none}
@@ -520,6 +520,11 @@ th{color:var(--ink);font-weight:500}
 }
 body.th-compact{--hdr-mark:calc(32px*.85);--hdr-ctl:calc(36px*.85);--hdr-clock:calc(22px*.85)}
 @media print{body{background:#fff!important;padding-left:0!important}}
+
+/* One simple appearance icon is used for every theme mode. */
+#themeBtn .th-auto,#themeBtn .th-light,#themeBtn .th-dark,#themeBtn .th-glass-dark,#themeBtn .th-glass-light{display:none!important}
+#themeBtn .th-simple{display:block!important}
+.hw-meta .hw-day{padding:0;border:0;border-radius:0;background:transparent!important}
 
 /* Weather & Air Quality Card Modal Styles */
 .wm-card{display:flex;flex-direction:column;gap:12px}
@@ -1218,8 +1223,8 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
  .dlg.w:has(.hcal-layout){width:min(900px,calc(100vw - 36px));max-width:900px;max-height:min(780px,90vh)}
  .dlg.w:has(.hcal-layout)>#ob{overflow:hidden}
  .hcal-layout{display:grid;grid-template-rows:auto minmax(0,1fr);gap:12px;min-height:0}
- .hcal-datecard{grid-template-columns:repeat(3,minmax(0,1fr));align-items:center;gap:8px 12px;margin:0;padding:10px 14px}
- .hcal-clock{grid-column:1/-1;text-align:center;margin:0 0 2px;font-size:clamp(32px,3vw,38px);line-height:1.05;white-space:nowrap}
+ .hcal-datecard{grid-template-columns:repeat(3,minmax(0,1fr));align-items:center;gap:16px 12px;margin:0;padding:10px 14px}
+ .hcal-clock{grid-column:1/-1;text-align:center;margin:0 0 4px;font-size:clamp(32px,3vw,38px);line-height:1.05;white-space:nowrap}
  .hcal-datecard>div:not(.hcal-clock){min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center}
  .hcal-main{display:grid;grid-template-columns:minmax(330px,1fr) minmax(300px,.9fr);gap:16px;min-height:0}
  .hcal-month,.hcal-day-panel{min-width:0;min-height:0}
@@ -1248,14 +1253,14 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
   .hdr-prayer-btn{display:grid}
   .hdr-prayer-popover{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);right:12px;z-index:59;width:min(320px,calc(100vw - 24px));max-height:70vh}
   .hdr-center{grid-area:center;display:flex;flex-direction:column;gap:3px;align-items:center;justify-content:center;width:100%;margin:0;text-align:center}
-  .hdr-greetline{justify-content:center;min-width:0;flex-wrap:nowrap;overflow:hidden;white-space:nowrap}
+  .hdr-greetline{justify-content:center;gap:10px;min-width:0;flex-wrap:nowrap;overflow:hidden;white-space:nowrap}
   .bismillah-txt,.hdr-greeting{font-size:clamp(10px,2.9vw,12px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .hdr-watch{align-items:center;min-width:0;width:100%}
   .hw-time{font-size:var(--hdr-clock);min-width:0;white-space:nowrap;text-align:center}
   .hw-meta{justify-content:center;flex-wrap:wrap;white-space:normal;overflow:visible;max-width:100%;font-size:clamp(9px,2.5vw,11px);gap:2px 4px}
   .hw-meta .hw-hijri,.hw-meta .hw-sep:not(.hw-weather-sep){display:none}
   .hw-meta .hw-weather-sep{display:none}
-  .hdr-weather{padding:4px 7px;border:1px solid var(--line);border-radius:999px;background:var(--soft);white-space:nowrap;font-size:12px}
+  .hdr-weather{padding:0;border:0;border-radius:0;background:transparent;white-space:nowrap;font-size:12px}
   .hw-icon{display:inline-flex;align-items:center;justify-content:center;color:var(--acc)}
   .hw-icon svg{display:block}
 }

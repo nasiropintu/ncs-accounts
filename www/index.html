@@ -336,7 +336,7 @@ th{color:var(--ink);font-weight:500}
  .rd-role-btn.active .rd-check{display:block;color:var(--acc)}
  
  /* Header Center: Bismillah + Lora Minimal Watch + Calendar */
- .hdr-greetline{display:contents}
+ .hdr-greetline{display:flex;align-items:baseline;justify-content:center;gap:10px;max-width:100%}
  .hdr-center{grid-column:2;justify-self:center;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2px;min-width:0}
  .bismillah-txt{font-size:15px;font-weight:500;color:var(--mut);letter-spacing:.035em;user-select:none;line-height:1.2;transition:color .2s ease}
  html[lang="bn"] .bismillah-txt{font-size:15px;font-family:SolaimanLipi,Inter,sans-serif;font-weight:600;color:var(--mut)}
@@ -349,7 +349,7 @@ th{color:var(--ink);font-weight:500}
  @keyframes tick-subtle{0%{transform:translateY(1.5px);opacity:.85}100%{transform:translateY(0);opacity:1}}
  .hw-time.tick-pulse .hw-time-val{display:inline-block;animation:tick-subtle .12s cubic-bezier(.16,1,.3,1)}
  .hw-meta{display:flex;align-items:center;justify-content:center;gap:7px;font-size:13px;color:var(--mut);margin-top:3px;white-space:nowrap}
- .hw-day{display:inline-flex;align-items:center;justify-content:center;padding:3px 12px;border-radius:999px;font-weight:600;font-size:13.5px;border:1px solid;transition:background .2s,color .2s}
+ .hw-day{display:inline-flex;align-items:center;justify-content:center;padding:0;border:0;border-radius:0;background:transparent!important;font-weight:500;font-size:13.5px}
  .hw-date{font-weight:500;color:var(--ink);cursor:pointer;border-radius:6px;padding:1px 4px;transition:background .15s,color .15s}
  .hw-date:hover{color:var(--acc);background:var(--soft)}
  .hw-sep{color:var(--line);font-weight:bold}
@@ -360,8 +360,8 @@ th{color:var(--ink);font-weight:500}
  
  /* Header Right: Minimal Weather + Mosque Prayer + Actions + Sync */
  .top #topR{grid-column:3;justify-self:end;display:flex;align-items:center;justify-content:flex-end;gap:8px}
- .hdr-weather{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;background:var(--soft);border:1px solid color-mix(in srgb,var(--acc) 22%,transparent);border-radius:999px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;user-select:none;transition:all .18s ease}
- .hdr-weather:hover{border-color:var(--acc);transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+ .hdr-weather{display:inline-flex;align-items:center;gap:6px;padding:0;background:transparent;border:0;border-radius:0;font-size:13px;font-weight:500;color:var(--ink);cursor:pointer;user-select:none;transition:color .18s ease}
+ .hdr-weather:hover{color:var(--acc)}
  .hw-weather-sep{display:none}
  .hw-icon{display:inline-flex;align-items:center;justify-content:center;color:var(--acc);line-height:1}
  .hw-icon svg{display:block}
@@ -372,7 +372,7 @@ th{color:var(--ink);font-weight:500}
  .hdr-prayer-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--line);transition:all .2s ease}
  .hdr-prayer-dot.active{background:var(--pos);box-shadow:0 0 0 3px color-mix(in srgb,var(--pos) 28%,transparent);animation:pulse-dot 2s infinite}
  @keyframes pulse-dot{0%{transform:scale(.95);box-shadow:0 0 0 0 color-mix(in srgb,var(--pos) 50%,transparent)}70%{transform:scale(1.1);box-shadow:0 0 0 6px transparent}100%{transform:scale(.95);box-shadow:0 0 0 0 transparent}}
- .hdr-prayer-label{font-size:12.5px;font-weight:600;color:var(--ink);white-space:nowrap}
+ .hdr-prayer-label{font-size:12.5px;font-weight:500;color:var(--ink);white-space:nowrap}
  @media (max-width:1120px){
    .hdr-prayer-label{display:none}
    .hdr-prayer-btn{padding:0;width:44px}
@@ -455,7 +455,7 @@ th{color:var(--ink);font-weight:500}
  .top-brand-sub{margin-top:2px}
  .tsub-pill{display:inline-flex;align-items:center;padding:1px 7px;border-radius:999px;background:var(--soft);color:var(--acc);font-size:10px;font-weight:600}
  .hdr-center{grid-area:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:100%;min-width:0;text-align:center;margin-top:0}
- .hdr-greetline{display:flex;align-items:baseline;justify-content:center;gap:5px;max-width:100%;flex-wrap:wrap;line-height:1.15}
+ .hdr-greetline{display:flex;align-items:baseline;justify-content:center;gap:10px;max-width:100%;flex-wrap:wrap;line-height:1.15}
  .bismillah-txt{font-size:12px;font-weight:500;color:var(--mut);letter-spacing:.035em;line-height:1.2}
  html[lang="bn"] .bismillah-txt{font-family:SolaimanLipi,Inter,sans-serif}
  .hdr-watch{display:flex;flex-direction:column;align-items:center;text-align:center;user-select:none}
@@ -528,6 +528,11 @@ th{color:var(--ink);font-weight:500}
 }
 body.th-compact{--hdr-mark:calc(32px*.85);--hdr-ctl:calc(36px*.85);--hdr-clock:calc(22px*.85)}
 @media print{body{background:#fff!important;padding-left:0!important}}
+
+/* One simple appearance icon is used for every theme mode. */
+#themeBtn .th-auto,#themeBtn .th-light,#themeBtn .th-dark,#themeBtn .th-glass-dark,#themeBtn .th-glass-light{display:none!important}
+#themeBtn .th-simple{display:block!important}
+.hw-meta .hw-day{padding:0;border:0;border-radius:0;background:transparent!important}
 
 /* Weather & Air Quality Card Modal Styles */
 .wm-card{display:flex;flex-direction:column;gap:12px}
@@ -1226,8 +1231,8 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
  .dlg.w:has(.hcal-layout){width:min(900px,calc(100vw - 36px));max-width:900px;max-height:min(780px,90vh)}
  .dlg.w:has(.hcal-layout)>#ob{overflow:hidden}
  .hcal-layout{display:grid;grid-template-rows:auto minmax(0,1fr);gap:12px;min-height:0}
- .hcal-datecard{grid-template-columns:repeat(3,minmax(0,1fr));align-items:center;gap:8px 12px;margin:0;padding:10px 14px}
- .hcal-clock{grid-column:1/-1;text-align:center;margin:0 0 2px;font-size:clamp(32px,3vw,38px);line-height:1.05;white-space:nowrap}
+ .hcal-datecard{grid-template-columns:repeat(3,minmax(0,1fr));align-items:center;gap:16px 12px;margin:0;padding:10px 14px}
+ .hcal-clock{grid-column:1/-1;text-align:center;margin:0 0 4px;font-size:clamp(32px,3vw,38px);line-height:1.05;white-space:nowrap}
  .hcal-datecard>div:not(.hcal-clock){min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center}
  .hcal-main{display:grid;grid-template-columns:minmax(330px,1fr) minmax(300px,.9fr);gap:16px;min-height:0}
  .hcal-month,.hcal-day-panel{min-width:0;min-height:0}
@@ -1256,14 +1261,14 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
   .hdr-prayer-btn{display:grid}
   .hdr-prayer-popover{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);right:12px;z-index:59;width:min(320px,calc(100vw - 24px));max-height:70vh}
   .hdr-center{grid-area:center;display:flex;flex-direction:column;gap:3px;align-items:center;justify-content:center;width:100%;margin:0;text-align:center}
-  .hdr-greetline{justify-content:center;min-width:0;flex-wrap:nowrap;overflow:hidden;white-space:nowrap}
+  .hdr-greetline{justify-content:center;gap:10px;min-width:0;flex-wrap:nowrap;overflow:hidden;white-space:nowrap}
   .bismillah-txt,.hdr-greeting{font-size:clamp(10px,2.9vw,12px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .hdr-watch{align-items:center;min-width:0;width:100%}
   .hw-time{font-size:var(--hdr-clock);min-width:0;white-space:nowrap;text-align:center}
   .hw-meta{justify-content:center;flex-wrap:wrap;white-space:normal;overflow:visible;max-width:100%;font-size:clamp(9px,2.5vw,11px);gap:2px 4px}
   .hw-meta .hw-hijri,.hw-meta .hw-sep:not(.hw-weather-sep){display:none}
   .hw-meta .hw-weather-sep{display:none}
-  .hdr-weather{padding:4px 7px;border:1px solid var(--line);border-radius:999px;background:var(--soft);white-space:nowrap;font-size:12px}
+  .hdr-weather{padding:0;border:0;border-radius:0;background:transparent;white-space:nowrap;font-size:12px}
   .hw-icon{display:inline-flex;align-items:center;justify-content:center;color:var(--acc)}
   .hw-icon svg{display:block}
 }
@@ -1760,6 +1765,7 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
           <svg class="th-dark" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
           <svg class="th-glass-dark" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
           <svg class="th-glass-light" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          <svg class="th-simple" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
         </button>
         <div class="tpp-panel" id="tppPanel" hidden>
           <div class="tpp-head"><span class="tpp-title">Appearance</span><button type="button" class="tpp-x" id="tppClose">✕</button></div>
@@ -6746,6 +6752,11 @@ function getWeatherIcon(code){ return getWeatherIconSvg(code, 18); }
 function renderWeather(cur){ renderWeatherHeader(cur); }
 
 
+function headerOrdinalDate(date){
+  var day=date.getDate(),suffix=day%100>=11&&day%100<=13?'th':day%10===1?'st':day%10===2?'nd':day%10===3?'rd':'th';
+  return day+suffix+' of '+['January','February','March','April','May','June','July','August','September','October','November','December'][date.getMonth()]+', '+date.getFullYear();
+}
+
 function updateLiveWatch(now){
   var h=now.getHours(),m=now.getMinutes(),s=now.getSeconds();
   var h12=((h+11)%12+1);
@@ -6777,15 +6788,13 @@ function updateLiveWatch(now){
   if(dayEl){
     if(dayEl.textContent!==dayName)dayEl.textContent=dayName;
     dayEl.style.color=dColor;
-    dayEl.style.backgroundColor=dColor+'18';
-    dayEl.style.borderColor=dColor+'44';
   }
   
   var dateEl=$('hwDate');
   if(dateEl){
     var gDate=isBn
       ?getBengaliDate(now).text
-      :(now.getDate()+' '+(['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][now.getMonth()])+' '+now.getFullYear());
+      :headerOrdinalDate(now);
     if(dateEl.textContent!==gDate)dateEl.textContent=gDate;
     dateEl.title=isBn?'তারিখের বিবরণ ও ক্যালেন্ডার খুলুন':'Open date details and calendar';
     dateEl.setAttribute('aria-label',dateEl.title);
@@ -6999,8 +7008,8 @@ function openHeaderCalendar(initialDate){
     var title=(isBn?mnBn[view.getMonth()]:mnEn[view.getMonth()])+' '+(isBn?toBnNum(view.getFullYear()):view.getFullYear());
     var first=(new Date(view.getFullYear(),view.getMonth(),1).getDay()+6)%7,days=new Date(view.getFullYear(),view.getMonth()+1,0).getDate();
     var weekdays=isBn?['সো','ম','বু','বৃ','শু','শ','র']:['Mo','Tu','We','Th','Fr','Sa','Su'];
-    var greg=selected.toLocaleDateString(isBn?'bn-BD':'en-GB',{day:'numeric',month:'long',year:'numeric'}),bn=getBengaliDate(selected),hij=getHijriDate(selected),now=new Date(),clock=now.toLocaleTimeString(isBn?'bn-BD':'en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});
-    var dateCard='<div class="hcal-datecard"><div class="hcal-clock" id="hcalClock">'+clock+'</div><div><b>'+(isBn?'গ্রেগরিয়ান':'Gregorian')+'</b> · '+greg+'</div><div><b>বাংলা</b> · '+bn.text+'</div><div><b>'+(isBn?'হিজরি':'Hijri')+'</b> · '+(isBn?hij.textBn:hij.textEn)+'</div></div>';
+    var greg=isBn?selected.toLocaleDateString('bn-BD',{day:'numeric',month:'long',year:'numeric'}):headerOrdinalDate(selected),bn=getBengaliDate(selected),hij=getHijriDate(selected),now=new Date(),clock=now.toLocaleTimeString(isBn?'bn-BD':'en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});
+    var dateCard='<div class="hcal-datecard"><div class="hcal-clock" id="hcalClock">'+clock+'</div><div>'+greg+'</div><div>'+bn.text+'</div><div>'+(isBn?hij.textBn:hij.textEn)+'</div></div>';
     var html='<div class="hcal-layout">'+dateCard+'<div class="hcal-main"><div class="hcal-month"><div class="hcal-top"><button type="button" class="ghost" data-hcal="prev" aria-label="Previous month">‹</button><b>'+title+'</b><button type="button" class="ghost" data-hcal="next" aria-label="Next month">›</button></div><div class="hcal-grid">'+weekdays.map(function(x){return '<span class="hcal-week">'+x+'</span>'}).join('');
     for(var i=0;i<first;i++)html+='<span class="hcal-empty"></span>';
     for(var day=1;day<=days;day++){
@@ -7012,7 +7021,7 @@ function openHeaderCalendar(initialDate){
   }
   function updateSummary(){
     var key=iso(selected),entries=S.entries.filter(function(e){return e.d===key&&!e.void}),dayState=S.days&&S.days[key]||{},holiday=bdHolidayInfo(key),summary=$('hcalSummary');if(!summary)return;
-    var selectedDateName=selected.toLocaleDateString(isBn?'bn-BD':'en-GB',{weekday:'long',day:'numeric',month:'short',year:'numeric'});
+    var selectedDateName=isBn?selected.toLocaleDateString('bn-BD',{weekday:'long',day:'numeric',month:'long',year:'numeric'}):selected.toLocaleDateString('en-GB',{weekday:'long'})+', '+headerOrdinalDate(selected);
     summary.innerHTML='<b>'+selectedDateName+'</b><div>'+ (isBn?'লেনদেন':'Transactions')+': '+(isBn?toBnNum(entries.length):entries.length)+' · '+(holiday?(isBn?holiday.bn:holiday.en):dayState.holiday?(isBn?'সরকারি ছুটি':'Government holiday'):dayState.workday?(isBn?'কর্মদিবস':'Workday'):dayState.closed?(isBn?'দিন বন্ধ':'Day closed'):dayState.prep?(isBn?'প্রস্তুত':'Prepared'):(isBn?'খোলা':'Open'))+'</div>'+(entries.length?'<ul>'+entries.slice(0,12).map(function(e){return '<li>'+esc(e.t||'')+' · '+esc(e.type||'')+' · '+esc(e.desc||'')+'</li>'}).join('')+'</ul>':'<div class="mut">'+(isBn?'এই দিনে কোনো লেনদেন নেই':'No transactions on this day')+'</div>');
   }
   ask(isBn?'তারিখ ও মাসিক ক্যালেন্ডার':'Date & Monthly Calendar','',function(){return false},isBn?'বন্ধ':'Close',1);
@@ -7089,7 +7098,10 @@ function animateCounts(){
 function saveCheck(){if(document.documentElement.dataset.rm)return;var d=document.createElement('div');d.className='savechk';d.innerHTML='<svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="22" fill="none" stroke="var(--acc)" stroke-width="3"/><path d="M14 27l8 8 16-16" fill="none" stroke="var(--acc)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';document.body.appendChild(d);setTimeout(function(){d.classList.add('out')},700);setTimeout(function(){d.remove()},1250)}
 (function(){
   var M="Claude Sonnet 5.5 · owner's Claude account";
-  APP_VERSION='11.14.0';
+  APP_VERSION='11.15.0';
+  VERS.unshift({v:'11.15.0',d:'2026-11-05',t:'Clean Date Labels and Simpler Header Styling',by:'Codex',n:['Removed pill boxes from the weekday and weather in the header','Formatted English dates as ordinal day, full month and year; removed Gregorian, Bengali and Hijri labels from the date card','Added space between the desktop date-card clock and dates, spaced Bismillah from its greeting, reduced prayer-status weight and simplified the theme icon']});
+  UPC.unshift({v:'11.15.0',s:'Done',t:['Unboxed header weekday and weather','Ordinal English dates and unlabeled calendar values','Cleaner spacing and simpler theme icon']});
+  BUGS.unshift({d:'2026-11-05 --:-- (UTC+6)',v:'11.15.0',w:'Codex',a:'Weekday and weather chips looked boxed; dates used compact formats and labels; greeting and clock spacing felt cramped; prayer status and theme control looked heavy',b:'Header chips used bordered pill surfaces, calendar values included labels, and the theme button changed to a layered icon in glass modes',c:'Removed weekday/weather surfaces, applied ordinal full-month English dates, removed date-system labels, increased spacing, softened prayer label weight and kept one simple sun icon across theme modes'});
   VERS.unshift({v:'11.14.0',d:'2026-11-05',t:'Centered Mobile Header and Balanced Date Card',by:'Codex',n:['Centered the mobile Bismillah, live clock, weekday, date and weather row beneath the unchanged shop name','Rearranged the desktop date card with a larger centered clock above three side-by-side calendar dates','Kept prayer, theme, refresh and sync controls in their current positions']});
   UPC.unshift({v:'11.14.0',s:'Done',t:['Centered mobile header content beneath the shop name','Larger desktop clock above three aligned calendar dates','Existing header controls stay in place']});
   BUGS.unshift({d:'2026-11-05 --:-- (UTC+6)',v:'11.14.0',w:'Codex',a:'The desktop date card had an awkwardly wrapped clock beside the dates; mobile header content below the shop name was left aligned',b:'The desktop card used one narrow column for the clock; mobile placed the clock/date group and weather in separate grid columns',c:'Put a larger clock above three aligned date columns on desktop and center the mobile greeting, clock and weekday/date/weather beneath the unchanged shop title'});
@@ -7292,7 +7304,7 @@ if ('serviceWorker' in navigator) {
 
 </script>
 <!-- NCS v10 Sync Engine -->
-<script src="diag.js?v=11.14.0"></script>
-<script src="sync.js?v=11.14.0"></script>
+<script src="diag.js?v=11.15.0"></script>
+<script src="sync.js?v=11.15.0"></script>
 </body>
 </html>

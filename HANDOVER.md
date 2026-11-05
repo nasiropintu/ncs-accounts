@@ -3,9 +3,9 @@
 | | |
 |---|---|
 | **Shop** | Nur Computer & Stationery |
-| **Current version** | **v11.14.0** (`versionCode 111400`) |
-| **Service worker cache** | `ncs-v82` |
-| **Last entry** | 2026-11-05 16:20 (UTC+6)
+| **Current version** | **v11.15.0** (`versionCode 111500`) |
+| **Service worker cache** | `ncs-v83` |
+| **Last entry** | 2026-11-05 16:35 (UTC+6)
 | **Contributors** | Claude profiles, Antigravity, Manus |
 
 Two Claude profiles work on this app and **do not share memory**. This file is their shared memory.
@@ -348,12 +348,20 @@ The five-colour chart palette (formerly Phase 1b) was delivered in v10.4.0.
 ## 7. Session Log
 *Newest first. Each entry is a version, a timestamp (UTC+6) and an author.*
 
+### v11.15.0 · 2026-11-05 16:35 · Codex
+**Clean date labels, lighter header details and a simpler theme icon.**
+- Removed the weekday and weather pill surfaces; English dates now use ordinal full-month format.
+- The date card shows Gregorian, Bengali and Hijri values without calendar-name labels and adds breathing room below the larger clock.
+- Spaced Bismillah from the greeting, softened prayer-status weight, and made the theme icon consistent and simple across modes.
+- Bumped the service worker cache to ncs-v83.
+- Verification: `npm run prepare-www` completed; `node --check` passed for both modified JavaScript modules; `git diff --check` passed with Windows CRLF notices only.
+
 ### v11.14.0 · 2026-11-05 16:20 · Codex
 **Centered mobile header content and balanced desktop date card.**
 - Centered the Bismillah, clock, weekday, date and weather under the unchanged shop title on mobile; prayer, theme, refresh and sync controls remain in place.
 - Desktop date card now shows a larger clock above the three calendar dates in aligned columns.
 - Bumped the service worker cache to ncs-v82.
-- Verification: build and source syntax checks pending.
+- Verification: `npm run prepare-www` completed; `node --check` passed for both modified JavaScript modules; `git diff --check` passed with Windows CRLF notices only.
 
 ### v11.13.0 · 2026-11-05 15:55 · Codex
 **Landscape desktop date card with side-by-side calendar and daily activity.**
@@ -561,6 +569,11 @@ The five-colour chart palette (formerly Phase 1b) was delivered in v10.4.0.
 
 ## 8. Bug Fix History
 *Newest first. Canonical single-line format: `YYYY-MM-DD HH:MM (UTC+6) — version — who — what was wrong — cause — fix`. Entries made before this rule are recorded as `--:--`.*
+
+### v11.15.0 · 2026-11-05 16:35 · Codex
+- **Symptom:** weekday and weather controls appeared as pills, date formats were abbreviated and labeled, the clock sat too close to its dates, Bismillah and greeting touched, prayer status was heavy, and the theme icon changed to a layered mark.
+- **Cause:** shared header controls used boxed styling; date rows added calendar labels; the theme icon varied by mode.
+- **Fix:** remove weekday/weather boxes and date labels, use ordinal full-month English dates, add clock/date and greeting spacing, reduce prayer-status weight, and show one simple sun icon for all themes.
 
 ### v11.14.0 · 2026-11-05 16:20 · Codex
 - **Symptom:** the desktop date card clock wrapped awkwardly beside the dates, and the mobile header content below the shop title was not centered.

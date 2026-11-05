@@ -809,6 +809,11 @@ function getWeatherIcon(code){ return getWeatherIconSvg(code, 18); }
 function renderWeather(cur){ renderWeatherHeader(cur); }
 
 
+function headerOrdinalDate(date){
+  var day=date.getDate(),suffix=day%100>=11&&day%100<=13?'th':day%10===1?'st':day%10===2?'nd':day%10===3?'rd':'th';
+  return day+suffix+' of '+['January','February','March','April','May','June','July','August','September','October','November','December'][date.getMonth()]+', '+date.getFullYear();
+}
+
 function updateLiveWatch(now){
   var h=now.getHours(),m=now.getMinutes(),s=now.getSeconds();
   var h12=((h+11)%12+1);
@@ -840,15 +845,13 @@ function updateLiveWatch(now){
   if(dayEl){
     if(dayEl.textContent!==dayName)dayEl.textContent=dayName;
     dayEl.style.color=dColor;
-    dayEl.style.backgroundColor=dColor+'18';
-    dayEl.style.borderColor=dColor+'44';
   }
   
   var dateEl=$('hwDate');
   if(dateEl){
     var gDate=isBn
       ?getBengaliDate(now).text
-      :(now.getDate()+' '+(['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][now.getMonth()])+' '+now.getFullYear());
+      :headerOrdinalDate(now);
     if(dateEl.textContent!==gDate)dateEl.textContent=gDate;
     dateEl.title=isBn?'তারিখের বিবরণ ও ক্যালেন্ডার খুলুন':'Open date details and calendar';
     dateEl.setAttribute('aria-label',dateEl.title);
@@ -1062,8 +1065,8 @@ function openHeaderCalendar(initialDate){
     var title=(isBn?mnBn[view.getMonth()]:mnEn[view.getMonth()])+' '+(isBn?toBnNum(view.getFullYear()):view.getFullYear());
     var first=(new Date(view.getFullYear(),view.getMonth(),1).getDay()+6)%7,days=new Date(view.getFullYear(),view.getMonth()+1,0).getDate();
     var weekdays=isBn?['সো','ম','বু','বৃ','শু','শ','র']:['Mo','Tu','We','Th','Fr','Sa','Su'];
-    var greg=selected.toLocaleDateString(isBn?'bn-BD':'en-GB',{day:'numeric',month:'long',year:'numeric'}),bn=getBengaliDate(selected),hij=getHijriDate(selected),now=new Date(),clock=now.toLocaleTimeString(isBn?'bn-BD':'en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});
-    var dateCard='<div class="hcal-datecard"><div class="hcal-clock" id="hcalClock">'+clock+'</div><div><b>'+(isBn?'গ্রেগরিয়ান':'Gregorian')+'</b> · '+greg+'</div><div><b>বাংলা</b> · '+bn.text+'</div><div><b>'+(isBn?'হিজরি':'Hijri')+'</b> · '+(isBn?hij.textBn:hij.textEn)+'</div></div>';
+    var greg=isBn?selected.toLocaleDateString('bn-BD',{day:'numeric',month:'long',year:'numeric'}):headerOrdinalDate(selected),bn=getBengaliDate(selected),hij=getHijriDate(selected),now=new Date(),clock=now.toLocaleTimeString(isBn?'bn-BD':'en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});
+    var dateCard='<div class="hcal-datecard"><div class="hcal-clock" id="hcalClock">'+clock+'</div><div>'+greg+'</div><div>'+bn.text+'</div><div>'+(isBn?hij.textBn:hij.textEn)+'</div></div>';
     var html='<div class="hcal-layout">'+dateCard+'<div class="hcal-main"><div class="hcal-month"><div class="hcal-top"><button type="button" class="ghost" data-hcal="prev" aria-label="Previous month">‹</button><b>'+title+'</b><button type="button" class="ghost" data-hcal="next" aria-label="Next month">›</button></div><div class="hcal-grid">'+weekdays.map(function(x){return '<span class="hcal-week">'+x+'</span>'}).join('');
     for(var i=0;i<first;i++)html+='<span class="hcal-empty"></span>';
     for(var day=1;day<=days;day++){
@@ -1075,7 +1078,7 @@ function openHeaderCalendar(initialDate){
   }
   function updateSummary(){
     var key=iso(selected),entries=S.entries.filter(function(e){return e.d===key&&!e.void}),dayState=S.days&&S.days[key]||{},holiday=bdHolidayInfo(key),summary=$('hcalSummary');if(!summary)return;
-    var selectedDateName=selected.toLocaleDateString(isBn?'bn-BD':'en-GB',{weekday:'long',day:'numeric',month:'short',year:'numeric'});
+    var selectedDateName=isBn?selected.toLocaleDateString('bn-BD',{weekday:'long',day:'numeric',month:'long',year:'numeric'}):selected.toLocaleDateString('en-GB',{weekday:'long'})+', '+headerOrdinalDate(selected);
     summary.innerHTML='<b>'+selectedDateName+'</b><div>'+ (isBn?'লেনদেন':'Transactions')+': '+(isBn?toBnNum(entries.length):entries.length)+' · '+(holiday?(isBn?holiday.bn:holiday.en):dayState.holiday?(isBn?'সরকারি ছুটি':'Government holiday'):dayState.workday?(isBn?'কর্মদিবস':'Workday'):dayState.closed?(isBn?'দিন বন্ধ':'Day closed'):dayState.prep?(isBn?'প্রস্তুত':'Prepared'):(isBn?'খোলা':'Open'))+'</div>'+(entries.length?'<ul>'+entries.slice(0,12).map(function(e){return '<li>'+esc(e.t||'')+' · '+esc(e.type||'')+' · '+esc(e.desc||'')+'</li>'}).join('')+'</ul>':'<div class="mut">'+(isBn?'এই দিনে কোনো লেনদেন নেই':'No transactions on this day')+'</div>');
   }
   ask(isBn?'তারিখ ও মাসিক ক্যালেন্ডার':'Date & Monthly Calendar','',function(){return false},isBn?'বন্ধ':'Close',1);
