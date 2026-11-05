@@ -90,7 +90,7 @@ $('scx').onclick=stopScan;
 $('bScan').onclick=async()=>{
   if(!('BarcodeDetector' in window))return dlg('Scan barcode','<p>Camera scanning needs Chrome on Android. You can also use a USB or Bluetooth barcode scanner, or type the code in the search box.</p>',()=>{},'OK');
   try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}})}catch(e){return dlg('Scan barcode','<p>Camera access was blocked. Allow the camera for this site and try again.</p>',()=>{},'OK')}
-  $('sc').hidden=false;const v=$('vid');v.srcObject=stream;await v.play();scanning=true;const det=new BarcodeDetector();
+  var _rd=$('roleDropdown');if(_rd)_rd.setAttribute('hidden','');$('sc').hidden=false;const v=$('vid');v.srcObject=stream;await v.play();scanning=true;const det=new BarcodeDetector();
   const loop=async()=>{if(!scanning)return;try{const r=await det.detect(v);if(r.length){const c=r[0].rawValue;stopScan();handleCode(c);return}}catch(e){}requestAnimationFrame(loop)};loop()};
 
 const split=x=>{const o={};x=Math.round(x);DEN.forEach(d=>{const c=Math.floor(x/d);if(c){o[d]=c;x-=c*d}});return o};

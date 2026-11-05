@@ -90,7 +90,7 @@ $('sg').addEventListener('mousedown',ev=>ev.preventDefault());
 $('sg').addEventListener('click',ev=>{const x=ev.target.closest('.x'),it=ev.target.closest('.si');if(x){const k=sgl[+x.dataset.x];delete S.names[$('fy').value][k];save();sug()}else if(it)pickName(+it.dataset.i)});
 $('fd').addEventListener('blur',()=>setTimeout(()=>$('sg').hidden=true,120));
 if($('accPresets')){$('accPresets').addEventListener('click',e=>{const b=e.target.closest('[data-acc-preset]');if(!b)return;const p=getPresets().find(x=>x.id===b.dataset.accPreset);if(p){$('fy').value='Sale';cats();const title=S.lang==='bn'?(p.bn||p.name):p.name;$('fd').value=title;if(p.cat&&Array.from($('fc').options).some(o=>o.value===p.cat))$('fc').value=p.cat;$('fp').value='Cash';$('fa').value=p.price;preview();$('fa').focus();$('fa').select();toast((S.lang==='bn'?'নির্বাচিত: ':'Selected ')+title);try{Sound.tick()}catch(x){}}});}
-function ask(title,body,onOk,okText,wide){try{Sound.tick()}catch(e){}$('ov').firstElementChild.classList.toggle('w',!!wide);$('ok').style.display='';$('ob').onclick=null;$('ob').oninput=null;$('ob').onchange=null;$('ot').textContent=title;$('ob').innerHTML=body;$('ok').textContent=okText||'Confirm';$('ov').hidden=false;
+function ask(title,body,onOk,okText,wide){var _rd=$('roleDropdown');if(_rd)_rd.setAttribute('hidden','');try{Sound.tick()}catch(e){}$('ov').firstElementChild.classList.toggle('w',!!wide);$('ok').style.display='';$('ob').onclick=null;$('ob').oninput=null;$('ob').onchange=null;$('ot').textContent=title;$('ob').innerHTML=body;$('ok').textContent=okText||'Confirm';$('ov').hidden=false;
   $('ok').onclick=async()=>{if(await onOk()!==false)$('ov').hidden=true};const f=$('ob').querySelector('input,select');if(f)f.focus()}
 $('oc').onclick=()=>$('ov').hidden=true;
 $('tbl').addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;const e=S.entries.find(x=>x.id==b.dataset.i);
@@ -246,6 +246,7 @@ const mk=async p=>{const s=rnd(16);return{s,h:await H(p,s),alg:'pbkdf2-sha256',i
 const ck=async(o,p)=>o&&o.alg==='pbkdf2-sha256'&&Number.isInteger(o.i)&&o.i>=100000&&o.i<=1000000?o.h===await H(p,o.s,o.i):!!o&&o.alg!=='pbkdf2-sha256'&&o.h===await legacyH(p,o.s,String(o.h).startsWith('x'));
 
 function lockUI(mode,msg){
+  var _rd=$('roleDropdown');if(_rd)_rd.setAttribute('hidden','');
   const lk=$('lk');lk.hidden=false;
   const F=(id,l,t)=>`<div class="f"><label>${l}</label><input id="${id}" type="${t||'password'}" ${t?'':'inputmode="numeric" '}autocomplete="off"></div>`;
   let h,btn='Unlock',title='Sign in';

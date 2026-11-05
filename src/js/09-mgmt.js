@@ -629,7 +629,7 @@ function chkBar(){var el=$('chkBar');if(!el)return;if(!(U&&lEd())){el.hidden=tru
   document.body.appendChild(dr);
   function close(){dr.hidden=true}
   function open(){if(!U)return;var T=TABS[role()];
-    $('drg').innerHTML=T.map(function(k,i){return '<button class="drt'+(CUR===k?' on':'')+'" data-v="'+k+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="color:'+COL[i%COL.length]+'">'+ICO[k]+'</svg>'+TL[k]+'</button>'}).join('');$('drn').textContent=shopN();dr.hidden=false}
+    $('drg').innerHTML=T.map(function(k,i){return '<button class="drt'+(CUR===k?' on':'')+'" data-v="'+k+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="color:'+COL[i%COL.length]+'">'+ICO[k]+'</svg>'+TL[k]+'</button>'}).join('');$('drn').textContent=shopN();var _rd=$('roleDropdown');if(_rd)_rd.setAttribute('hidden','');dr.hidden=false}
   mb.onclick=open;$('drx').onclick=close;dr.querySelector('.drb').onclick=close;
   $('drg').addEventListener('click',function(e){var b=e.target.closest('[data-v]');if(!b)return;close();go(b.dataset.v)});
   document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});

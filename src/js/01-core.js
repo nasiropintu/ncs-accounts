@@ -137,7 +137,7 @@ function storageNotice(message){
     box=document.createElement('div');
     box.id='ncsStorageNotice';
     box.setAttribute('role','alert');
-    box.style.cssText='position:fixed;left:12px;right:12px;bottom:86px;z-index:1000;padding:12px 14px;border:1px solid var(--warn);border-radius:12px;background:var(--card);color:var(--ink);box-shadow:0 6px 24px rgba(0,0,0,.22);display:none;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap';
+    box.style.cssText='position:fixed;left:12px;right:12px;bottom:86px;z-index:380;padding:12px 14px;border:1px solid var(--warn);border-radius:12px;background:var(--card);color:var(--ink);box-shadow:0 6px 24px rgba(0,0,0,.22);display:none;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap';
     const text=document.createElement('span');text.dataset.storageMessage='1';
     const button=document.createElement('button');button.type='button';button.className='ghost';button.setAttribute('aria-label','Dismiss');button.textContent='Dismiss';
     button.onclick=function(){box.style.display='none';window._storageWarnDismissed=true};
