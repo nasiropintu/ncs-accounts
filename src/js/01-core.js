@@ -13,6 +13,7 @@ const seed=()=>({start:0,theme:'auto',dayStart:'06:00',dayEnd:'18:00',sound:fals
  try{rawStorageAtLoad=localStorage.getItem(KEY);S=rawStorageAtLoad?JSON.parse(rawStorageAtLoad):seed()}
  catch(e){storageLoadError=e;recoveryRaw=rawStorageAtLoad;S=seed()}
 S.names=S.names||{};S.parties=S.parties||{};
+try{if(!S.location){var savedLoc=localStorage.getItem('ncs_location_v1');if(savedLoc)S.location=JSON.parse(savedLoc)}}catch(e){}
 if(!Array.isArray(S.walletDates))S.walletDates=[];
 if(!Array.isArray(S.counts))S.counts=[];
 const ENC=(window.NCS_CONFIG||{}).enc;
@@ -190,6 +191,19 @@ const save=()=>{
     if(ok)schedule();
     return ok;
 };
+
+function selectAccountsDate(date){
+  if(typeof date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(date))return false;
+  if(date>todayIso()){if(typeof ltoast==='function')ltoast(lb('Future dates are not allowed','ভবিষ্যতের তারিখ নির্বাচন করা যাবে না'));return false}
+  if(date<NCS_MIN_DATE){if(typeof ltoast==='function')ltoast(lb('Date cannot be before November 2020','নভেম্বর ২০২০ এর আগের তারিখ গ্রহণযোগ্য নয়'));return false}
+  cur=date;
+  if(typeof U!=='undefined'&&U&&typeof go==='function'){
+    window._ncsDateTarget=true;
+    if(typeof CUR!=='undefined'&&CUR!=='acc')go('acc');
+    else{window._ncsDateTarget=false;if(typeof reset==='function')reset();if(typeof render==='function')render()}
+  }else{if(typeof reset==='function')reset();if(typeof render==='function')render()}
+  return true;
+}
 
 const NCS_MIN_DATE='2020-11-01';
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');

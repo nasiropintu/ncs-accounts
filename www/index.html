@@ -1208,6 +1208,23 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
 .tpb-auto{background:#E2E8F0}
 .tpp-name{font-size:12.5px;font-weight:700;color:var(--ink);line-height:1.2}
 .tpp-desc{font-size:10.5px;color:var(--mut);line-height:1.2}
+.hcal-datecard{display:grid;gap:5px;padding:12px;margin-bottom:12px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(145deg,var(--soft),var(--card));font-size:12px;color:var(--mut)}
+.hcal-clock{font:600 26px/1.1 Lora,Georgia,serif;font-variant-numeric:tabular-nums;text-align:center;color:var(--ink);margin-bottom:3px}
+.hcal-top{display:grid;grid-template-columns:40px 1fr 40px;align-items:center;gap:8px;margin-bottom:10px;text-align:center}
+.hcal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.hcal-week,.hcal-empty{display:grid;place-items:center;min-height:34px;color:var(--mut);font-size:11px}
+.hcal-day{position:relative;display:grid;place-items:center;min-height:38px;padding:2px;border:1px solid var(--line);border-radius:9px;background:var(--card);color:var(--ink);font:inherit;cursor:pointer}
+.hcal-day:disabled{opacity:.35;cursor:not-allowed}
+.hcal-day.selected{outline:2px solid var(--acc);outline-offset:1px;background:var(--soft)}
+.hcal-day i{position:absolute;bottom:4px;width:4px;height:4px;border-radius:50%;background:var(--acc)}
+.hcal-day.activity i{background:#2563eb}.hcal-day.workday{border-color:#16a34a}.hcal-day.holiday{border-color:#dc2626;color:#dc2626}.hcal-day.closed{border-color:var(--mut)}
+.hcal-summary{margin-top:12px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--bg);font-size:12px}
+.hcal-summary ul{max-height:110px;overflow:auto;margin:6px 0 0;padding-left:18px}.hcal-summary li{margin:3px 0}
+.hcal-legend{display:flex;justify-content:center;gap:12px;margin-top:8px;color:var(--mut);font-size:10px}.hcal-legend span::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;background:#2563eb}.hcal-legend .workday::before{background:#16a34a}.hcal-legend .holiday::before{background:#dc2626}
+.hcal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+@media(min-width:900px){.top-brand .tt{min-width:0}.shop-name-title{white-space:normal;overflow:visible;text-overflow:clip;max-width:220px}.shop-name-title br{display:block}.top-brand-sub{margin-top:3px}}
+@media(max-width:899px){.top-brand .tt{min-width:0}.shop-name-title{white-space:normal;overflow:visible;text-overflow:clip;max-width:190px;line-height:1.08}.shop-name-title br{display:block}.top-brand-sub{margin-top:3px}}
+@media(max-width:380px){.shop-name-title{max-width:150px}}
 
 /* Mobile: panel pops up from bottom so it's never clipped by header */
 @media(max-width:899px){
@@ -1889,6 +1906,7 @@ const seed=()=>({start:0,theme:'auto',dayStart:'06:00',dayEnd:'18:00',sound:fals
  try{rawStorageAtLoad=localStorage.getItem(KEY);S=rawStorageAtLoad?JSON.parse(rawStorageAtLoad):seed()}
  catch(e){storageLoadError=e;recoveryRaw=rawStorageAtLoad;S=seed()}
 S.names=S.names||{};S.parties=S.parties||{};
+try{if(!S.location){var savedLoc=localStorage.getItem('ncs_location_v1');if(savedLoc)S.location=JSON.parse(savedLoc)}}catch(e){}
 if(!Array.isArray(S.walletDates))S.walletDates=[];
 if(!Array.isArray(S.counts))S.counts=[];
 const ENC=(window.NCS_CONFIG||{}).enc;
@@ -2066,6 +2084,19 @@ const save=()=>{
     if(ok)schedule();
     return ok;
 };
+
+function selectAccountsDate(date){
+  if(typeof date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(date))return false;
+  if(date>todayIso()){if(typeof ltoast==='function')ltoast(lb('Future dates are not allowed','ভবিষ্যতের তারিখ নির্বাচন করা যাবে না'));return false}
+  if(date<NCS_MIN_DATE){if(typeof ltoast==='function')ltoast(lb('Date cannot be before November 2020','নভেম্বর ২০২০ এর আগের তারিখ গ্রহণযোগ্য নয়'));return false}
+  cur=date;
+  if(typeof U!=='undefined'&&U&&typeof go==='function'){
+    window._ncsDateTarget=true;
+    if(typeof CUR!=='undefined'&&CUR!=='acc')go('acc');
+    else{window._ncsDateTarget=false;if(typeof reset==='function')reset();if(typeof render==='function')render()}
+  }else{if(typeof reset==='function')reset();if(typeof render==='function')render()}
+  return true;
+}
 
 const NCS_MIN_DATE='2020-11-01';
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -2552,10 +2583,10 @@ const bump=()=>{};setInterval(()=>{if(U&&Date.now()>exp)lock()},60000);
 $('lockb').onclick=lock;
 
 function dayBar(){$('und').disabled=!UN||closed();const d=S.days[cur]||{},c=!!d.closed;
-  $('daybar').innerHTML=`<label class="tg"><input type="checkbox" id="tp" ${d.prep?'checked':''} ${c||!isA()?'disabled':''}>Prepared${d.prep?' · '+esc(d.prep.by):''}</label><label class="tg"><input type="checkbox" id="tc" ${d.chk?'checked':''} ${c||!isA()?'disabled':''}>Checked${d.chk?' · '+esc(d.chk.by):''}</label><span class="sp"><span class="b${c?' v':''}">${c?'Closed':'Open'}</span>${isA()?(c?'<button class="ghost" id="reo">Reopen</button>':'<button class="ghost" id="cls">Close Day</button>'):''}</span>`;
+  $('daybar').innerHTML=`<label class="tg"><input type="checkbox" id="tp" ${d.prep?'checked':''} ${c||!isA()?'disabled':''}>Prepared${d.prep?' · '+esc(d.prep.by):''}</label><label class="tg"><input type="checkbox" id="tc" ${d.chk?'checked':''} ${c||!isA()?'disabled':''}>Checked${d.chk?' · '+esc(d.chk.by):''}</label>${isA()?`<label class="tg"><input type="checkbox" data-kind="workday" ${d.workday?'checked':''}>Workday</label><label class="tg"><input type="checkbox" data-kind="holiday" ${d.holiday?'checked':''}>Government holiday</label>`:''}<span class="sp"><span class="b${c?' v':''}">${c?'Closed':'Open'}</span>${isA()?(c?'<button class="ghost" id="reo">Reopen</button>':'<button class="ghost" id="cls">Close Day</button>'):''}</span>`;
   $('fsec').hidden=c||!isA();$('cn').hidden=!c;
   $('pf').innerHTML=`<div>Prepared by: ${d.prep?'☑ '+esc(d.prep.by)+' ('+d.prep.ts+')':'☐ ____________'}</div><div>Checked by: ${d.chk?'☑ '+esc(d.chk.by)+' ('+d.chk.ts+')':'☐ ____________'}</div>`}
-$('daybar').addEventListener('change',e=>{const D=S.days[cur]=S.days[cur]||{},k=e.target.id==='tp'?'prep':'chk';D[k]=e.target.checked?{by:U.name,ts:stamp()}:null;lg((e.target.checked?'Ticked ':'Unticked ')+(k==='prep'?'Prepared':'Checked'),label(cur));save();dayBar()});
+$('daybar').addEventListener('change',e=>{var kind=e.target.closest('[data-kind]');if(kind&&isA()){var dayState=S.days[cur]=S.days[cur]||{},holiday=kind.dataset.kind==='holiday';dayState[holiday?'holiday':'workday']=kind.checked;if(kind.checked)dayState[holiday?'workday':'holiday']=false;lg('Set calendar day',label(cur)+' — '+(holiday?'Government holiday':'Workday'));save();dayBar();return}const D=S.days[cur]=S.days[cur]||{},k=e.target.id==='tp'?'prep':'chk';D[k]=e.target.checked?{by:U.name,ts:stamp()}:null;lg((e.target.checked?'Ticked ':'Unticked ')+(k==='prep'?'Prepared':'Checked'),label(cur));save();dayBar()});
 $('daybar').addEventListener('click',e=>{const b=e.target.id;
   if(b==='cls'){if(!(S.days[cur]&&S.days[cur].prep))return ask('Close Day','<p>Tick "Prepared" before closing the day.</p>',()=>{},'OK');
     ask('Close Day',`<p>Lock ${label(cur)}? Entries cannot be changed until an admin reopens it.</p>`,()=>{S.days[cur].closed={by:U.name,ts:stamp()};lg('Close day',label(cur));save();{const x=new Date(cur+'T00:00:00');x.setDate(x.getDate()+1);cur=iso(x)}reset();render()},'Close Day')}
@@ -2887,7 +2918,7 @@ function go(v){
     POS.refresh();
     if(isCounterStock())POS.prodUI();
   }
-  if(v==='acc'){AV=false;cur=iso(new Date());reset();render();try{applyCardSettings()}catch(e){}}
+  if(v==='acc'){AV=false;if(!window._ncsDateTarget)cur=iso(new Date());reset();render();try{applyCardSettings()}catch(e){}}
   if(v==='led')ledUI();
   if(v==='task'){if(typeof taskUI==='function')taskUI();}
   if(v==='more')updateMoreTab();
@@ -3646,7 +3677,7 @@ const BD_DISTRICTS = [
 ];
 
 function getLocation(){
-  if(typeof S !== 'undefined' && S && S.location && S.location.en) return S.location;
+  if(typeof S !== 'undefined' && S && S.location && S.location.en){try{localStorage.setItem('ncs_location_v1',JSON.stringify(S.location))}catch(e){}return S.location}
   var def = { div: 'dhaka', en: 'Dhaka', bn: 'ঢাকা', lat: 23.8103, lon: 90.4125 };
   try{
     var saved = localStorage.getItem('ncs_location_v1');
@@ -3665,6 +3696,7 @@ function getLocation(){
 function setLocation(loc){
   if(!loc || !loc.lat) return;
   if(typeof S !== 'undefined' && S) S.location = loc;
+  try{if(typeof save==='function')save()}catch(e){}
   try{ localStorage.setItem('ncs_location_v1', JSON.stringify(loc)); }catch(e){}
   try{
     sessionStorage.removeItem('ncs_weather_v1');
@@ -6723,6 +6755,10 @@ function updateLiveWatch(now){
       ?(toBnNum(now.getDate())+' '+(['জানু','ফেব্রু','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টে','অক্টো','নভে','ডিসে'][now.getMonth()])+' '+toBnNum(now.getFullYear()))
       :(now.getDate()+' '+(['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][now.getMonth()])+' '+now.getFullYear());
     if(dateEl.textContent!==gDate)dateEl.textContent=gDate;
+    dateEl.title=isBn?'তারিখের বিবরণ ও ক্যালেন্ডার খুলুন':'Open date details and calendar';
+    dateEl.setAttribute('aria-label',dateEl.title);
+    dateEl.setAttribute('role','button');
+    dateEl.setAttribute('tabindex','0');
   }
   
   var bngEl=$('hwBng');
@@ -6753,7 +6789,9 @@ function updateLiveWatch(now){
   var snEl=$('shopNameTitle');
   if(snEl){
     var snStr=isBn?SHOP_BN:SHOP_EN;
-    if(snEl.textContent!==snStr)snEl.textContent=snStr;
+    var snMarkup=isBn?SHOP_BN:'Nur Computer<br>&amp; Stationery';
+    if(snEl.innerHTML!==snMarkup)snEl.innerHTML=snMarkup;
+    var rdShop=$('rdShopName');if(rdShop)rdShop.textContent=snStr;
   }
 }
 
@@ -6873,18 +6911,48 @@ if(typeof document!=='undefined'){
       return;
     }
 
-    /* 5. Date Click to Copy */
+    /* 5. Open multi-calendar date card */
     var dateClick=e.target.closest('#hwDate');
     if(dateClick){
-      var dtStr=dateClick.textContent;
-      if(navigator.clipboard&&navigator.clipboard.writeText){
-        navigator.clipboard.writeText(dtStr).then(function(){
-          if(typeof toast==='function')toast(lb('Date copied: '+dtStr,'তারিখ কপি হয়েছে: '+dtStr));
-        }).catch(function(){});
-      }
+      e.preventDefault();
+      if(typeof openHeaderCalendar==='function')openHeaderCalendar(new Date());
       return;
     }
+    if(e.target.closest('#hwBng')){e.preventDefault();if(typeof openHeaderCalendar==='function')openHeaderCalendar(new Date());return}
   });
+  document.addEventListener('keydown',function(e){if((e.key==='Enter'||e.key===' ')&&e.target.closest('#hwDate,#hwBng')){e.preventDefault();if(typeof openHeaderCalendar==='function')openHeaderCalendar(new Date())}});
+}
+
+function openHeaderCalendar(initialDate){
+  var isBn=S.lang==='bn',view=new Date(initialDate||new Date());view.setDate(1);
+  var selected=new Date(initialDate||new Date());
+  var mnEn=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var mnBn=['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
+  function renderCalendar(){
+    var title=(isBn?mnBn[view.getMonth()]:mnEn[view.getMonth()])+' '+(isBn?toBnNum(view.getFullYear()):view.getFullYear());
+    var first=(new Date(view.getFullYear(),view.getMonth(),1).getDay()+6)%7,days=new Date(view.getFullYear(),view.getMonth()+1,0).getDate();
+    var weekdays=isBn?['সো','ম','বু','বৃ','শু','শ','র']:['Mo','Tu','We','Th','Fr','Sa','Su'];
+    var greg=selected.toLocaleDateString(isBn?'en-GB':'en-GB',{day:'numeric',month:'long',year:'numeric'}),bn=getBengaliDate(selected),hij=getHijriDate(selected),now=new Date(),clock=now.toLocaleTimeString(isBn?'bn-BD':'en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});
+    var dateCard='<div class="hcal-datecard"><div class="hcal-clock" id="hcalClock">'+clock+'</div><div><b>Gregorian</b> · '+greg+'</div><div><b>বাংলা</b> · '+bn.text+'</div><div><b>Hijri</b> · '+(isBn?hij.textBn:hij.textEn)+'</div></div>';
+    var html=dateCard+'<div class="hcal-top"><button type="button" class="ghost" data-hcal="prev" aria-label="Previous month">‹</button><b>'+title+'</b><button type="button" class="ghost" data-hcal="next" aria-label="Next month">›</button></div><div class="hcal-grid">'+weekdays.map(function(x){return '<span class="hcal-week">'+x+'</span>'}).join('');
+    for(var i=0;i<first;i++)html+='<span class="hcal-empty"></span>';
+    for(var day=1;day<=days;day++){
+      var d=new Date(view.getFullYear(),view.getMonth(),day),key=iso(d),entries=S.entries.filter(function(e){return e.d===key&&!e.void}),state=S.days&&S.days[key],status=state&&state.holiday?'holiday':state&&state.workday?'workday':state&&state.closed?'closed':entries.length?'activity':'',cls=(key===iso(selected)?' selected':'')+(status?' '+status:'');
+      html+='<button type="button" class="hcal-day'+cls+'" data-hcal-date="'+key+'"'+(key>todayIso()?' disabled':'')+'><span>'+ (isBn?toBnNum(day):day)+'</span>'+(entries.length?'<i aria-hidden="true"></i>':'')+'</button>';
+    }
+    html+='</div><div class="hcal-legend"><span class="activity">'+(isBn?'লেনদেন':'Activity')+'</span><span class="workday">'+(isBn?'কর্মদিবস':'Workday')+'</span><span class="holiday">'+(isBn?'ছুটি':'Holiday')+'</span></div><div class="hcal-summary" id="hcalSummary"></div><div class="hcal-actions"><button type="button" class="ghost" data-hcal="today">'+(isBn?'আজ':'Today')+'</button><button type="button" class="go" data-hcal="open">'+(isBn?'এই দিনের হিসাব দেখুন':'Open this day in Accounts')+'</button></div>';
+    $('ob').innerHTML=html;updateSummary();
+  }
+  function updateSummary(){
+    var key=iso(selected),entries=S.entries.filter(function(e){return e.d===key&&!e.void}),dayState=S.days&&S.days[key]||{},summary=$('hcalSummary');if(!summary)return;
+    var selectedDateName=selected.toLocaleDateString(isBn?'bn-BD':'en-GB',{weekday:'long',day:'numeric',month:'short',year:'numeric'});
+    summary.innerHTML='<b>'+selectedDateName+'</b><div>'+ (isBn?'লেনদেন':'Transactions')+': '+(isBn?toBnNum(entries.length):entries.length)+' · '+(dayState.holiday?(isBn?'সরকারি ছুটি':'Government holiday'):dayState.workday?(isBn?'কর্মদিবস':'Workday'):dayState.closed?(isBn?'দিন বন্ধ':'Day closed'):dayState.prep?(isBn?'প্রস্তুত':'Prepared'):(isBn?'খোলা':'Open'))+'</div>'+(entries.length?'<ul>'+entries.slice(0,12).map(function(e){return '<li>'+esc(e.t||'')+' · '+esc(e.type||'')+' · '+esc(e.desc||'')+'</li>'}).join('')+'</ul>':'<div class="mut">'+(isBn?'এই দিনে কোনো লেনদেন নেই':'No transactions on this day')+'</div>');
+  }
+  ask(isBn?'তারিখ ও মাসিক ক্যালেন্ডার':'Date & Monthly Calendar','',function(){return false},isBn?'বন্ধ':'Close');
+  $('ot').textContent=isBn?'তারিখ ও মাসিক ক্যালেন্ডার':'Date & Monthly Calendar';
+  renderCalendar();
+  var clockTimer=setInterval(function(){var clock=$('hcalClock');if(!clock||$('ov').hidden){clearInterval(clockTimer);return}clock.textContent=new Date().toLocaleTimeString(isBn?'bn-BD':'en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true})},1000);
+  $('ob').onclick=function(e){var nav=e.target.closest('[data-hcal]'),dateBtn=e.target.closest('[data-hcal-date]');if(dateBtn){selected=new Date(dateBtn.dataset.hcalDate+'T00:00:00');renderCalendar();return}if(!nav)return;if(nav.dataset.hcal==='prev'||nav.dataset.hcal==='next'){view.setMonth(view.getMonth()+(nav.dataset.hcal==='prev'?-1:1));renderCalendar()}else if(nav.dataset.hcal==='today'){selected=new Date();view=new Date(selected.getFullYear(),selected.getMonth(),1);renderCalendar()}else if(nav.dataset.hcal==='open'){var key=iso(selected);if(selectAccountsDate(key)){window._ncsDateTarget=true;if(CUR!=='acc')go('acc');else window._ncsDateTarget=false;$('ov').hidden=true}}};
 }
 
 
@@ -6954,7 +7022,10 @@ function animateCounts(){
 function saveCheck(){if(document.documentElement.dataset.rm)return;var d=document.createElement('div');d.className='savechk';d.innerHTML='<svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="22" fill="none" stroke="var(--acc)" stroke-width="3"/><path d="M14 27l8 8 16-16" fill="none" stroke="var(--acc)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';document.body.appendChild(d);setTimeout(function(){d.classList.add('out')},700);setTimeout(function(){d.remove()},1250)}
 (function(){
   var M="Claude Sonnet 5.5 · owner's Claude account";
-  APP_VERSION='11.10.0';
+  APP_VERSION='11.11.0';
+  VERS.unshift({v:'11.11.0',d:'2026-11-05',t:'Unified Date Card, Monthly Calendar and Persistent Location',by:'Codex',n:['Added a clickable date card with a live clock and Gregorian, Bengali and Hijri dates','Added monthly calendar navigation, daily transaction summaries, and Accounts day drilldown','Added saved Workday and Government holiday markers to calendar dates','Persisted prayer and weather location in app data across sign-outs and reloads','Set the shop title in two fixed lines with the role control beneath it']});
+  UPC.unshift({v:'11.11.0',s:'Done',t:['Unified clickable date and three-calendar details','Monthly calendar with transaction/day-status summary and Accounts drilldown','Persistent prayer and weather location','Two-line shop name with role below']});
+  BUGS.unshift({d:'2026-11-05 --:-- (UTC+6)',v:'11.11.0',w:'Codex',a:'Header date showed inconsistent calendar formats; selecting a calendar day could not open that day in Accounts; saved location reverted; shop title wrapped unpredictably',b:'Dates were separately displayed without a shared calendar; tab navigation reset Accounts date; location was stored only in a standalone browser key; shop name used a single unbroken line',c:'Added a shared date details and month calendar, connected selected days to Accounts, saved location in application state with legacy fallback, and forced the shop title to two lines'});
   VERS.unshift({v:'11.10.0',d:'2026-11-05',t:'Mobile Header Layout and Weather Icon Fixes',by:'Codex',n:['Reorganized the mobile header to keep tools separate from the greeting and clock details','Lowered the mobile theme picker beneath the sticky header controls','Refined weather line icons for fog, drizzle, rain, snow and thunderstorms']});
   UPC.unshift({v:'11.10.0',s:'Done',t:['Fixed mobile header overlaps and compressed the date and weather line','Kept theme picker below the header controls on mobile','Added distinct weather condition icons']});
   BUGS.unshift({d:'2026-11-05 --:-- (UTC+6)',v:'11.10.0',w:'Codex',a:'Mobile header controls overlapped and the header information became an oversized wrapping block; weather icons looked unrelated',b:'A fixed header layout and separate icon mapping allowed controls to collide and grouped several weather codes under overly generic icons',c:'Introduced compact mobile grid placement and distinct consistent SVG weather symbols; moved theme picker below the sticky header layer'});
@@ -7145,7 +7216,7 @@ if ('serviceWorker' in navigator) {
 
 </script>
 <!-- NCS v10 Sync Engine -->
-<script src="diag.js?v=11.10.0"></script>
-<script src="sync.js?v=11.10.0"></script>
+<script src="diag.js?v=11.11.0"></script>
+<script src="sync.js?v=11.11.0"></script>
 </body>
 </html>

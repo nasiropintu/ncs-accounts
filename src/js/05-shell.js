@@ -64,7 +64,7 @@ function go(v){
     POS.refresh();
     if(isCounterStock())POS.prodUI();
   }
-  if(v==='acc'){AV=false;cur=iso(new Date());reset();render();try{applyCardSettings()}catch(e){}}
+  if(v==='acc'){AV=false;if(!window._ncsDateTarget)cur=iso(new Date());reset();render();try{applyCardSettings()}catch(e){}}
   if(v==='led')ledUI();
   if(v==='task'){if(typeof taskUI==='function')taskUI();}
   if(v==='more')updateMoreTab();

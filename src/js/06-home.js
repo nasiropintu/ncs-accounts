@@ -120,7 +120,7 @@ const BD_DISTRICTS = [
 ];
 
 function getLocation(){
-  if(typeof S !== 'undefined' && S && S.location && S.location.en) return S.location;
+  if(typeof S !== 'undefined' && S && S.location && S.location.en){try{localStorage.setItem('ncs_location_v1',JSON.stringify(S.location))}catch(e){}return S.location}
   var def = { div: 'dhaka', en: 'Dhaka', bn: 'ঢাকা', lat: 23.8103, lon: 90.4125 };
   try{
     var saved = localStorage.getItem('ncs_location_v1');
@@ -139,6 +139,7 @@ function getLocation(){
 function setLocation(loc){
   if(!loc || !loc.lat) return;
   if(typeof S !== 'undefined' && S) S.location = loc;
+  try{if(typeof save==='function')save()}catch(e){}
   try{ localStorage.setItem('ncs_location_v1', JSON.stringify(loc)); }catch(e){}
   try{
     sessionStorage.removeItem('ncs_weather_v1');

@@ -350,6 +350,15 @@ The five-colour chart palette (formerly Phase 1b) was delivered in v10.4.0.
 ## 7. Session Log
 *Newest first. Each entry is a version, a timestamp (UTC+6) and an author.*
 
+### v11.11.0 · 2026-11-05 · Codex
+**Unified date card, monthly calendar, persistent location, and two-line shop title.**
+- Added a clickable date card with live clock and Gregorian, Bengali and Hijri dates; monthly calendar supports day summaries and opening a date in Accounts.
+- Added explicit Workday and Government holiday markers to saved daily status.
+- Saved prayer/weather location in app state and retained the prior local key as a fallback.
+- Set shop title to two lines with role below it.
+- Bumped the service worker cache to ncs-v79.
+- Verification: build and syntax checks pending.
+
 ### v11.10.0 · 2026-11-05 · Codex
 **Mobile header overlap and weather icon fixes.**
 - Reorganized mobile header controls and date/weather details into compact rows; lowered theme picker below sticky header.
