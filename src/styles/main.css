@@ -1165,7 +1165,7 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
 
 /* --- Picker wrap + panel --- */
 .tpp-wrap{position:relative}
-.tpp-panel{position:absolute;top:calc(100% + 10px);right:0;z-index:110;width:258px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 16px 48px rgba(0,0,0,.2),0 2px 8px rgba(0,0,0,.08);animation:tpp-in .18s cubic-bezier(.16,1,.3,1)}
+.tpp-panel{position:absolute;top:calc(100% + 10px);right:0;z-index:110;width:258px;max-height:calc(100vh - 120px);overflow-y:auto;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px;box-shadow:0 16px 48px rgba(0,0,0,.2),0 2px 8px rgba(0,0,0,.08);animation:tpp-in .18s cubic-bezier(.16,1,.3,1)}
 .tpp-panel[hidden]{display:none}
 @keyframes tpp-in{from{opacity:0;transform:translateY(-8px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
 .tpp-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--line)}
@@ -1203,37 +1203,38 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
 
 /* Mobile: panel pops up from bottom so it's never clipped by header */
 @media(max-width:899px){
-  .tpp-panel{position:fixed;top:auto;bottom:calc(78px + env(safe-area-inset-bottom,0px));right:12px;left:12px;width:auto;z-width:110}
+  .tpp-panel{position:fixed;top:auto;bottom:calc(78px + env(safe-area-inset-bottom,0px));right:12px;left:12px;width:auto;z-index:110;max-height:70vh;overflow-y:auto}
 }
 
 /* ============================================================
    GLASS DARK TOKEN OVERRIDES
    ============================================================ */
 :root[data-theme="glass-dark"]{
-  --bg:#07090f;
-  --card:rgba(255,255,255,0.07);
-  --ink:#F0F4FF;
-  --mut:rgba(240,244,255,0.52);
-  --line:rgba(255,255,255,0.11);
+  --bg:#060a12;
+  --card:rgba(255,255,255,0.055);
+  --ink:#EEF2FF;
+  --mut:rgba(238,242,255,0.5);
+  --line:rgba(255,255,255,0.09);
   --acc:#10B981;
-  --soft:rgba(16,185,129,0.14);
+  --soft:rgba(16,185,129,0.12);
   --pos:#34D399;
   --neg:#F87171;
   --warn:#FBBF24;
   --btn:#10B981;
   --btn2:#059669;
-  --btnink:#07090f;
-  --sh:0 4px 24px rgba(0,0,0,.5),0 1px 4px rgba(0,0,0,.3);
-  --t1:rgba(69,10,10,.3);--t2:rgba(69,26,3,.3);--t3:rgba(6,78,59,.3);--t4:rgba(49,46,129,.3);
+  --btnink:#060a12;
+  --sh:0 8px 32px rgba(0,0,0,.55),0 2px 8px rgba(0,0,0,.35);
+  --t1:rgba(127,29,29,.35);--t2:rgba(120,53,15,.35);--t3:rgba(6,78,59,.35);--t4:rgba(49,46,129,.35);
   --g1:#10B981;--g2:#059669;--on:#10B981;
-  --cartbg:rgba(255,255,255,.05);--dhg:rgba(16,185,129,.08);
+  --cartbg:rgba(255,255,255,.04);--dhg:rgba(16,185,129,.07);
   --ch1:#34D399;--ch2:#60A5FA;--ch3:#A78BFA;--ch4:#FBBF24;--ch5:#FB7185;
-  --table-alt:rgba(255,255,255,.03);--table-hover:rgba(255,255,255,.07);
-  --gblu:blur(22px) saturate(160%);
-  --gbrd:rgba(255,255,255,0.14);
-  --gshi:rgba(255,255,255,0.18);
-  --gcard:rgba(255,255,255,0.07);
-  --gcard-h:rgba(255,255,255,0.11);
+  --table-alt:rgba(255,255,255,.025);--table-hover:rgba(255,255,255,.06);
+  /* glass-specific */
+  --gblu:blur(28px) saturate(180%) brightness(1.05);
+  --gbrd:rgba(255,255,255,0.12);
+  --gshi:rgba(255,255,255,0.14);
+  --gcard:rgba(16,22,40,0.55);
+  --gcard-h:rgba(16,22,40,0.7);
   color-scheme:dark
 }
 
@@ -1241,51 +1242,58 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
    GLASS LIGHT TOKEN OVERRIDES
    ============================================================ */
 :root[data-theme="glass-light"]{
-  --bg:#eef2f7;
-  --card:rgba(255,255,255,0.65);
-  --ink:#0F172A;
-  --mut:rgba(15,23,42,0.5);
-  --line:rgba(15,23,42,0.1);
-  --acc:#0F766E;
-  --soft:rgba(15,118,110,0.08);
-  --pos:#15803D;
+  --bg:#dde8f2;
+  --card:rgba(255,255,255,0.58);
+  --ink:#0A1628;
+  --mut:rgba(10,22,40,0.5);
+  --line:rgba(10,22,40,0.09);
+  --acc:#0D9488;
+  --soft:rgba(13,148,136,0.09);
+  --pos:#0D9488;
   --neg:#DC2626;
   --warn:#D97706;
-  --btn:#0F766E;
+  --btn:#0D9488;
   --btn2:#14B8A6;
   --btnink:#FFF;
-  --sh:0 2px 16px rgba(15,23,42,.1),0 1px 3px rgba(15,23,42,.07);
-  --t1:rgba(254,226,226,.7);--t2:rgba(254,243,199,.7);--t3:rgba(220,252,231,.7);--t4:rgba(237,233,254,.7);
-  --g1:#0F766E;--g2:#14B8A6;--on:#0D9488;
-  --cartbg:rgba(255,255,255,.6);--dhg:rgba(220,252,231,.5);
-  --ch1:#10B981;--ch2:#2563EB;--ch3:#7C3AED;--ch4:#F59E0B;--ch5:#E11D48;
-  --table-alt:rgba(255,255,255,.4);--table-hover:rgba(15,118,110,.06);
-  --gblu:blur(20px) saturate(150%);
-  --gbrd:rgba(255,255,255,0.55);
-  --gshi:rgba(255,255,255,0.75);
-  --gcard:rgba(255,255,255,0.6);
-  --gcard-h:rgba(255,255,255,0.8);
+  --sh:0 4px 24px rgba(10,22,40,.12),0 1px 4px rgba(10,22,40,.08);
+  --t1:rgba(254,202,202,.75);--t2:rgba(254,240,138,.75);--t3:rgba(187,247,208,.75);--t4:rgba(221,214,254,.75);
+  --g1:#0D9488;--g2:#14B8A6;--on:#0D9488;
+  --cartbg:rgba(255,255,255,.55);--dhg:rgba(187,247,208,.55);
+  --ch1:#0D9488;--ch2:#2563EB;--ch3:#7C3AED;--ch4:#F59E0B;--ch5:#E11D48;
+  --table-alt:rgba(255,255,255,.45);--table-hover:rgba(13,148,136,.07);
+  /* glass-specific */
+  --gblu:blur(24px) saturate(160%) brightness(1.02);
+  --gbrd:rgba(255,255,255,0.6);
+  --gshi:rgba(255,255,255,0.85);
+  --gcard:rgba(255,255,255,0.45);
+  --gcard-h:rgba(255,255,255,0.65);
   color-scheme:light
 }
 
-/* --- Shared glass backdrop blob (single, slow, enterprise) --- */
+/* --- Premium glass backdrop — two slow-drifting blobs + base gradient --- */
 :root[data-theme="glass-dark"] body::before,
 :root[data-theme="glass-light"] body::before{
-  content:"";position:fixed;inset:0;z-index:0;pointer-events:none
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;animation:blob-drift 28s ease-in-out infinite alternate
+}
+@keyframes blob-drift{
+  0%{background-position:0% 0%,100% 100%,50% 50%}
+  100%{background-position:8% 6%,92% 94%,50% 50%}
 }
 :root[data-theme="glass-dark"] body::before{
   background:
-    radial-gradient(ellipse 60% 50% at 20% -10%,rgba(15,118,110,.22) 0%,transparent 70%),
-    radial-gradient(ellipse 50% 45% at 85% 15%,rgba(37,99,235,.14) 0%,transparent 65%)
+    radial-gradient(ellipse 55% 48% at 18% 8%,rgba(15,118,110,.28) 0%,transparent 68%),
+    radial-gradient(ellipse 48% 42% at 86% 14%,rgba(37,99,235,.18) 0%,transparent 62%),
+    linear-gradient(160deg,#060a12 0%,#0d1428 50%,#060e18 100%);
+  background-size:200% 200%,200% 200%,100% 100%
 }
 :root[data-theme="glass-light"] body::before{
   background:
-    radial-gradient(ellipse 60% 50% at 15% -5%,rgba(15,118,110,.12) 0%,transparent 70%),
-    radial-gradient(ellipse 50% 45% at 85% 10%,rgba(99,102,241,.08) 0%,transparent 65%)
+    radial-gradient(ellipse 55% 48% at 15% 5%,rgba(13,148,136,.16) 0%,transparent 68%),
+    radial-gradient(ellipse 48% 42% at 88% 12%,rgba(99,102,241,.10) 0%,transparent 62%),
+    linear-gradient(160deg,#dde8f2 0%,#e8f0f8 50%,#d4e4ef 100%);
+  background-size:200% 200%,200% 200%,100% 100%
 }
-/* All content sits above blob */
-:root[data-theme="glass-dark"] body>*,
-:root[data-theme="glass-light"] body>*{position:relative;z-index:1}
+/* blob behind all content — fixed positioning of children is unaffected */
 
 /* --- Body background --- */
 :root[data-theme="glass-dark"] body{background:#07090f}
@@ -1303,8 +1311,10 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
 :root[data-theme="glass-dark"] .svc-bar-wrap,
 :root[data-theme="glass-dark"] #vPos .pos-cart,
 :root[data-theme="glass-dark"] #vPos .pos-products{
-  background:var(--gcard);-webkit-backdrop-filter:var(--gblu);backdrop-filter:var(--gblu);
-  border:1px solid var(--gbrd);box-shadow:var(--sh),inset 0 1px 0 var(--gshi)
+  background:linear-gradient(145deg,rgba(255,255,255,0.08) 0%,var(--gcard) 60%);
+  -webkit-backdrop-filter:var(--gblu);backdrop-filter:var(--gblu);
+  border:1px solid var(--gbrd);
+  box-shadow:var(--sh),inset 0 1px 0 var(--gshi),inset 0 -1px 0 rgba(0,0,0,0.2)
 }
 :root[data-theme="glass-light"] .card,
 :root[data-theme="glass-light"] .stat,
@@ -1317,15 +1327,24 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
 :root[data-theme="glass-light"] .svc-bar-wrap,
 :root[data-theme="glass-light"] #vPos .pos-cart,
 :root[data-theme="glass-light"] #vPos .pos-products{
-  background:var(--gcard);-webkit-backdrop-filter:var(--gblu);backdrop-filter:var(--gblu);
-  border:1px solid var(--gbrd);box-shadow:var(--sh),inset 0 1px 0 var(--gshi)
+  background:linear-gradient(145deg,rgba(255,255,255,0.75) 0%,var(--gcard) 100%);
+  -webkit-backdrop-filter:var(--gblu);backdrop-filter:var(--gblu);
+  border:1px solid var(--gbrd);
+  box-shadow:var(--sh),inset 0 1px 0 var(--gshi)
 }
 
 /* --- Glass header --- */
-:root[data-theme="glass-dark"] .top,
+:root[data-theme="glass-dark"] .top{
+  background:linear-gradient(160deg,rgba(255,255,255,0.09) 0%,var(--gcard) 70%);
+  -webkit-backdrop-filter:var(--gblu);backdrop-filter:var(--gblu);
+  border-color:var(--gbrd);
+  box-shadow:0 8px 40px rgba(0,0,0,.35),0 1px 0 var(--gbrd),inset 0 1px 0 var(--gshi)
+}
 :root[data-theme="glass-light"] .top{
-  background:var(--gcard);-webkit-backdrop-filter:var(--gblu);backdrop-filter:var(--gblu);
-  border-color:var(--gbrd);box-shadow:0 8px 32px rgba(0,0,0,.18),inset 0 1px 0 var(--gshi)
+  background:linear-gradient(160deg,rgba(255,255,255,0.8) 0%,var(--gcard) 100%);
+  -webkit-backdrop-filter:var(--gblu);backdrop-filter:var(--gblu);
+  border-color:var(--gbrd);
+  box-shadow:0 4px 24px rgba(10,22,40,.12),inset 0 1px 0 var(--gshi)
 }
 /* Top shine on header */
 :root[data-theme="glass-dark"] .top::after,
