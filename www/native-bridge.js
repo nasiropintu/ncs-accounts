@@ -5,7 +5,7 @@
 (function () {
   'use strict';
   var REPO = 'NuroTraders/ncs-accounts';
-  var NATIVE_VERSION = '11.8.0';
+  var NATIVE_VERSION = '11.10.0';
 
   var cap = window.Capacitor;
   var isAndroid = !!(cap && cap.isNativePlatform && cap.isNativePlatform());
@@ -162,8 +162,8 @@
           if (!newer(meta.version, curVer) || pendingVersion === meta.version) return;
           return U.download({ url: meta.url, version: meta.version }).then(function (b) {
             pendingVersion = meta.version;
-            return U.next({ id: b.id }).then(function () {
-              notice('Update ' + meta.version + ' is ready.', 'Restart now', function () { U.set({ id: b.id }); });
+            return notice('Update ' + meta.version + ' is ready to install.', 'Restart now', function () {
+              U.set({ id: b.id }).catch(function (e) { notice('Could not apply update: ' + (e && e.message ? e.message : e)); });
             });
           });
         });

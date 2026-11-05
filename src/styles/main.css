@@ -1203,7 +1203,43 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
 
 /* Mobile: panel pops up from bottom so it's never clipped by header */
 @media(max-width:899px){
-  .tpp-panel{position:fixed;top:auto;bottom:calc(78px + env(safe-area-inset-bottom,0px));right:12px;left:12px;width:auto;z-index:110;max-height:70vh;overflow-y:auto}
+  .tpp-panel{position:fixed;top:auto;bottom:calc(78px + env(safe-area-inset-bottom,0px));right:12px;left:12px;width:auto;z-index:39;max-height:70vh;overflow-y:auto}
+}
+
+/* Mobile header repair: keep controls in one row and move theme picker below it. */
+@media(max-width:899px){
+  .top{position:sticky;z-index:60;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"brand tools" "center center";gap:6px 8px;align-items:center}
+  .top-brand{grid-area:brand;min-width:0}
+  .top #topR{grid-area:tools;display:flex;align-items:center;justify-self:end;min-width:0}
+  .top #topR .hdr-prayer-wrap{display:contents}
+  .top #topR .tpp-wrap{position:static}
+  .hdr-prayer-btn{display:grid}
+  .hdr-prayer-popover{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);right:12px;z-index:59;width:min(320px,calc(100vw - 24px));max-height:70vh}
+  .hdr-center{grid-area:center;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"greet greet" "watch weather";gap:2px 8px;align-items:center;width:100%;margin:0}
+  .hdr-greetline{grid-area:greet;min-width:0;flex-wrap:nowrap;overflow:hidden;white-space:nowrap}
+  .bismillah-txt,.hdr-greeting{font-size:clamp(10px,2.9vw,12px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hdr-watch{grid-area:watch;align-items:flex-start;min-width:0}
+  .hw-time{font-size:var(--hdr-clock);min-width:0;white-space:nowrap}
+  .hw-meta{justify-content:flex-start;flex-wrap:nowrap;white-space:nowrap;overflow:hidden;max-width:100%;font-size:clamp(9px,2.5vw,11px);gap:2px 4px}
+  .hw-meta .hw-hijri,.hw-meta .hw-sep:not(.hw-weather-sep){display:none}
+  .hw-meta .hw-weather-sep{display:none}
+  .hdr-weather{grid-area:weather;justify-self:end;padding:4px 7px;border:1px solid var(--line);border-radius:999px;background:var(--soft);white-space:nowrap;font-size:12px}
+  .hw-icon{display:inline-flex;align-items:center;justify-content:center;color:var(--acc)}
+  .hw-icon svg{display:block}
+}
+@media(max-width:520px){
+  .top{padding:8px 10px;gap:5px 6px}
+  .top #topR{gap:3px}
+  .top .ic,.hdr-prayer-btn{flex:none}
+  .hdr-greetline{justify-content:center}
+}
+@media(max-width:380px){
+  .top{--hdr-mark:24px;--hdr-ctl:30px;--hdr-clock:17px;--hdr-shop:14px;--hdr-shop-bn:14px;padding:7px 8px;gap:4px}
+  .top-brand{gap:4px}
+  .top #topR{gap:2px}
+  .top .ic,.hdr-prayer-btn{width:30px;height:30px;min-width:30px}
+  .bismillah-txt,.hdr-greeting{font-size:10px}
+  .hw-meta{font-size:9px}
 }
 
 /* ============================================================

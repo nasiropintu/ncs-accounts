@@ -350,6 +350,20 @@ The five-colour chart palette (formerly Phase 1b) was delivered in v10.4.0.
 ## 7. Session Log
 *Newest first. Each entry is a version, a timestamp (UTC+6) and an author.*
 
+### v11.10.0 · 2026-11-05 · Codex
+**Mobile header overlap and weather icon fixes.**
+- Reorganized mobile header controls and date/weather details into compact rows; lowered theme picker below sticky header.
+- Added distinct consistent weather SVGs for fog, drizzle, rain, snow and thunderstorms.
+- Bumped service worker cache to ncs-v78.
+- Verification: build and syntax checks pending.
+
+### v11.9.0 · 2026-11-05 · Codex
+**User-controlled update prompts for the PWA and Android live bundle.**
+- PWA service worker waits until the user chooses Refresh before activating a downloaded version.
+- Android live bundle update now offers Restart now after download without pre-activating it.
+- Windows Electron continues to download updates automatically and prompts when installation is ready.
+- Verification: build output and syntax validation pending.
+
 ### v11.8.0 · 2026-11-05 · Codex
 **Acrylic glass refresh: softer ambient orbs, clearer surfaces and sharper contrast.**
 - Refined Glass Light and Glass Dark with turquoise and periwinkle ambient fields inspired by the supplied acrylic reference.

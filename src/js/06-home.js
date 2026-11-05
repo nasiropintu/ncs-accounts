@@ -167,7 +167,8 @@ function findNearestDistrict(lat, lon){
 /* Minimal Weather Line SVGs (stroke-based, 24x24 viewBox, currentColor) */
 function getWeatherIconSvg(code, size){
   size = size || 20;
-  var s = 'viewBox="0 0 24 24" width="' + size + '" height="' + size + '" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="w-svg" aria-hidden="true"';
+  code = Number(code);
+  var s = 'viewBox="0 0 24 24" width="' + size + '" height="' + size + '" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="w-svg" aria-hidden="true"';
   if(code === 0){
     return '<svg ' + s + '><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>';
   }
@@ -178,12 +179,18 @@ function getWeatherIconSvg(code, size){
     return '<svg ' + s + '><path d="M17.5 19H9a6 6 0 0 1-1.2-11.8A7.5 7.5 0 0 1 21 12.5 4.5 4.5 0 0 1 17.5 19z"/></svg>';
   }
   if(code >= 45 && code <= 48){
-    return '<svg ' + s + '><path d="M4 14h16M4 10h16M6 18h12M8 6h8"/></svg>';
+    return '<svg ' + s + '><path d="M3 9h18M5 13h14M3 17h18"/><path d="M7 5h10" opacity=".55"/></svg>';
   }
-  if((code >= 51 && code <= 67) || (code >= 80 && code <= 82)){
-    return '<svg ' + s + '><path d="M19 15.5A4.5 4.5 0 0 0 16 8a6 6 0 0 0-11 2.5A4 4 0 0 0 6 18h13"/><path d="M8 20l-1 2M12 20l-1 2M16 20l-1 2"/></svg>';
+  if(code >= 51 && code <= 57){
+    return '<svg ' + s + '><path d="M19 14.5A4.5 4.5 0 0 0 16 7a6 6 0 0 0-11 2.5A4 4 0 0 0 6 17h13"/><path d="m9 20-1 2m5-2-1 2m5-2-1 2" stroke-dasharray=".1 2.8"/></svg>';
   }
-  if(code >= 95){
+  if((code >= 61 && code <= 67) || (code >= 80 && code <= 82)){
+    return '<svg ' + s + '><path d="M19 14.5A4.5 4.5 0 0 0 16 7a6 6 0 0 0-11 2.5A4 4 0 0 0 6 17h13"/><path d="m8 19-1 3m6-3-1 3m6-3-1 3"/></svg>';
+  }
+  if(code >= 71 && code <= 77 || code === 85 || code === 86){
+    return '<svg ' + s + '><path d="M19 14.5A4.5 4.5 0 0 0 16 7a6 6 0 0 0-11 2.5A4 4 0 0 0 6 17h13"/><path d="M8 20h.01M12 22h.01M16 20h.01" stroke-width="3"/></svg>';
+  }
+  if(code >= 95 && code <= 99){
     return '<svg ' + s + '><path d="M19 14.5A4.5 4.5 0 0 0 16 7a6 6 0 0 0-11 2.5A4 4 0 0 0 6 17h13"/><path d="m13 14-3 5h3l-1 4 4-6h-3z"/></svg>';
   }
   return '<svg ' + s + '><path d="M17.5 19H9a6 6 0 0 1-1.2-11.8A7.5 7.5 0 0 1 21 12.5 4.5 4.5 0 0 1 17.5 19z"/></svg>';
