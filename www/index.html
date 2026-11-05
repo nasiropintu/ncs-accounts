@@ -1438,6 +1438,151 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important
 }
 
+/* --- Refined acrylic finish --- */
+:root[data-theme="glass-dark"]{
+  --bg:#10182a;
+  --card:rgba(21,31,50,.72);
+  --mut:rgba(231,239,255,.68);
+  --line:rgba(225,238,255,.14);
+  --acc:#58ddc2;
+  --soft:rgba(76,218,194,.14);
+  --btn:#0f9f91;
+  --btn2:#21c5aa;
+  --btnink:#f4fffd;
+  --gblu:blur(22px) saturate(145%);
+  --gbrd:rgba(211,233,255,.18);
+  --gshi:rgba(255,255,255,.16);
+  --gcard:rgba(17,27,46,.78);
+  --gcard-h:rgba(24,38,61,.9);
+  --sh:0 16px 42px rgba(1,7,20,.28),0 2px 8px rgba(1,7,20,.18)
+}
+:root[data-theme="glass-light"]{
+  --bg:#e8f2fb;
+  --card:rgba(250,253,255,.78);
+  --ink:#142942;
+  --mut:rgba(20,41,66,.68);
+  --line:rgba(38,75,112,.13);
+  --acc:#087f83;
+  --soft:rgba(8,127,131,.1);
+  --btn:#087f83;
+  --btn2:#15a99f;
+  --gblu:blur(20px) saturate(145%);
+  --gbrd:rgba(255,255,255,.78);
+  --gshi:rgba(255,255,255,.88);
+  --gcard:rgba(249,253,255,.8);
+  --gcard-h:rgba(255,255,255,.94);
+  --sh:0 14px 34px rgba(41,78,112,.11),0 2px 6px rgba(41,78,112,.06);
+  --t1:rgba(192,241,226,.78);--t2:rgba(255,231,184,.7);--t3:rgba(205,222,255,.78);--t4:rgba(250,207,220,.68);
+  --table-alt:rgba(224,237,249,.58);--table-hover:rgba(8,127,131,.08)
+}
+:root[data-theme="glass-dark"] body,
+:root[data-theme="glass-light"] body{
+  background-color:var(--bg);
+  background-image:
+    radial-gradient(circle at 11% 32%,rgba(61,234,210,.32) 0 3.5%,rgba(61,234,210,.18) 5%,transparent 16%),
+    radial-gradient(circle at 87% 24%,rgba(119,147,255,.3) 0 3%,rgba(119,147,255,.16) 5%,transparent 17%),
+    radial-gradient(circle at 78% 82%,rgba(68,211,198,.2) 0 4%,transparent 18%),
+    radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.32),transparent 55%),
+    linear-gradient(145deg,#dff5f3 0%,#d8e9fa 52%,#e7e0fc 100%);
+  background-attachment:fixed
+}
+:root[data-theme="glass-dark"] body{
+  background-image:
+    radial-gradient(circle at 11% 32%,rgba(28,210,184,.2) 0 3.5%,rgba(28,210,184,.12) 5%,transparent 17%),
+    radial-gradient(circle at 87% 24%,rgba(113,132,255,.22) 0 3%,rgba(113,132,255,.1) 5%,transparent 18%),
+    radial-gradient(circle at 78% 82%,rgba(32,194,185,.12) 0 4%,transparent 18%),
+    linear-gradient(145deg,#101827 0%,#141f35 54%,#1c1932 100%)
+}
+:root[data-theme="glass-light"] body::before,
+:root[data-theme="glass-dark"] body::before{
+  background:none;animation:none
+}
+:root[data-theme="glass-light"] .card,
+:root[data-theme="glass-light"] .more-card,
+:root[data-theme="glass-light"] .wlt-card,
+:root[data-theme="glass-light"] .task-column,
+:root[data-theme="glass-light"] .task-card,
+:root[data-theme="glass-light"] .salat-box,
+:root[data-theme="glass-light"] #vPos .pos-cart,
+:root[data-theme="glass-light"] #vPos .pos-products{
+  background:linear-gradient(145deg,rgba(255,255,255,.88),rgba(241,248,255,.68));
+  border-color:rgba(255,255,255,.86);
+  box-shadow:var(--sh),inset 0 1px 0 #fff
+}
+:root[data-theme="glass-dark"] .card,
+:root[data-theme="glass-dark"] .more-card,
+:root[data-theme="glass-dark"] .wlt-card,
+:root[data-theme="glass-dark"] .task-column,
+:root[data-theme="glass-dark"] .task-card,
+:root[data-theme="glass-dark"] .salat-box,
+:root[data-theme="glass-dark"] #vPos .pos-cart,
+:root[data-theme="glass-dark"] #vPos .pos-products{
+  background:linear-gradient(145deg,rgba(33,49,73,.9),rgba(17,28,47,.82));
+  border-color:rgba(207,229,255,.17);
+  box-shadow:var(--sh),inset 0 1px 0 rgba(255,255,255,.12)
+}
+:root[data-theme="glass-light"] .stat:not(.main){
+  border-color:rgba(255,255,255,.8);
+  box-shadow:0 10px 24px rgba(43,83,120,.08),inset 0 1px 0 rgba(255,255,255,.85)
+}
+:root[data-theme="glass-light"] .stat.main{
+  background:linear-gradient(120deg,#087f83 0%,#12a99a 58%,#28bba7 100%);
+  box-shadow:0 16px 34px rgba(8,127,131,.2),inset 0 1px 0 rgba(255,255,255,.26)
+}
+:root[data-theme="glass-dark"] .stat.main{
+  background:linear-gradient(120deg,#087d78 0%,#0e9e8e 62%,#16b39c 100%);
+  box-shadow:0 16px 34px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.22)
+}
+:root[data-theme="glass-dark"] .dlg,
+:root[data-theme="glass-dark"] .tpp-panel,
+:root[data-theme="glass-dark"] .role-dropdown,
+:root[data-theme="glass-dark"] .hdr-prayer-popover{
+  background:linear-gradient(145deg,rgba(38,55,80,.96),rgba(19,31,51,.94));
+  border-color:rgba(220,237,255,.2);
+  box-shadow:0 24px 64px rgba(1,7,20,.4),inset 0 1px 0 rgba(255,255,255,.16)
+}
+:root[data-theme="glass-light"] .dlg,
+:root[data-theme="glass-light"] .tpp-panel,
+:root[data-theme="glass-light"] .role-dropdown,
+:root[data-theme="glass-light"] .hdr-prayer-popover{
+  background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(235,245,253,.94));
+  border-color:rgba(255,255,255,.9);
+  box-shadow:0 24px 64px rgba(25,59,91,.2),inset 0 1px 0 #fff
+}
+:root[data-theme="glass-light"] .oa,
+:root[data-theme="glass-dark"] .oa{
+  background:transparent;
+  border-color:var(--line)
+}
+:root[data-theme="glass-light"] .top,
+:root[data-theme="glass-light"] .tabs,
+:root[data-theme="glass-light"] .more-item{
+  box-shadow:var(--sh),inset 0 1px 0 rgba(255,255,255,.9)
+}
+:root[data-theme="glass-light"] .ghost,
+:root[data-theme="glass-light"] .top .ic,
+:root[data-theme="glass-light"] .hdr-prayer-btn{
+  background:rgba(255,255,255,.76);
+  border-color:rgba(34,77,112,.12)
+}
+:root[data-theme="glass-dark"] .ghost,
+:root[data-theme="glass-dark"] .top .ic,
+:root[data-theme="glass-dark"] .hdr-prayer-btn{
+  background:rgba(255,255,255,.07);
+  border-color:rgba(226,240,255,.16)
+}
+:root[data-theme="glass-light"] .tabs button.on{background:rgba(8,127,131,.12);color:#086d70}
+:root[data-theme="glass-dark"] .tabs button.on{background:rgba(88,221,194,.16);color:#78efd6}
+:root[data-theme="glass-light"] .card h2,
+:root[data-theme="glass-light"] .card h3,
+:root[data-theme="glass-light"] .more-sec-title{color:#17334f}
+:root[data-theme="glass-dark"] .more-item-text small,
+:root[data-theme="glass-dark"] .card small{color:rgba(231,239,255,.68)}
+@media(prefers-reduced-motion:reduce){
+  :root[data-theme="glass-light"] *,
+  :root[data-theme="glass-dark"] *{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+
 </style>
 <link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0F766E"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes">
 <script src="native-bridge.js"></script><script src="config.js"></script>
@@ -6766,7 +6911,10 @@ function animateCounts(){
 function saveCheck(){if(document.documentElement.dataset.rm)return;var d=document.createElement('div');d.className='savechk';d.innerHTML='<svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="22" fill="none" stroke="var(--acc)" stroke-width="3"/><path d="M14 27l8 8 16-16" fill="none" stroke="var(--acc)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';document.body.appendChild(d);setTimeout(function(){d.classList.add('out')},700);setTimeout(function(){d.remove()},1250)}
 (function(){
   var M="Claude Sonnet 5.5 · owner's Claude account";
-  APP_VERSION='11.7.0';
+  APP_VERSION='11.8.0';
+  VERS.unshift({v:'11.8.0',d:'2026-11-05',t:'Acrylic Glass Refresh: Softer Ambient Orbs, Clearer Surfaces & Sharper Contrast',by:'Codex',n:['Refined Glass Light and Glass Dark with soft teal and periwinkle ambient color fields inspired by the supplied acrylic reference','Improved readability with clearer surface separation, stronger muted text contrast, and calmer shadows','Polished cards, navigation, dialogs, controls, and the balance hero while preserving the existing layout and data views']});
+  UPC.unshift({v:'11.8.0',s:'Done',t:['Refined acrylic glass themes and soft ambient color orbs','Improved text contrast and separation across cards and dialogs','Polished shared surfaces and controls without changing app workflows']});
+  BUGS.unshift({d:'2026-11-05 --:-- (UTC+6)',v:'11.8.0',w:'Codex',a:'Glass Light surfaces appeared washed out while Glass Dark felt nearly black and flat',b:'Glass panels and backdrops had weak ambient color separation, low text contrast, and overly dark or pale surface blends',c:'Introduced softer turquoise and periwinkle ambient fields, tuned frosted surfaces and shadows, and strengthened text and control contrast'});
   VERS.unshift({v:'11.7.0',d:'2026-11-05',t:'Compact Mobile Header: Token-Driven Sizing, Merged Greeting Line & Bug FAB Reposition',by:'Codex',n:['Added shared sizing tokens for the shop mark, header controls, clock, padding, and shop name','Compacted the mobile header while keeping Bismillah, greeting, clock, calendar dates, weather, prayer and controls visible','Moved the mobile Bug FAB clear of the tab dock and hid it on the POS view']});
   UPC.unshift({v:'11.7.0',s:'Done',t:['Token-driven header sizing and responsive compact mobile layout','Single-line Bismillah and greeting with retained calendar and weather details','Repositioned mobile Bug FAB and hid it on POS']});
   BUGS.unshift({d:'2026-11-05 --:-- (UTC+6)',v:'11.7.0',w:'Codex',a:'Mobile header was overly tall and Bug FAB overlapped wallet controls or the tab dock',b:'Header typography and controls used large per-breakpoint fixed sizes; Bug FAB was anchored low on mobile',c:'Introduced responsive header sizing tokens, tightened mobile spacing, retained all header information, and repositioned or hid the Bug FAB where it conflicts'});
@@ -6893,7 +7041,7 @@ if ('serviceWorker' in navigator) addEventListener('load', () => navigator.servi
 
 </script>
 <!-- NCS v10 Sync Engine -->
-<script src="diag.js?v=11.7.0"></script>
-<script src="sync.js?v=11.7.0"></script>
+<script src="diag.js?v=11.8.0"></script>
+<script src="sync.js?v=11.8.0"></script>
 </body>
 </html>

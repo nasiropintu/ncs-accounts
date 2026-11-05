@@ -350,6 +350,13 @@ The five-colour chart palette (formerly Phase 1b) was delivered in v10.4.0.
 ## 7. Session Log
 *Newest first. Each entry is a version, a timestamp (UTC+6) and an author.*
 
+### v11.8.0 · 2026-11-05 · Codex
+**Acrylic glass refresh: softer ambient orbs, clearer surfaces and sharper contrast.**
+- Refined Glass Light and Glass Dark with turquoise and periwinkle ambient fields inspired by the supplied acrylic reference.
+- Tuned card, navigation, dialog and control surfaces for clearer separation and stronger text contrast while preserving workflows and layout.
+- Bumped the app to v11.8.0 and the service worker cache to ncs-v77.
+- Verification: build output and visual browser QA pending.
+
 ### v11.7.0 · 2026-11-05 · Claude Sonnet 4.6
 **Glass theme system + header theme picker panel.**
 - `themeBtn` now opens a 5-option dropdown panel (`#tppPanel` inside `.tpp-wrap`): Light, Dark, Glass Dark, Glass Light, Auto. Old 3-way cycle removed. Closes on pick, Escape, or outside click. `S.theme` stores value (LOCAL, never synced).
