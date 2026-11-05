@@ -350,6 +350,14 @@ The five-colour chart palette (formerly Phase 1b) was delivered in v10.4.0.
 ## 7. Session Log
 *Newest first. Each entry is a version, a timestamp (UTC+6) and an author.*
 
+### v11.7.0 · 2026-11-05 · Claude Sonnet 4.6
+**Glass theme system + header theme picker panel.**
+- `themeBtn` now opens a 5-option dropdown panel (`#tppPanel` inside `.tpp-wrap`): Light, Dark, Glass Dark, Glass Light, Auto. Old 3-way cycle removed. Closes on pick, Escape, or outside click. `S.theme` stores value (LOCAL, never synced).
+- Glass Dark / Glass Light: full-app frosted glass via CSS token overrides on `:root[data-theme]`. Single enterprise-grade backdrop blob (2 radial gradients, static). Glass surfaces: header, tabs/nav, cards, modals, prayer popover, role dropdown, sync pill, toast, picker panel. Solid always: inputs, buttons, transaction table rows.
+- `applyTheme()` extended for 5 themes; `_THEMES` guard; `themeBtn[data-mode]` drives SVG icon for all 5 states.
+- Files changed: `src/markup/app.html`, `src/js/03-accounts.js`, `src/styles/main.css`, `sw.js` (ncs-v75), `package.json` (v11.7.0).
+- Remaining tasks: compact mobile header height, prayer popover z-index escape on mobile, roadmap features.
+
 ### v11.6.0 · 2026-11-02 00:30 · Antigravity
 **Figma header redesign, authentic solid Mosque icon, role switcher and AM/PM typography split.**
 - Replaced previous prayer icon with authentic solid silhouette Mosque vector SVG (viewBox 0 0 800 800) matching user reference, with dynamic theme coloring (`fill="currentColor"`).

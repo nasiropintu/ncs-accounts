@@ -86,7 +86,25 @@
       <div class="hdr-prayer-popover" id="hdrPrayerPopover"></div>
     </div>
     <div class="top-actions">
-      <button type="button" class="ic" id="themeBtn" aria-label="Theme" title="Theme" data-mode="auto"><svg class="th-auto" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg><svg class="th-light" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg><svg class="th-dark" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+      <div class="tpp-wrap" id="tppWrap">
+        <button type="button" class="ic" id="themeBtn" aria-label="Theme" title="Choose theme" data-mode="auto" aria-expanded="false">
+          <svg class="th-auto" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg>
+          <svg class="th-light" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <svg class="th-dark" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg class="th-glass-dark" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          <svg class="th-glass-light" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </button>
+        <div class="tpp-panel" id="tppPanel" hidden>
+          <div class="tpp-head"><span class="tpp-title">Appearance</span><button type="button" class="tpp-x" id="tppClose">✕</button></div>
+          <div class="tpp-grid">
+            <button type="button" class="tpp-opt" data-tv="light"><div class="tpp-sw tpb-light"><div></div><div></div><div></div></div><span class="tpp-name">Light</span><span class="tpp-desc">Clean white</span></button>
+            <button type="button" class="tpp-opt" data-tv="dark"><div class="tpp-sw tpb-dark"><div></div><div></div><div></div></div><span class="tpp-name">Dark</span><span class="tpp-desc">Deep obsidian</span></button>
+            <button type="button" class="tpp-opt" data-tv="glass-dark"><div class="tpp-sw tpb-gdark"><div></div><div></div><div></div></div><span class="tpp-name">Glass Dark</span><span class="tpp-desc">Frosted navy</span></button>
+            <button type="button" class="tpp-opt" data-tv="glass-light"><div class="tpp-sw tpb-glight"><div></div><div></div><div></div></div><span class="tpp-name">Glass Light</span><span class="tpp-desc">Frosted pearl</span></button>
+            <button type="button" class="tpp-opt tpp-opt-auto" data-tv="auto"><div class="tpp-sw tpb-auto"><div style="background:linear-gradient(to bottom,#fff 50%,#131B2E 50%)"></div><div style="background:linear-gradient(to bottom,#0F766E 50%,#10B981 50%)"></div><div style="background:linear-gradient(to bottom,#E2E8F0 50%,#1E293B 50%)"></div></div><span class="tpp-name">Auto</span><span class="tpp-desc">Follows system</span></button>
+          </div>
+        </div>
+      </div>
       <button type="button" class="ic" id="refresh" aria-label="Refresh current view" title="Refresh current view"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 0 1 13.66-5.66L20 8"/><path d="M20 3v5h-5"/><path d="M20 12a8 8 0 0 1-13.66 5.66L4 16"/><path d="M4 21v-5h5"/></svg></button>
     </div>
     <button type="button" class="top-sync-pill" id="topSync" title="Sync Status" aria-live="polite"><i class="sdot off" aria-hidden="true"></i><span>Sync</span></button>

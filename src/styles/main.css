@@ -1144,3 +1144,269 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
 
 
  .day-chip{display:inline-block;padding:2px 8px;border-radius:6px;font-size:13.5px;font-weight:600;vertical-align:middle}
+
+/* ============================================================
+   v11.7.0 — THEME PICKER + GLASS THEME SYSTEM
+   ============================================================ */
+
+/* --- themeBtn icon visibility by mode --- */
+#themeBtn .th-glass-dark,
+#themeBtn .th-glass-light{display:none}
+#themeBtn[data-mode="glass-dark"] .th-auto,
+#themeBtn[data-mode="glass-dark"] .th-light,
+#themeBtn[data-mode="glass-dark"] .th-dark,
+#themeBtn[data-mode="glass-dark"] .th-glass-light{display:none}
+#themeBtn[data-mode="glass-dark"] .th-glass-dark{display:block}
+#themeBtn[data-mode="glass-light"] .th-auto,
+#themeBtn[data-mode="glass-light"] .th-light,
+#themeBtn[data-mode="glass-light"] .th-dark,
+#themeBtn[data-mode="glass-light"] .th-glass-dark{display:none}
+#themeBtn[data-mode="glass-light"] .th-glass-light{display:block}
+
+/* --- Picker wrap + panel --- */
+.tpp-wrap{position:relative}
+.tpp-panel{position:absolute;top:calc(100% + 10px);right:0;z-index:110;width:258px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 16px 48px rgba(0,0,0,.2),0 2px 8px rgba(0,0,0,.08);animation:tpp-in .18s cubic-bezier(.16,1,.3,1)}
+.tpp-panel[hidden]{display:none}
+@keyframes tpp-in{from{opacity:0;transform:translateY(-8px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.tpp-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.tpp-title{font-size:13px;font-weight:700;color:var(--ink);letter-spacing:.01em}
+.tpp-x{border:0;background:none;color:var(--mut);cursor:pointer;font-size:14px;line-height:1;padding:2px 5px;border-radius:6px}
+.tpp-x:hover{color:var(--ink);background:var(--soft)}
+.tpp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tpp-opt-auto{grid-column:1/-1;flex-direction:row;align-items:center;gap:10px;padding:8px 10px}
+.tpp-opt-auto .tpp-sw{width:60px;flex:none}
+.tpp-opt{display:flex;flex-direction:column;align-items:flex-start;gap:5px;padding:10px 10px 8px;border:2px solid var(--line);border-radius:12px;background:var(--bg);cursor:pointer;transition:all .15s ease;text-align:left;position:relative}
+.tpp-opt:hover{border-color:var(--acc);background:var(--soft)}
+.tpp-opt.active{border-color:var(--acc);background:var(--soft);box-shadow:0 0 0 1px var(--acc)}
+.tpp-opt.active::after{content:"✓";position:absolute;top:6px;right:8px;font-size:11px;font-weight:800;color:var(--acc)}
+.tpp-sw{width:100%;height:28px;border-radius:7px;border:1px solid rgba(0,0,0,.08);overflow:hidden;display:flex;gap:2px;padding:2px;box-sizing:border-box}
+.tpp-sw>div{flex:1;border-radius:3px}
+.tpb-light{background:#F8FAFC}
+.tpb-light>div:nth-child(1){background:#FFF}
+.tpb-light>div:nth-child(2){background:#0F766E}
+.tpb-light>div:nth-child(3){background:#E2E8F0}
+.tpb-dark{background:#0B0F19}
+.tpb-dark>div:nth-child(1){background:#131B2E}
+.tpb-dark>div:nth-child(2){background:#10B981}
+.tpb-dark>div:nth-child(3){background:#1E293B}
+.tpb-gdark{background:linear-gradient(135deg,#07090f,#0d1a2e)}
+.tpb-gdark>div:nth-child(1){background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15)}
+.tpb-gdark>div:nth-child(2){background:#10B981}
+.tpb-gdark>div:nth-child(3){background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
+.tpb-glight{background:linear-gradient(135deg,#eef2f7,#dde8f0)}
+.tpb-glight>div:nth-child(1){background:rgba(255,255,255,.65);border:1px solid rgba(255,255,255,.6)}
+.tpb-glight>div:nth-child(2){background:#0F766E}
+.tpb-glight>div:nth-child(3){background:rgba(255,255,255,.55)}
+.tpb-auto{background:#E2E8F0}
+.tpp-name{font-size:12.5px;font-weight:700;color:var(--ink);line-height:1.2}
+.tpp-desc{font-size:10.5px;color:var(--mut);line-height:1.2}
+
+/* Mobile: panel pops up from bottom so it's never clipped by header */
+@media(max-width:899px){
+  .tpp-panel{position:fixed;top:auto;bottom:calc(78px + env(safe-area-inset-bottom,0px));right:12px;left:12px;width:auto;z-width:110}
+}
+
+/* ============================================================
+   GLASS DARK TOKEN OVERRIDES
+   ============================================================ */
+:root[data-theme="glass-dark"]{
+  --bg:#07090f;
+  --card:rgba(255,255,255,0.07);
+  --ink:#F0F4FF;
+  --mut:rgba(240,244,255,0.52);
+  --line:rgba(255,255,255,0.11);
+  --acc:#10B981;
+  --soft:rgba(16,185,129,0.14);
+  --pos:#34D399;
+  --neg:#F87171;
+  --warn:#FBBF24;
+  --btn:#10B981;
+  --btn2:#059669;
+  --btnink:#07090f;
+  --sh:0 4px 24px rgba(0,0,0,.5),0 1px 4px rgba(0,0,0,.3);
+  --t1:rgba(69,10,10,.3);--t2:rgba(69,26,3,.3);--t3:rgba(6,78,59,.3);--t4:rgba(49,46,129,.3);
+  --g1:#10B981;--g2:#059669;--on:#10B981;
+  --cartbg:rgba(255,255,255,.05);--dhg:rgba(16,185,129,.08);
+  --ch1:#34D399;--ch2:#60A5FA;--ch3:#A78BFA;--ch4:#FBBF24;--ch5:#FB7185;
+  --table-alt:rgba(255,255,255,.03);--table-hover:rgba(255,255,255,.07);
+  --gblu:blur(22px) saturate(160%);
+  --gbrd:rgba(255,255,255,0.14);
+  --gshi:rgba(255,255,255,0.18);
+  --gcard:rgba(255,255,255,0.07);
+  --gcard-h:rgba(255,255,255,0.11);
+  color-scheme:dark
+}
+
+/* ============================================================
+   GLASS LIGHT TOKEN OVERRIDES
+   ============================================================ */
+:root[data-theme="glass-light"]{
+  --bg:#eef2f7;
+  --card:rgba(255,255,255,0.65);
+  --ink:#0F172A;
+  --mut:rgba(15,23,42,0.5);
+  --line:rgba(15,23,42,0.1);
+  --acc:#0F766E;
+  --soft:rgba(15,118,110,0.08);
+  --pos:#15803D;
+  --neg:#DC2626;
+  --warn:#D97706;
+  --btn:#0F766E;
+  --btn2:#14B8A6;
+  --btnink:#FFF;
+  --sh:0 2px 16px rgba(15,23,42,.1),0 1px 3px rgba(15,23,42,.07);
+  --t1:rgba(254,226,226,.7);--t2:rgba(254,243,199,.7);--t3:rgba(220,252,231,.7);--t4:rgba(237,233,254,.7);
+  --g1:#0F766E;--g2:#14B8A6;--on:#0D9488;
+  --cartbg:rgba(255,255,255,.6);--dhg:rgba(220,252,231,.5);
+  --ch1:#10B981;--ch2:#2563EB;--ch3:#7C3AED;--ch4:#F59E0B;--ch5:#E11D48;
+  --table-alt:rgba(255,255,255,.4);--table-hover:rgba(15,118,110,.06);
+  --gblu:blur(20px) saturate(150%);
+  --gbrd:rgba(255,255,255,0.55);
+  --gshi:rgba(255,255,255,0.75);
+  --gcard:rgba(255,255,255,0.6);
+  --gcard-h:rgba(255,255,255,0.8);
+  color-scheme:light
+}
+
+/* --- Shared glass backdrop blob (single, slow, enterprise) --- */
+:root[data-theme="glass-dark"] body::before,
+:root[data-theme="glass-light"] body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none
+}
+:root[data-theme="glass-dark"] body::before{
+  background:
+    radial-gradient(ellipse 60% 50% at 20% -10%,rgba(15,118,110,.22) 0%,transparent 70%),
+    radial-gradient(ellipse 50% 45% at 85% 15%,rgba(37,99,235,.14) 0%,transparent 65%)
+}
+:root[data-theme="glass-light"] body::before{
+  background:
+    radial-gradient(ellipse 60% 50% at 15% -5%,rgba(15,118,110,.12) 0%,transparent 70%),
+    radial-gradient(ellipse 50% 45% at 85% 10%,rgba(99,102,241,.08) 0%,transparent 65%)
+}
+/* All content sits above blob */
+:root[data-theme="glass-dark"] body>*,
+:root[data-theme="glass-light"] body>*{position:relative;z-index:1}
+
+/* --- Body background --- */
+:root[data-theme="glass-dark"] body{background:#07090f}
+:root[data-theme="glass-light"] body{background:#eef2f7}
+
+/* --- Glass surface mixin — cards, panels, columns --- */
+:root[data-theme="glass-dark"] .card,
+:root[data-theme="glass-dark"] .stat,
+:root[data-theme="glass-dark"] .more-card,
+:root[data-theme="glass-dark"] .wlt-card,
+:root[data-theme="glass-dark"] .task-column,
+:root[data-theme="glass-dark"] .task-card,
+:root[data-theme="glass-dark"] .salat-box,
+:root[data-theme="glass-dark"] .h-custom-bar,
+:root[data-theme="glass-dark"] .svc-bar-wrap,
+:root[data-theme="glass-dark"] #vPos .pos-cart,
+:root[data-theme="glass-dark"] #vPos .pos-products{
+  background:var(--gcard);-webkit-backdrop-filter:var(--gblu);backdrop-filter:var(--gblu);
+  border:1px solid var(--gbrd);box-shadow:var(--sh),inset 0 1px 0 var(--gshi)
+}
+:root[data-theme="glass-light"] .card,
+:root[data-theme="glass-light"] .stat,
+:root[data-theme="glass-light"] .more-card,
+:root[data-theme="glass-light"] .wlt-card,
+:root[data-theme="glass-light"] .task-column,
+:root[data-theme="glass-light"] .task-card,
+:root[data-theme="glass-light"] .salat-box,
+:root[data-theme="glass-light"] .h-custom-bar,
+:root[data-theme="glass-light"] .svc-bar-wrap,
+:root[data-theme="glass-light"] #vPos .pos-cart,
+:root[data-theme="glass-light"] #vPos .pos-products{
+  background:var(--gcard);-webkit-backdrop-filter:var(--gblu);backdrop-filter:var(--gblu);
+  border:1px solid var(--gbrd);box-shadow:var(--sh),inset 0 1px 0 var(--gshi)
+}
+
+/* --- Glass header --- */
+:root[data-theme="glass-dark"] .top,
+:root[data-theme="glass-light"] .top{
+  background:var(--gcard);-webkit-backdrop-filter:var(--gblu);backdrop-filter:var(--gblu);
+  border-color:var(--gbrd);box-shadow:0 8px 32px rgba(0,0,0,.18),inset 0 1px 0 var(--gshi)
+}
+/* Top shine on header */
+:root[data-theme="glass-dark"] .top::after,
+:root[data-theme="glass-light"] .top::after{
+  content:"";position:absolute;inset:0 0 65% 0;border-radius:inherit;
+  background:linear-gradient(180deg,var(--gshi),transparent);pointer-events:none
+}
+.top{position:relative} /* needed for ::after pseudo */
+
+/* --- Glass tabs/nav --- */
+:root[data-theme="glass-dark"] .tabs,
+:root[data-theme="glass-light"] .tabs{
+  background:var(--gcard);-webkit-backdrop-filter:var(--gblu);backdrop-filter:var(--gblu);
+  border-color:var(--gbrd);box-shadow:0 -4px 20px rgba(0,0,0,.12),inset 0 1px 0 var(--gshi)
+}
+
+/* --- Glass modals --- */
+:root[data-theme="glass-dark"] .dlg,
+:root[data-theme="glass-light"] .dlg{
+  background:var(--gcard);-webkit-backdrop-filter:blur(32px) saturate(180%);backdrop-filter:blur(32px) saturate(180%);
+  border:1px solid var(--gbrd);box-shadow:0 20px 60px rgba(0,0,0,.3),inset 0 1px 0 var(--gshi)
+}
+:root[data-theme="glass-dark"] .ov{background:rgba(0,0,0,.62)}
+:root[data-theme="glass-light"] .ov{background:rgba(15,23,42,.35)}
+:root[data-theme="glass-dark"] .oa,
+:root[data-theme="glass-light"] .oa{
+  background:var(--gcard);-webkit-backdrop-filter:var(--gblu);backdrop-filter:var(--gblu)
+}
+
+/* --- Glass sync pill --- */
+:root[data-theme="glass-dark"] .top-sync-pill,
+:root[data-theme="glass-light"] .top-sync-pill{
+  background:var(--gcard);-webkit-backdrop-filter:var(--gblu);backdrop-filter:var(--gblu);
+  border-color:var(--gbrd)
+}
+
+/* --- Glass more items --- */
+:root[data-theme="glass-dark"] .more-item,
+:root[data-theme="glass-light"] .more-item{
+  background:var(--gcard);-webkit-backdrop-filter:var(--gblu);backdrop-filter:var(--gblu);
+  border-color:var(--gbrd)
+}
+:root[data-theme="glass-dark"] .more-item:hover,
+:root[data-theme="glass-light"] .more-item:hover{background:var(--gcard-h)}
+
+/* --- Glass prayer popover & role dropdown --- */
+:root[data-theme="glass-dark"] .hdr-prayer-popover,
+:root[data-theme="glass-dark"] .role-dropdown,
+:root[data-theme="glass-light"] .hdr-prayer-popover,
+:root[data-theme="glass-light"] .role-dropdown{
+  background:var(--gcard);-webkit-backdrop-filter:blur(28px) saturate(170%);backdrop-filter:blur(28px) saturate(170%);
+  border-color:var(--gbrd);box-shadow:0 16px 48px rgba(0,0,0,.22),inset 0 1px 0 var(--gshi)
+}
+
+/* --- Glass theme picker panel --- */
+:root[data-theme="glass-dark"] .tpp-panel,
+:root[data-theme="glass-light"] .tpp-panel{
+  background:var(--gcard);-webkit-backdrop-filter:blur(28px) saturate(170%);backdrop-filter:blur(28px) saturate(170%);
+  border-color:var(--gbrd);box-shadow:0 20px 60px rgba(0,0,0,.28),inset 0 1px 0 var(--gshi)
+}
+
+/* --- Glass toast + savechk --- */
+:root[data-theme="glass-dark"] .toast,
+:root[data-theme="glass-light"] .toast{
+  -webkit-backdrop-filter:var(--gblu);backdrop-filter:var(--gblu)
+}
+
+/* --- SOLID overrides — never glass (readability) ---
+   Transaction tables, inputs, buttons stay fully solid */
+:root[data-theme="glass-dark"] input,
+:root[data-theme="glass-dark"] select,
+:root[data-theme="glass-dark"] textarea{
+  background:rgba(0,0,0,.3)!important;border-color:var(--gbrd)!important;color:var(--ink)!important
+}
+:root[data-theme="glass-light"] input,
+:root[data-theme="glass-light"] select,
+:root[data-theme="glass-light"] textarea{
+  background:rgba(255,255,255,.75)!important;border-color:var(--gbrd)!important;color:var(--ink)!important
+}
+:root[data-theme="glass-dark"] .go,
+:root[data-theme="glass-light"] .go{
+  background:linear-gradient(135deg,var(--btn),var(--btn2))!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important
+}
