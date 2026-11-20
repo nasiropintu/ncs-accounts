@@ -1,61 +1,160 @@
-# NCS Accounts: Android + Windows apps (one-time setup)
+# NCS Accounts: Android + Windows Apps & Cloud Sync Setup
 
-You do this once. After that, every update is just "upload files to GitHub".
+This guide covers one-time initial setup, Google Apps Script sync configuration, credential management, security guidelines, and the release process.
 
-## 1. Put the project in your GitHub repository
-1. Unzip `ncs-native-project.zip` on your PC.
-2. Open your repository on github.com, then **Add file → Upload files**.
-3. Drag in everything from the unzipped folder (all files and the folders `.github`, `electron`, `native`, `scripts`, `build`). Click **Commit changes**.
-   - GitHub accepts up to 100 files per upload. This project is under that.
-   - If the hidden `.github` folder does not upload, use **Add file → Create new file**, type `.github/workflows/build.yml` as the name, and paste the contents of that file.
-4. The repository must be **Public** (the apps download updates from its Releases page). Your `config.js` is encrypted, so this is safe.
+---
 
-## 2. Allow the build to publish releases
-Repository **Settings → Actions → General → Workflow permissions → Read and write permissions → Save**.
+## 1. Zero-Trust Security & Repository Setup
 
-## 3. (Nothing to do) Build runs on GitHub's servers
-No Android Studio, no Node.js, nothing to install on your PC.
+The GitHub repository is **Public** so that mobile and desktop clients can download automated live updates from GitHub Releases.
 
-## 4. Add the signing key (so the phone app can always update)
-Open `PRIVATE-signing-secrets.txt`. In the repository go to **Settings → Secrets and variables → Actions → New repository secret** and create two secrets:
-- Name `ANDROID_KEYSTORE_PASSWORD`, value from the file.
-- Name `ANDROID_KEYSTORE_B64`, value is the long line from the file.
+> [!IMPORTANT]
+> **Zero-Trust Rule**: Never commit secrets (API keys, tokens, or live Google Apps Script URLs) to GitHub.
+> - `config.js` and `Code.gs` are strictly ignored by `.gitignore` and must never be committed.
+> - Reference templates with dummy placeholders are provided in the repo:
+>   - `config.example.js` (client config template)
+>   - `Code.example.gs` (Google Apps Script sync backend template)
+> - Live credentials belong **only** inside device local storage (via in-app Settings) or your private Google Apps Script project.
 
-Keep `PRIVATE-signing-secrets.txt` backed up. Never upload it to GitHub.
+### Initial Repository Upload
+1. Clone or download your repository.
+2. Ensure `.gitignore` includes `config.js` and `Code.gs`.
+3. Commit and push the project files to your GitHub repository (`nasiropintu/ncs-accounts`).
+4. Ensure GitHub Actions workflow permissions allow publishing:
+   **Settings → Actions → General → Workflow permissions → Read and write permissions → Save**.
 
-## 5. Build
-Open the **Actions** tab, pick **Build NCS apps**, press **Run workflow**. It takes about 10 to 20 minutes.
-When it is green, open the **Releases** page on the right side of the repository. You will see:
-- `NCS-Accounts-<version>.apk` (phone)
-- `NCS-Accounts-Setup-<version>.exe` (PC)
+---
 
-## 6. Install
-- **Phone:** open the Releases page in the phone browser, download the `.apk`, tap it. Android will ask to allow "install unknown apps" for your browser. Allow it once.
-- **PC:** run the Setup `.exe`. Windows may show "Windows protected your PC": click **More info → Run anyway** (the app is not code-signed, which costs money).
+## 2. Google Apps Script Sync Backend Setup
 
-## 7. First start on each device
-The native apps have their own storage, separate from the PWA. Open the app, enter the **shop passphrase**, and it syncs from your Google Sheet.
-Before switching a device over, open the old PWA and let it sync (or take a JSON backup) so nothing is left only on that device.
+1. Open your target Google Sheet (or create a new one).
+2. Go to **Extensions → Apps Script**.
+3. Copy the entire contents of [`Code.example.gs`](file:///c:/Users/User/Desktop/NCS%20WORK%20-%20STATION/ncs-accounts-main/Code.example.gs) into the editor (replacing all code).
+4. Configure your secret token:
+   Generate a high-entropy secret token (32+ random characters), for example using Node.js:
+   ```bash
+   node -e "console.log(require('crypto').randomBytes(24).toString('hex'))"
+   ```
+   Add it to `VALID_KEYS` in your Apps Script:
+   ```javascript
+   const VALID_KEYS = [
+     'YOUR_STRONG_SECRET_TOKEN_HERE'
+   ];
+   ```
+5. Click **Save** (Ctrl+S).
+6. Click **Deploy → New deployment**:
+   - Type: **Web app**
+   - Execute as: **Me**
+   - Who has access: **Anyone**
+7. Click **Deploy** and copy the **Web app URL** (ends in `/exec`).
 
-## 8. Releasing an update (every time)
-1. Change the app as usual. **Raise `APP_VERSION` in `index.html`** (your handover rules already require this).
-2. Upload the changed files to the repository (same as before).
-3. The build starts by itself and creates a new release.
-4. Devices update on their own:
-   - **Phone:** the new version downloads quietly in the background. A green bar appears: tap **Restart now**, or it applies the next time the app is closed and reopened.
-   - **PC:** a dialog says "Update ready". Pick **Restart now** or **Later** (it then installs when you close the app). Help menu → Check for updates also works.
+---
 
-If `APP_VERSION` is not raised, the build says "Nothing to build" and does nothing. That is on purpose.
+## 3. Configuring Sync on Each Device
 
-You only need to install a new `.apk` by hand if the native part changes (new permission, new plugin). That is rare, and the handover notes will say so.
+On each device (Web PWA, Android APK, or Windows PC):
+1. Open the NCS Accounts app.
+2. Go to **More → Settings (System Settings)**.
+3. Paste the **Web app URL** into the `Google Sheet sync URL (Web App)` field.
+4. Enter the matching token into the `Sync API Key / Token` field.
+5. Tap **⚡ Test Connection** to verify connection, authentication, and current server revision.
+6. Tap **Save**. Sync will immediately pull current state and begin auto-syncing.
 
-## Files in this project
-| Path | What it is |
+> [!TIP]
+> **Shared Workstations**: If using a public or shared computer, use the **🗑 Clear Credentials** button in Settings or Diagnostics to purge the stored URL and Key from `localStorage` before leaving.
+
+### Seamless Token Rotation (Zero-Downtime)
+To rotate a compromised or retired key:
+1. Generate a new secret token.
+2. In Google Apps Script, add the new token to `VALID_KEYS` alongside the old one:
+   ```javascript
+   const VALID_KEYS = [
+     'NEW_STRONG_SECRET_TOKEN',
+     'OLD_TOKEN_DURING_MIGRATION'
+   ];
+   ```
+3. Deploy as a **New Version**.
+4. Update each device via **Settings → Sync API Key**.
+5. Once all devices are updated, remove the old token from `VALID_KEYS` and redeploy.
+
+---
+
+## 4. Android Code Signing Setup (CI Pipeline)
+
+To allow the Android app to sign release builds and auto-update:
+1. Open `PRIVATE-signing-secrets.txt` on your local PC (keep this file secure; never upload to git).
+2. In your repository on GitHub, go to **Settings → Secrets and variables → Actions → New repository secret**.
+3. Create two secrets:
+   - `ANDROID_KEYSTORE_PASSWORD`: Keystore password from your private file.
+   - `ANDROID_KEYSTORE_B64`: Base64 string of the keystore from your private file.
+
+---
+
+## 5. Automated Build & Verification Pipeline
+
+Builds run entirely in the cloud via GitHub Actions (`.github/workflows/build.yml`):
+- **Automated QA Gate**: Runs `npm test` (97 unit tests covering accounting, wallets, ledger balance, and sync conflict resolution). The build will fail fast if any test breaks.
+- **APK Verification Gate**: Mandatorily verifies cryptographic signature with `apksigner verify` before releasing.
+- **Artifacts Produced**:
+  - `NCS-Accounts-<version>.apk` (Android)
+  - `NCS-Accounts-Setup-<version>.exe` (Windows x64)
+  - `www.zip` + `update.json` (OTA differential updates)
+
+---
+
+## 6. Installation & Client Updates
+
+- **Phone (Android)**: Download the `.apk` from the Releases page and install. Subsequent updates apply over-the-air in the background (restart prompt appears).
+- **PC (Windows)**: Run `NCS-Accounts-Setup-<version>.exe`. Background updates are handled automatically by electron-updater.
+- **Web PWA**: Access the GitHub Pages deployment; updates refresh automatically through Service Worker cache invalidation (`sw.js`).
+
+---
+
+## 7. Releasing an Update (Development Protocol)
+
+1. Make changes in `src/` following the Two-Tree contract (Rule 39).
+2. **Version Bump Protocol**:
+   - `APP_VERSION` in `src/js/10-sound-clock.js` (canonical source)
+   - Add new entry at index 0 of `VERS` and `UPC` in `src/js/10-sound-clock.js`
+   - Bump version in `package.json` and `.native-version.json`
+   - Increment Service Worker cache version in `sw.js` (e.g., `ncs-v88`)
+   - Update script asset tag `?v=<version>` in `src/template.html`
+   - Log release in `HANDOVER.md`
+3. **Compile and Test**:
+   ```bash
+   npm run prepare-www
+   ```
+   This automatically runs `npm test` (all 97 tests must pass) and compiles `src/` into `index.html` and `www/`.
+4. **Mirror & Commit**:
+   Mirror files to the local git clone, commit, and push to `origin/main`.
+   GitHub Actions will automatically trigger, run tests, build native binaries, and publish the release.
+
+---
+
+## 8. Storage & Client-Side Security Architecture
+
+- **Browser Storage Boundary (SEC-05)**:
+  `localStorage` and `IndexedDB` rely on OS-level device access controls (Android screen lock / biometric, Windows user account isolation).
+- **Disaster Recovery Rollbacks**:
+  Disaster recovery cloud overwrites require Admin PIN confirmation and automatically generate an immutable snapshot in Google Sheets (`Snapshot_PreRecovery_<datetime>`).
+- **Encrypted Manual Backups**:
+  Use **More → Settings → Download data backup** with the **Password-protected (AES-GCM encrypted)** option to export encrypted backups (`.json.enc`) using PBKDF2 (100,000 iterations) + AES-GCM-256.
+
+---
+
+## Files in this Project
+
+| Path | Purpose |
 |---|---|
-| `index.html`, `sw.js`, `config.js`, fonts, icons | Your PWA (unchanged, still works on the web) |
-| `native/bridge.js` | Makes share, save-file, print and live updates work on Android; turns the service worker off in native apps |
-| `scripts/prepare-www.js` | Copies the app into `www/` for both native apps and adds the bridge (your `index.html` is never edited) |
-| `scripts/android-setup.js` | Creates the Android project and applies camera permission, signing, icons, print support |
-| `electron/main.js` | Windows app window and auto-updater |
-| `electron-builder.config.js` | Windows installer settings |
-| `.github/workflows/build.yml` | The cloud build |
+| `src/` | Modular ES6/JS source code, CSS, and HTML template |
+| `tests/` | Automated QA test suites (accounting, wallet, ledger, sync-conflict) |
+| `index.html` | Compiled single-page web app bundle |
+| `sw.js` | Service Worker providing offline caching for PWA |
+| `config.example.js` | Template for client-side configuration (gitignored `config.js`) |
+| `Code.example.gs` | Template for Google Apps Script sync backend (gitignored `Code.gs`) |
+| `scripts/build.js` | AST-validated modular JS compiler |
+| `scripts/prepare-www.js` | Prepares `www/` payload for native apps and runs QA tests |
+| `scripts/android-setup.js` | Generates Capacitor Android project |
+| `electron/` | Electron Windows shell and auto-updater scripts |
+| `.github/workflows/build.yml` | GitHub Actions CI/CD release workflow |
+| `HANDOVER.md` | Primary architectural and protocol documentation |

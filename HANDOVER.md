@@ -1,11 +1,11 @@
-# NCS Accounts — Handover | v11.19.0 | ncs-v87 | 18:36 UTC+6
+# NCS Accounts — Handover | v11.20.0 | ncs-v88 | 20:45 UTC+6
 
 | | |
 |---|---|
 | **Shop** | Nur Computer & Stationery |
-| **Current version** | **v11.17.0** (`versionCode 111700`) |
-| **Service worker cache** | `ncs-v85` |
-| **Last entry** | 2026-11-20 17:00 (UTC+6)
+| **Current version** | **v11.20.0** (`versionCode 112000`) |
+| **Service worker cache** | `ncs-v88` |
+| **Last entry** | 2026-11-20 20:45 (UTC+6)
 | **Contributors** | Claude profiles, Antigravity, Manus |
 
 Two Claude profiles work on this app and **do not share memory**. This file is their shared memory.
@@ -222,6 +222,22 @@ GET protocol restored for `getRemote()`, `importPos()` and `importCatalog()`. `b
 ### Sync and support
 37. **Auto-Sync (v10.0.0-beta).** Every `save()` MUST trigger `schedulePush()`. Do not rely on manual refresh buttons.
 38. **Bug Reporting and Support Dispatch (v10.1.1).** The More-tab Bug Report modal gives 1-tap WhatsApp dispatch to `+8801765420566` with pre-filled version, timestamp, role, activity, issue description and `getLastError()`. It also offers one-click clipboard copy of the full diagnostic payload and a log download fallback.
+40. **Zero-Trust Sync Protocol & Secrets Boundary (v11.16.0 - v11.20.0).**
+    - Never commit secrets to git. `config.js` and `Code.gs` are strictly ignored by `.gitignore`. Reference templates `config.example.js` and `Code.example.gs` must be used for public distribution.
+    - Client credentials live in device `localStorage` (`ncs_sync_url`, `ncs_sync_key`) and are configured in-app via Settings.
+    - Google Apps Script supports dual-key rotation (`VALID_KEYS` array) for zero-downtime key rotation.
+    - Authenticated POST protocol with fallback chain and `redirect: 'follow'` ensures reliable communication through GAS redirects.
+    - Revisions are server-assigned monotonic integers (`nextRev = cur.rev + 1`) locked via LockService, eliminating client revision spoofing.
+    - Pre-recovery automated rollback snapshots (`Snapshot_PreRecovery_<datetime>`) are created before any admin disaster recovery overwrite.
+    - Formula injection is neutralized in `Code.gs` via `escFormula_` (single-quote prefixing on `=`, `+`, `-`, `@`) and client-side `csvCell`.
+41. **Automated QA Test Gate & Financial Arithmetic Invariants (v11.19.0 - v11.20.0).**
+    - All financial calculations (`calc()`, `cashBook()`, `lBal()`, `lCombinedBal()`, `isWalletTransfer()`, `checkWalletLimit()`) and sync conflict guards MUST be covered by unit tests under `tests/`.
+    - Run `npm test` (`node --test tests/*.test.js`).
+    - `npm run prepare-www` and GitHub Actions CI automatically gate builds on 100% test pass. Never bypass this gate.
+42. **Storage Security & Client Trust Boundary (v11.20.0 - SEC-05).**
+    - Browser `localStorage` and `IndexedDB` rely on OS-level device access controls (Android screen lock / biometric, Windows user account isolation).
+    - On shared or public workstations, use the 1-click **"Clear Credentials"** button in Settings or Diagnostics to purge cached credentials.
+    - For long-term backups and data migration, use the built-in AES-GCM-256 password-encrypted backup export (`NCS_Backup_*.json.enc`) using PBKDF2 (100,000 iterations).
 
 ---
 
@@ -347,6 +363,31 @@ The five-colour chart palette (formerly Phase 1b) was delivered in v10.4.0.
 
 ## 7. Session Log
 *Newest first. Each entry is a version, a timestamp (UTC+6) and an author.*
+
+### v11.20.0 · 2026-11-20 20:45 · Antigravity
+**Phase 4 Documentation Alignment, Zero-Trust Architecture & Storage Security (SEC-05, DOC-01).**
+- **1-Tap Credential Wipe:** Added `[🗑 Clear Credentials]` button to both System Settings (`03-accounts.js`) and Diagnostics modal (`05-shell.js`), enabling users on shared PCs to immediately purge cached `ncs_sync_url` and `ncs_sync_key` from `localStorage` and reset memory sync state to `off`.
+- **Storage Security Boundary Documented (SEC-05):** Formally documented client trust boundary in `SETUP.md` and `HANDOVER.md` Rule 42. `localStorage` and `IndexedDB` rely on OS-level isolation (Android screen locks, Windows user account sandboxes); sensitive backups utilize AES-GCM-256 with PBKDF2 (100k rounds).
+- **SETUP.md Complete Overhaul:** Replaced misleading statements about automated repo encryption with full zero-trust documentation, in-app sync setup, zero-downtime dual-key rotation steps, and CI build pipeline instructions.
+- **HANDOVER.md Reconciliation:** Added Rules 40 (Zero-Trust Sync Protocol & Secrets Boundary), 41 (Automated QA Test Gate & Financial Arithmetic Invariants), and 42 (Storage Security & Client Trust Boundary).
+- Bumped version to 11.20.0 (`versionCode 112000`), cache `ncs-v88`. Verified compilation via `npm run prepare-www` (97 unit tests passing) and AST syntax validator; mirrored per Rule 39.
+
+### v11.19.0 · 2026-11-20 18:35 · Antigravity
+**Phase 3 QA: Automated Financial & Sync Test Suite (QA-01).**
+- **Automated Test Suite (97 tests):** Created comprehensive test suite under `tests/` using Node's native test runner (`node --test tests/*.test.js`):
+  - `tests/accounting.test.js`: 27 tests covering `calc()`, `cashBook()`, `cash()` across all transaction types (Sale, Purchase, Adjustment, Void, Ledger, Mobile Banking, Due), rounding (`r2`), sort order, and cash difference (`df`).
+  - `tests/wallet.test.js`: 26 tests verifying MFS vs Recharge SIM isolation, `WLTC` category-to-wallet mapping integrity, and `isWalletTransfer()` classification.
+  - `tests/ledger.test.js`: 26 tests verifying customer net balance (`lBal()`), void transaction exclusion, sub-account resolution (`lSubAccounts()`), and parent-group aggregate balance (`lCombinedBal()`).
+  - `tests/sync-conflict.test.js`: 18 tests verifying server `isConflict()` guard, monotonic `nextRev` progression, client `pullDecision()` action routing, conflict retry budget, and `applyRemote` local key preservation.
+- **Build Gating:** Updated `package.json` `prepare-www` script to run tests before compilation; updated `.github/workflows/build.yml` to enforce `npm test` before any build artifact is generated.
+- Bumped version to 11.19.0 (`versionCode 111900`), cache `ncs-v87`. Verified 97/97 tests pass; mirrored per Rule 39.
+
+### v11.18.0 · 2026-11-20 17:15 · Antigravity
+**Sync Reliability Hotfix: Multi-Content-Type POST & Graceful GET Fallback.**
+- **Robust Fetch Protocol:** All sync requests (`getRemote`, `push`, `importPos`, `importCatalog`, and test connection ping) updated to try `Content-Type: application/json` with `redirect: 'follow'` first, followed by `text/plain`, and falling back to GET where payload size allows.
+- **GAS Redirect Resolution:** Added `redirect: 'follow'` to resolve silent 302 redirect failures in Google Apps Script published web apps.
+- **Secret Extraction from Git:** Added `Code.gs` to `.gitignore`, created safe template `Code.example.gs`, and untracked live backend file from the repository.
+- Bumped version to 11.18.0 (`versionCode 111800`), cache `ncs-v86`. Verified compilation via `npm run prepare-www`; mirrored per Rule 39.
 
 ### v11.17.0 · 2026-11-20 17:00 · Antigravity
 **Phase 2 Build Toolchain, Electron & CI/CD Defense (Manus.im Audit Remediation).**

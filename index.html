@@ -2488,7 +2488,7 @@ function applyTheme(){
   document.addEventListener('click',function(e){if(wrap&&!wrap.contains(e.target)&&!panel.contains(e.target))close();});
   document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
 })();
- $('set').onclick=()=>ask(lb('Settings','সেটিংস'),`<div class="f"><label>${lb('Starting cash','শুরুর ক্যাশ')}</label><input id="s1" type="number" min="0" step="any" value="${S.start||0}"></div><div class="f"><label class="tg" style="justify-content:space-between"><span>${lb('Sound effects','সাউন্ড ইফেক্ট')} <small class="mut">(tick, cha-ching, buzz, chime)</small></span><input type="checkbox" id="snd" ${S.sound?'checked':''}></label><button type="button" class="ghost" id="sndTest" style="margin-top:6px;height:32px;font-size:13px">▶ ${lb('Test sound','সাউন্ড টেস্ট')}</button></div><div class="f"><label>${lb('Reason for changing opening cash (required when changed)','শুরুর ক্যাশ পরিবর্তনের কারণ (পরিবর্তন করলে আবশ্যক)')}</label><input id="s1r" maxlength="160"></div><div class="f"><label>${lb('Google Sheet sync URL (Web App)','গুগল শিট সিঙ্ক URL (ওয়েব অ্যাপ)')}</label><input id="s4" value="${esc(syncUrl())}"></div><div class="f"><label>${lb('Sync API Key / Token','সিঙ্ক এপিআই কী / টোকেন')}</label><input id="s5" type="password" value="${esc(syncKey())}"></div><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><button type="button" class="ghost" id="testSyncConn" style="height:32px;font-size:12.5px">⚡ ${lb('Test Connection','সংযোগ পরীক্ষা')}</button><div id="testSyncStatus" style="font-size:12.5px"></div></div><button type="button" class="ghost" id="setpin">${lb('Change admin PIN','এডমিন পিন পরিবর্তন')}</button> <button type="button" class="ghost" id="ssu">${lb('Secure sync setup','সিকিউর সিঙ্ক সেটআপ')}</button> <button type="button" class="ghost" id="sfr" style="color:var(--neg)">${lb('Start fresh (carry forward balances)','নতুন শুরু (ব্যালেন্স এগিয়ে নেওয়া)')}</button> <button type="button" class="ghost" id="backupJson">${lb('Download data backup','ডাটা ব্যাকআপ ডাউনলোড')}</button> <button type="button" class="ghost" id="restoreJson">${lb('Restore from backup','ব্যাকআপ থেকে রিস্টোর')}</button><p class="mut" style="font-size:12.5px;margin:8px 0 0">${lb('Backups are files you download; the app does not back up by itself. Data lives in this browser, and in the Google Sheet only if sync is on. Keep a recent download off this device (for example in Drive).','ব্যাকআপ হলো ডাউনলোড করা ফাইল; অ্যাপ নিজে ব্যাকআপ নেয় না। তথ্য এই ব্রাউজারে থাকে, আর সিঙ্ক চালু থাকলে গুগল শিটে। সাম্প্রতিক একটি ডাউনলোড এই ডিভাইসের বাইরে রাখুন (যেমন ড্রাইভে)।')} ${S.lastBackup?lb('Last download from this device: ','এই ডিভাইস থেকে শেষ ডাউনলোড: ')+sd(iso(new Date(S.lastBackup))):lb('No backup downloaded from this device yet.','এই ডিভাইস থেকে এখনো ব্যাকআপ ডাউনলোড হয়নি।')}</p>`,()=>{const before={start:S.start,sync:S.sync,sound:S.sound},raw=$('s1').value.trim(),start=raw===''?NaN:Number(raw),old=+S.start||0,reason=$('s1r').value.trim();if(!Number.isFinite(start)||start<0)return false;if(start!==old){if(!reason){$('s1r').style.borderColor='var(--neg)';return false}lg('Opening cash changed',old+' → '+start+' · '+reason);S.start=start}const u4=$('s4').value.trim(),k5=$('s5').value.trim();if(u4&&k5){S.sync={url:u4,key:k5};try{localStorage.setItem('ncs_sync_url',u4);localStorage.setItem('ncs_sync_key',k5)}catch(e){}}else{S.sync=null;try{localStorage.removeItem('ncs_sync_url');localStorage.removeItem('ncs_sync_key')}catch(e){}}S.sound=!!$('snd').checked;if(!save()){Object.assign(S,before);if(start!==old)S.log.shift();return false}pull();applyTheme();render()},lb('Save','সংরক্ষণ'));
+ $('set').onclick=()=>ask(lb('Settings','সেটিংস'),`<div class="f"><label>${lb('Starting cash','শুরুর ক্যাশ')}</label><input id="s1" type="number" min="0" step="any" value="${S.start||0}"></div><div class="f"><label class="tg" style="justify-content:space-between"><span>${lb('Sound effects','সাউন্ড ইফেক্ট')} <small class="mut">(tick, cha-ching, buzz, chime)</small></span><input type="checkbox" id="snd" ${S.sound?'checked':''}></label><button type="button" class="ghost" id="sndTest" style="margin-top:6px;height:32px;font-size:13px">▶ ${lb('Test sound','সাউন্ড টেস্ট')}</button></div><div class="f"><label>${lb('Reason for changing opening cash (required when changed)','শুরুর ক্যাশ পরিবর্তনের কারণ (পরিবর্তন করলে আবশ্যক)')}</label><input id="s1r" maxlength="160"></div><div class="f"><label>${lb('Google Sheet sync URL (Web App)','গুগল শিট সিঙ্ক URL (ওয়েব অ্যাপ)')}</label><input id="s4" value="${esc(syncUrl())}"></div><div class="f"><label>${lb('Sync API Key / Token','সিঙ্ক এপিআই কী / টোকেন')}</label><input id="s5" type="password" value="${esc(syncKey())}"></div><div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap"><button type="button" class="ghost" id="testSyncConn" style="height:32px;font-size:12.5px">⚡ ${lb('Test Connection','সংযোগ পরীক্ষা')}</button><button type="button" class="ghost" id="clearSyncCreds" style="height:32px;font-size:12.5px;color:var(--neg)">🗑 ${lb('Clear Credentials','ক্রেডেনশিয়াল মুছুন')}</button><div id="testSyncStatus" style="font-size:12.5px"></div></div><button type="button" class="ghost" id="setpin">${lb('Change admin PIN','এডমিন পিন পরিবর্তন')}</button> <button type="button" class="ghost" id="ssu">${lb('Secure sync setup','সিকিউর সিঙ্ক সেটআপ')}</button> <button type="button" class="ghost" id="sfr" style="color:var(--neg)">${lb('Start fresh (carry forward balances)','নতুন শুরু (ব্যালেন্স এগিয়ে নেওয়া)')}</button> <button type="button" class="ghost" id="backupJson">${lb('Download data backup','ডাটা ব্যাকআপ ডাউনলোড')}</button> <button type="button" class="ghost" id="restoreJson">${lb('Restore from backup','ব্যাকআপ থেকে রিস্টোর')}</button><p class="mut" style="font-size:12.5px;margin:8px 0 0">${lb('Backups are files you download; the app does not back up by itself. Data lives in this browser, and in the Google Sheet only if sync is on. Keep a recent download off this device (for example in Drive).','ব্যাকআপ হলো ডাউনলোড করা ফাইল; অ্যাপ নিজে ব্যাকআপ নেয় না। তথ্য এই ব্রাউজারে থাকে, আর সিঙ্ক চালু থাকলে গুগল শিটে। সাম্প্রতিক একটি ডাউনলোড এই ডিভাইসের বাইরে রাখুন (যেমন ড্রাইভে)।')} ${S.lastBackup?lb('Last download from this device: ','এই ডিভাইস থেকে শেষ ডাউনলোড: ')+sd(iso(new Date(S.lastBackup))):lb('No backup downloaded from this device yet.','এই ডিভাইস থেকে এখনো ব্যাকআপ ডাউনলোড হয়নি।')}</p>`,()=>{const before={start:S.start,sync:S.sync,sound:S.sound},raw=$('s1').value.trim(),start=raw===''?NaN:Number(raw),old=+S.start||0,reason=$('s1r').value.trim();if(!Number.isFinite(start)||start<0)return false;if(start!==old){if(!reason){$('s1r').style.borderColor='var(--neg)';return false}lg('Opening cash changed',old+' → '+start+' · '+reason);S.start=start}const u4=$('s4').value.trim(),k5=$('s5').value.trim();if(u4&&k5){S.sync={url:u4,key:k5};try{localStorage.setItem('ncs_sync_url',u4);localStorage.setItem('ncs_sync_key',k5)}catch(e){}}else{S.sync=null;try{localStorage.removeItem('ncs_sync_url');localStorage.removeItem('ncs_sync_key')}catch(e){}}S.sound=!!$('snd').checked;if(!save()){Object.assign(S,before);if(start!==old)S.log.shift();return false}pull();applyTheme();render()},lb('Save','সংরক্ষণ'));
  $('ob').addEventListener('click', async e => {
     if (e.target.id === 'testSyncConn') {
       const u = $('s4') ? $('s4').value.trim() : syncUrl();
@@ -2525,6 +2525,21 @@ function applyTheme(){
         if (stEl) stEl.innerHTML = '<span style="color:var(--neg)">✗ ' + lb('Connection failed: ', 'সংযোগ ব্যর্থ: ') + (err.message || lb('Network error', 'নেটওয়ার্ক ত্রুটি')) + '</span>';
         try { Sound.buzz(); } catch (x) {}
       }
+    }
+    if (e.target.id === 'clearSyncCreds') {
+      if (!confirm(lb('Clear Google Sheet sync URL and Key from this device?', 'এই ডিভাইস থেকে গুগল শিট সিঙ্ক লিঙ্ক ও কী মুছে ফেলবেন?'))) return;
+      try {
+        localStorage.removeItem('ncs_sync_url');
+        localStorage.removeItem('ncs_sync_key');
+      } catch(x){}
+      S.sync = null;
+      if ($('s4')) $('s4').value = '';
+      if ($('s5')) $('s5').value = '';
+      const stEl = $('testSyncStatus');
+      if (stEl) stEl.innerHTML = '<span style="color:var(--pos)">✓ ' + lb('Credentials cleared.', 'ক্রেডেনশিয়াল মুছে ফেলা হয়েছে।') + '</span>';
+      save();
+      setSt('off');
+      if (typeof ltoast === 'function') ltoast(lb('Sync credentials cleared from this device', 'সিঙ্ক ক্রেডেনশিয়াল মুছে ফেলা হয়েছে'));
     }
     if (e.target.id === 'backupJson') {
       const backup = { app: 'NCS Daily Accounts', version: APP_VERSION, exportedAt: new Date().toISOString(), state: stateOut() };
@@ -3148,6 +3163,11 @@ bugBtn.onclick = function() {
         '<span>' + lb('Download Log', 'লগ ফাইল') + '</span>' +
       '</button>' +
     '</div>' +
+    '<div style="margin-bottom:8px">' +
+      '<button type="button" class="ghost" id="bugClearCreds" style="width:100%;height:34px;font-size:12px;color:var(--neg)">' +
+        '🗑 ' + lb('Clear Local Sync Credentials', 'ডিভাইস থেকে সিঙ্ক তথ্য মুছুন') +
+      '</button>' +
+    '</div>' +
     '<div id="bugStatus" class="mut" style="font-size:12px;text-align:center;min-height:18px"></div>' +
     '<p class="mut" style="font-size:11.5px;margin:4px 0 0;text-align:center">' + lb('Attaches technical log & system state (No customer passwords or private PINs).', 'কারিগরি ডায়াগনস্টিক তথ্য সংযুক্ত থাকবে (কোনো পাসওয়ার্ড বা পিন ছাড়া)।') + '</p>';
 
@@ -3232,6 +3252,23 @@ bugBtn.onclick = function() {
       dlFile(filename, report.text + '\n\n--- JSON ---\n' + JSON.stringify(report, null, 2));
       var st = $('bugStatus');
       if (st) st.innerHTML = '<span style="color:var(--acc)">✓ ' + lb('Downloading bug report file...', 'লগ ফাইল ডাউনলোড হচ্ছে...') + '</span>';
+    };
+  }
+
+  var clrBtn = $('bugClearCreds');
+  if (clrBtn) {
+    clrBtn.onclick = function() {
+      if (!confirm(lb('Remove sync URL and access key from this browser?', 'এই ব্রাউজার থেকে সিঙ্ক লিঙ্ক এবং অ্যাক্সেস কী মুছে ফেলবেন?'))) return;
+      try {
+        localStorage.removeItem('ncs_sync_url');
+        localStorage.removeItem('ncs_sync_key');
+      } catch(e){}
+      S.sync = null;
+      save();
+      setSt('off');
+      var st = $('bugStatus');
+      if (st) st.innerHTML = '<span style="color:var(--pos)">✓ ' + lb('Credentials removed from this device', 'সিঙ্ক তথ্য মুছে ফেলা হয়েছে') + '</span>';
+      if (typeof ltoast === 'function') ltoast(lb('Sync credentials cleared', 'সিঙ্ক তথ্য মোছা হয়েছে'));
     };
   }
 };
@@ -7238,7 +7275,10 @@ function animateCounts(){
 function saveCheck(){if(document.documentElement.dataset.rm)return;var d=document.createElement('div');d.className='savechk';d.innerHTML='<svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="22" fill="none" stroke="var(--acc)" stroke-width="3"/><path d="M14 27l8 8 16-16" fill="none" stroke="var(--acc)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';document.body.appendChild(d);setTimeout(function(){d.classList.add('out')},700);setTimeout(function(){d.remove()},1250)}
 (function(){
   var M="Claude Sonnet 5.5 · owner's Claude account";
-  APP_VERSION='11.19.0';
+  APP_VERSION='11.20.0';
+  VERS.unshift({v:'11.20.0',d:'2026-11-20',t:'Phase 4: Documentation Alignment, Zero-Trust Architecture & Storage Security (SEC-05, DOC-01)',by:'Antigravity',n:['Added 1-tap Clear Credentials button in Settings and Diagnostics modals to instantly purge stored URL and Sync Key from localStorage on shared workstations','Documented client-side storage boundary (SEC-05): localStorage/IndexedDB relies on host OS access controls, while encrypted manual backups use AES-GCM-256 with PBKDF2 (100k iterations)','Complete overhaul of SETUP.md: removed inaccurate statements regarding automated repository encryption, added full in-app credential configuration and zero-downtime dual-key rotation procedures','Reconciled HANDOVER.md: added Rules 40 (Zero-Trust Sync Protocol), 41 (Automated QA & Invariants Gate), and 42 (Storage Security Boundary)']});
+  UPC.unshift({v:'11.20.0',s:'Done',t:['1-tap Clear Credentials in Settings and Diagnostics','Complete SETUP.md and HANDOVER.md documentation alignment','Storage security & trust boundary documentation (SEC-05)','All 4 phases of Manus.im audit and remediation plan fully implemented']});
+  BUGS.unshift({d:'2026-11-20 20:45 (UTC+6)',v:'11.20.0',w:'Antigravity',a:'SETUP.md claimed config.js was encrypted in public repos; no button existed to clear sync credentials on shared PCs; storage security model was undocumented',b:'Legacy setup instructions predated zero-trust in-app sync configuration and modular build toolchain; credentials remained in localStorage indefinitely',c:'Rewrote SETUP.md with zero-trust architecture, added 1-tap credential wipe in Settings & Diagnostics, and updated HANDOVER.md rules and session log'});
   VERS.unshift({v:'11.19.0',d:'2026-11-20',t:'Phase 3 QA: Automated Test Suite — 97 tests covering accounting, wallets, ledger & sync conflict logic',by:'Antigravity',n:['Created tests/accounting.test.js: 27 tests for cash(), calc(), cashBook() covering Sale/Purchase/Adjustment/Void/Ledger/MobileBanking/Due entry types, r2 rounding, sort order, and df difference calculation','Created tests/wallet.test.js: 26 tests for WLT taxonomy (MFS vs Recharge SIM separation), WLTC category-to-key mapping validation, and isWalletTransfer() classification','Created tests/ledger.test.js: 26 tests for lBal() due in/out balance, void exclusion, lSubAccounts() parent-child resolution, and lCombinedBal() group aggregate balance','Created tests/sync-conflict.test.js: 18 tests for server-side isConflict() revision guard, monotonic nextRev increment, pullDecision() client action logic, push retry budget, and applyRemote LOCAL key preservation','Gated npm run prepare-www on passing tests: build now fails fast if any accounting invariant breaks','Added npm test step to .github/workflows/build.yml: CI enforces tests in the version job before any build artifact is produced']});
   UPC.unshift({v:'11.19.0',s:'Done',t:['97 automated tests: accounting, wallets, ledger, sync conflict','npm run prepare-www now gated on test pass','CI workflow enforces tests before build artifacts','QA-01 audit checklist item resolved']});
   BUGS.unshift({d:'2026-11-20 18:28 (UTC+6)',v:'11.19.0',w:'Antigravity',a:'No automated regression coverage — logic changes could silently break financial calculations',b:'calc(), cashBook(), lBal(), lCombinedBal(), isWalletTransfer(), sync conflict guard all had zero unit tests; build had no test gate',c:'Added 97 unit tests across 4 test files and 14 describe suites; gated prepare-www and CI pipeline on test pass'});
@@ -7455,7 +7495,7 @@ if ('serviceWorker' in navigator) {
 
 </script>
 <!-- NCS v10 Sync Engine -->
-<script src="diag.js?v=11.19.0"></script>
-<script src="sync.js?v=11.19.0"></script>
+<script src="diag.js?v=11.20.0"></script>
+<script src="sync.js?v=11.20.0"></script>
 </body>
 </html>

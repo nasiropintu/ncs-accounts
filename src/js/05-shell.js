@@ -116,6 +116,11 @@ bugBtn.onclick = function() {
         '<span>' + lb('Download Log', 'লগ ফাইল') + '</span>' +
       '</button>' +
     '</div>' +
+    '<div style="margin-bottom:8px">' +
+      '<button type="button" class="ghost" id="bugClearCreds" style="width:100%;height:34px;font-size:12px;color:var(--neg)">' +
+        '🗑 ' + lb('Clear Local Sync Credentials', 'ডিভাইস থেকে সিঙ্ক তথ্য মুছুন') +
+      '</button>' +
+    '</div>' +
     '<div id="bugStatus" class="mut" style="font-size:12px;text-align:center;min-height:18px"></div>' +
     '<p class="mut" style="font-size:11.5px;margin:4px 0 0;text-align:center">' + lb('Attaches technical log & system state (No customer passwords or private PINs).', 'কারিগরি ডায়াগনস্টিক তথ্য সংযুক্ত থাকবে (কোনো পাসওয়ার্ড বা পিন ছাড়া)।') + '</p>';
 
@@ -200,6 +205,23 @@ bugBtn.onclick = function() {
       dlFile(filename, report.text + '\n\n--- JSON ---\n' + JSON.stringify(report, null, 2));
       var st = $('bugStatus');
       if (st) st.innerHTML = '<span style="color:var(--acc)">✓ ' + lb('Downloading bug report file...', 'লগ ফাইল ডাউনলোড হচ্ছে...') + '</span>';
+    };
+  }
+
+  var clrBtn = $('bugClearCreds');
+  if (clrBtn) {
+    clrBtn.onclick = function() {
+      if (!confirm(lb('Remove sync URL and access key from this browser?', 'এই ব্রাউজার থেকে সিঙ্ক লিঙ্ক এবং অ্যাক্সেস কী মুছে ফেলবেন?'))) return;
+      try {
+        localStorage.removeItem('ncs_sync_url');
+        localStorage.removeItem('ncs_sync_key');
+      } catch(e){}
+      S.sync = null;
+      save();
+      setSt('off');
+      var st = $('bugStatus');
+      if (st) st.innerHTML = '<span style="color:var(--pos)">✓ ' + lb('Credentials removed from this device', 'সিঙ্ক তথ্য মুছে ফেলা হয়েছে') + '</span>';
+      if (typeof ltoast === 'function') ltoast(lb('Sync credentials cleared', 'সিঙ্ক তথ্য মোছা হয়েছে'));
     };
   }
 };

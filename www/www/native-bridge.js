@@ -5,7 +5,7 @@
 (function () {
   'use strict';
   var REPO = 'nasiropintu/ncs-accounts';
-  var NATIVE_VERSION = '11.19.0';
+  var NATIVE_VERSION = '11.20.0';
 
   var cap = window.Capacitor;
   var isAndroid = !!(cap && cap.isNativePlatform && cap.isNativePlatform());
