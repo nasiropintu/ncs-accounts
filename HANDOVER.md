@@ -1,4 +1,4 @@
-# NCS Accounts — Handover | v11.18.0 | ncs-v86 | 17:15 UTC+6
+# NCS Accounts — Handover | v11.19.0 | ncs-v87 | 18:36 UTC+6
 
 | | |
 |---|---|

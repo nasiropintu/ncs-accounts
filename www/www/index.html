@@ -7238,7 +7238,10 @@ function animateCounts(){
 function saveCheck(){if(document.documentElement.dataset.rm)return;var d=document.createElement('div');d.className='savechk';d.innerHTML='<svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="22" fill="none" stroke="var(--acc)" stroke-width="3"/><path d="M14 27l8 8 16-16" fill="none" stroke="var(--acc)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';document.body.appendChild(d);setTimeout(function(){d.classList.add('out')},700);setTimeout(function(){d.remove()},1250)}
 (function(){
   var M="Claude Sonnet 5.5 · owner's Claude account";
-  APP_VERSION='11.18.0';
+  APP_VERSION='11.19.0';
+  VERS.unshift({v:'11.19.0',d:'2026-11-20',t:'Phase 3 QA: Automated Test Suite — 97 tests covering accounting, wallets, ledger & sync conflict logic',by:'Antigravity',n:['Created tests/accounting.test.js: 27 tests for cash(), calc(), cashBook() covering Sale/Purchase/Adjustment/Void/Ledger/MobileBanking/Due entry types, r2 rounding, sort order, and df difference calculation','Created tests/wallet.test.js: 26 tests for WLT taxonomy (MFS vs Recharge SIM separation), WLTC category-to-key mapping validation, and isWalletTransfer() classification','Created tests/ledger.test.js: 26 tests for lBal() due in/out balance, void exclusion, lSubAccounts() parent-child resolution, and lCombinedBal() group aggregate balance','Created tests/sync-conflict.test.js: 18 tests for server-side isConflict() revision guard, monotonic nextRev increment, pullDecision() client action logic, push retry budget, and applyRemote LOCAL key preservation','Gated npm run prepare-www on passing tests: build now fails fast if any accounting invariant breaks','Added npm test step to .github/workflows/build.yml: CI enforces tests in the version job before any build artifact is produced']});
+  UPC.unshift({v:'11.19.0',s:'Done',t:['97 automated tests: accounting, wallets, ledger, sync conflict','npm run prepare-www now gated on test pass','CI workflow enforces tests before build artifacts','QA-01 audit checklist item resolved']});
+  BUGS.unshift({d:'2026-11-20 18:28 (UTC+6)',v:'11.19.0',w:'Antigravity',a:'No automated regression coverage — logic changes could silently break financial calculations',b:'calc(), cashBook(), lBal(), lCombinedBal(), isWalletTransfer(), sync conflict guard all had zero unit tests; build had no test gate',c:'Added 97 unit tests across 4 test files and 14 describe suites; gated prepare-www and CI pipeline on test pass'});
   VERS.unshift({v:'11.18.0',d:'2026-11-20',t:'Sync Reliability Fix: Robust multi-Content-Type POST with redirect:follow & graceful GET fallback',by:'Antigravity',n:['Fixed sync going offline after Phase 1: All fetch calls (getRemote, push, importPos, importCatalog, ping test) now try application/json POST first, then text/plain POST, then GET fallback','Added redirect:follow to all fetch calls to correctly handle Google Apps Script 302 redirects','Strengthened error isolation in getRemote: each fetch attempt wrapped independently so one failure does not suppress the next','Ping test button in Settings uses same multi-attempt strategy for accurate connection diagnostics']});
   UPC.unshift({v:'11.18.0',s:'Done',t:['Sync no longer goes offline after Phase 1 POST migration','All sync fetch calls now use application/json + redirect:follow with fallback chain','Push function has dual POST Content-Type retry before failing to offline']});
   BUGS.unshift({d:'2026-11-20 17:11 (UTC+6)',v:'11.18.0',w:'Antigravity',a:'Phase 1 changed all sync calls to POST but push() had no GET fallback and all calls used text/plain which GAS sometimes rejects without redirect:follow',b:'push() threw on JSON parse if GAS returned a redirect HTML page; getRemote() fallback threw uncaught on network error; importPos and importCatalog had no retry layer',c:'Changed Content-Type to application/json (primary), added text/plain as secondary retry, added redirect:follow on all fetches, isolated each attempt in its own try/catch, added GET fallback where payload size permits'});
@@ -7452,7 +7455,7 @@ if ('serviceWorker' in navigator) {
 
 </script>
 <!-- NCS v10 Sync Engine -->
-<script src="diag.js?v=11.18.0"></script>
-<script src="sync.js?v=11.18.0"></script>
+<script src="diag.js?v=11.19.0"></script>
+<script src="sync.js?v=11.19.0"></script>
 </body>
 </html>
