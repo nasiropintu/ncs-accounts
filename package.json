@@ -7,7 +7,7 @@
   "author": "Nur Computer & Stationery",
   "repository": {
     "type": "git",
-    "url": "https://github.com/NuroTraders/ncs-accounts.git"
+    "url": "https://github.com/nasiropintu/ncs-accounts.git"
   },
   "main": "electron/main.js",
   "scripts": {
