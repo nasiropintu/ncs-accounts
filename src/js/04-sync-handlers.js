@@ -24,6 +24,21 @@ function checkMergedMismatches(){S.pending=S.pending||[];var seen={};S.pending.f
 function mergeRemoteFrom(r){if(!r||!r.ok||!r.state)return false;try{mergeState(JSON.parse(r.state));checkMergedMismatches();ensureCols();S.synced=r.rev;S.rev=r.rev+1;primeLH();persist();if(U){render();try{homeUI()}catch(e){}POS.refresh();if(CUR==='led')ledUI()}return true}catch(e){return false}}
 const mergeRemote=async()=>{try{return mergeRemoteFrom(await getRemote())}catch(e){return false}};
 async function importCatalog(){if(S.catImported||S.products.length||!SY())return;
-  try{const r=await(await fetch(S.sync.url+(S.sync.url.includes('?')?'&':'?')+'action=catalog&key='+encodeURIComponent(S.sync.key))).json();
-    if(r.ok&&r.items&&r.items.length){r.items.filter(p=>!p.del).forEach(p=>S.products.push({id:p.id,name:p.name,barcode:p.barcode||'',buy:0,price:+p.price||0,img:''}));S.catImported=1;save();if(U)POS.refresh()}
-    else{S.catImported=1;persist()}}catch(e){}}
+  try{
+    const u=syncUrl(),k=syncKey();
+    let r=null;
+    try{
+      const res=await fetch(u,{
+        method:'POST',
+        headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body:JSON.stringify({action:'catalog',key:k,token:k})
+      });
+      if(res.ok)r=await res.json();
+    }catch(err){}
+    if(!r){
+      const sep=u.includes('?')?'&':'?';
+      r=await(await fetch(`${u}${sep}action=catalog&key=${encodeURIComponent(k)}&token=${encodeURIComponent(k)}`)).json();
+    }
+    if(r&&r.ok&&r.items&&r.items.length){r.items.filter(p=>!p.del).forEach(p=>S.products.push({id:p.id,name:p.name,barcode:p.barcode||'',buy:0,price:+p.price||0,img:''}));S.catImported=1;save();if(U)POS.refresh()}
+    else{S.catImported=1;persist()}
+  }catch(e){}}

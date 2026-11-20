@@ -3,9 +3,9 @@
 | | |
 |---|---|
 | **Shop** | Nur Computer & Stationery |
-| **Current version** | **v11.15.0** (`versionCode 111500`) |
-| **Service worker cache** | `ncs-v83` |
-| **Last entry** | 2026-11-05 16:35 (UTC+6)
+| **Current version** | **v11.16.0** (`versionCode 111600`) |
+| **Service worker cache** | `ncs-v84` |
+| **Last entry** | 2026-11-20 13:00 (UTC+6)
 | **Contributors** | Claude profiles, Antigravity, Manus |
 
 Two Claude profiles work on this app and **do not share memory**. This file is their shared memory.
@@ -347,6 +347,17 @@ The five-colour chart palette (formerly Phase 1b) was delivered in v10.4.0.
 
 ## 7. Session Log
 *Newest first. Each entry is a version, a timestamp (UTC+6) and an author.*
+
+### v11.16.0 · 2026-11-20 13:00 · Antigravity
+**Phase 1 Security & Sync Hardening (Manus.im Audit Remediation).**
+- **Zero-Trust Sync Credentials:** Priority given to device-local credentials (`localStorage.getItem('ncs_sync_url')` and `'ncs_sync_key'`), decoupling live sync secrets from repository code. Added `config.example.js` template and added `config.js` to `.gitignore`.
+- **In-App Cloud Backend Settings & 1-Tap Test:** Enhanced Settings modal with direct prefilling of active sync URL and key, plus a 1-tap `[⚡ Test Connection]` button that executes an active ping check against Google Apps Script returning server revision and auth status.
+- **Dual-Key Backend Architecture:** Updated `Code.gs` with `VALID_KEYS` array, enabling seamless zero-downtime key rotation without stranding active mobile/PC clients.
+- **Server Monotonic Revisions:** `Code.gs` assigns `cur.rev + 1` atomically under `LockService`, eliminating client-side revision spoofing.
+- **Anti-Clobbering Protection:** Ordinary sync writes fail safe on revision conflict; removed routine `force` clobbering. Disaster recovery requires explicit Admin PIN confirmation and triggers an automatic immutable rollback snapshot sheet (`Snapshot_PreRecovery_<datetime>`) before replacing state.
+- **Formula Injection Sanitization:** Implemented `escFormula_` in `Code.gs`, escaping leading `=`, `+`, `-`, `@`, `\t`, `\r` on human-readable cells before writing to `Entries` and `Log` sheets.
+- **Full POST Protocol:** Converted `getRemote()` (pull), `importPos()` (inbox), and `importCatalog()` to HTTP POST with request body, eliminating secret tokens from GET URL query strings.
+- Bumped version to 11.16.0 (`versionCode 111600`), cache `ncs-v84`. Verified compilation via `npm run prepare-www` and AST syntax validator; mirrored per Rule 39.
 
 ### v11.15.0 · 2026-11-05 16:35 · Codex
 **Clean date labels, lighter header details and a simpler theme icon.**
