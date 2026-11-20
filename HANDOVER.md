@@ -1,11 +1,11 @@
-# NCS Accounts — Handover | v11.20.0 | ncs-v88 | 20:45 UTC+6
+# NCS Accounts — Handover | v11.21.0 | ncs-v89 | 20:55 UTC+6
 
 | | |
 |---|---|
 | **Shop** | Nur Computer & Stationery |
-| **Current version** | **v11.20.0** (`versionCode 112000`) |
-| **Service worker cache** | `ncs-v88` |
-| **Last entry** | 2026-11-20 20:45 (UTC+6)
+| **Current version** | **v11.21.0** (`versionCode 112100`) |
+| **Service worker cache** | `ncs-v89` |
+| **Last entry** | 2026-11-20 20:55 (UTC+6)
 | **Contributors** | Claude profiles, Antigravity, Manus |
 
 Two Claude profiles work on this app and **do not share memory**. This file is their shared memory.
@@ -363,6 +363,19 @@ The five-colour chart palette (formerly Phase 1b) was delivered in v10.4.0.
 
 ## 7. Session Log
 *Newest first. Each entry is a version, a timestamp (UTC+6) and an author.*
+
+### v11.21.0 · 2026-11-20 20:55 · Antigravity
+**Unified Vector Header App Icon Across All Platforms & Green Removal.**
+- **Vector Header Monitor Icon:** Generated high-resolution icons using the exact vector geometry of the header monitor logo (`top-brand-svg`), featuring the crisp dark slate monitor outline (`#0F172A`), soft mint interior (`#EEF8F5`), white ID card (`#FFFFFF`), avatar silhouette, and dual analytics bars (`#0F766E` and `#10B981`).
+- **Eliminated Legacy #2F5D3A Forest Green:** Replaced all solid green icon backgrounds and splash screens with clean, modern `#FFFFFF` backgrounds.
+- **Full Platform Coverage:**
+  - Web PWA: `icon-192.png`, `icon-512.png`, and `manifest.webmanifest` (`background_color: #FFFFFF`, `theme_color: #0F766E`).
+  - Windows: `build/icon.png` (512x512).
+  - Android: `ic_launcher.png`, `ic_launcher_round.png`, and `ic_launcher_foreground.png` across all 5 screen densities (`mipmap-mdpi` through `mipmap-xxxhdpi`).
+  - Android Splash: 11 portrait and landscape `splash.png` files across all drawable folders.
+  - Native scripts & bridge: `scripts/android-setup.js` and `native/bridge.js` purged of `#2F5D3A`.
+- Added `scripts/generate-icons.ps1` for reproducible vector icon generation.
+- Bumped version to 11.21.0 (`versionCode 112100`), cache `ncs-v89`. Verified compilation via `npm run prepare-www` (97/97 tests pass); mirrored per Rule 39.
 
 ### v11.20.0 · 2026-11-20 20:45 · Antigravity
 **Phase 4 Documentation Alignment, Zero-Trust Architecture & Storage Security (SEC-05, DOC-01).**

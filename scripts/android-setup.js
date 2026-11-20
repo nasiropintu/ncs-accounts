@@ -66,10 +66,10 @@ fs.copyFileSync(path.join(root, 'native/android-java/NativePrintPlugin.java'), p
 
 copyDir(path.join(root, 'native/android-res'), path.join(root, 'android/app/src/main/res'));
 write('android/app/src/main/res/values/ic_launcher_background.xml',
-  '<?xml version="1.0" encoding="utf-8"?>\n<resources>\n    <color name="ic_launcher_background">#2F5D3A</color>\n</resources>\n');
+  '<?xml version="1.0" encoding="utf-8"?>\n<resources>\n    <color name="ic_launcher_background">#FFFFFF</color>\n</resources>\n');
 patch('android/app/src/main/res/values/styles.xml',
   '<item name="android:background">@drawable/splash</item>',
-  '<item name="android:background">@drawable/splash</item>\n        <item name="windowSplashScreenBackground">#2F5D3A</item>',
+  '<item name="android:background">@drawable/splash</item>\n        <item name="windowSplashScreenBackground">#FFFFFF</item>',
   'windowSplashScreenBackground');
 
 // Shows the first lines of build.gradle in the build log (helps find problems quickly)
