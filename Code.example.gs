@@ -1,21 +1,41 @@
 /**
  * ═══════════════════════════════════════════════════════════════════════════
- *  NCS Daily Accounts — Hardened Google Sheet Sync Backend (Option 1 Whole-State)
+ *  NCS Daily Accounts — Google Apps Script Sync Backend
+ *  TEMPLATE FILE — Copy this to your Apps Script project.
  * ═══════════════════════════════════════════════════════════════════════════
- *  Security & Reliability Hardening (Phase 1 / Manus Audit Remediation):
- *  1. Dual-Key Authentication (VALID_KEYS): Seamless zero-downtime secret rotation.
- *  2. Full POST Protocol: pull, push, inbox, catalog & ping over POST body (no URL tokens).
- *  3. Server-Monotonic Revisions: Server assigns nextRev (cur.rev + 1) under LockService.
- *  4. Anti-Clobbering Protection: Normal writes fail safe on conflict.
- *  5. Rollback Snapshots: Disaster recovery auto-archives Snapshot_PreRecovery_<datetime>.
- *  6. Formula Injection Neutralization: Escapes leading =, +, -, @ on all human-readable cells.
+ *
+ *  SETUP INSTRUCTIONS:
+ *  1. Open your Google Sheet → Extensions → Apps Script
+ *  2. Paste this entire file, replacing any existing code
+ *  3. Replace the placeholder key(s) in VALID_KEYS with your own secret token
+ *     (generate a strong random string, e.g. 32+ characters)
+ *  4. Click Save, then Deploy → New Deployment → Web App
+ *     - Execute as: Me
+ *     - Who has access: Anyone
+ *  5. Copy the deployment URL into the app's Settings → Google Sheet sync URL
+ *  6. Enter the same token into Settings → Sync API Key / Token
+ *
+ *  SECURITY NOTES:
+ *  - NEVER commit a Code.gs with real keys to a public repository.
+ *    Code.gs is listed in .gitignore for this reason.
+ *  - Use VALID_KEYS as a dual-key array during key rotation:
+ *    add new key first, then remove old key after all devices update.
+ *  - Redeploy (New Version) after any change to this file.
+ *
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-// Dual-key array for seamless rotation: existing client token + rotated token
+// ─── CONFIGURE THESE ─────────────────────────────────────────────────────────
+// Replace with your own strong secret token(s).
+// Use at least 32 random characters. Example generator:
+//   node -e "console.log(require('crypto').randomBytes(24).toString('hex'))"
 const VALID_KEYS = [
-  'ncs_7Kp9mQ2xR8vL4nJ6wT1yB3cD5fG0hS3a' // Legacy key (retire after device updates)
+  'YOUR_SECRET_TOKEN_HERE'
+  // During rotation, temporarily add a second key:
+  // 'YOUR_NEW_SECRET_TOKEN_HERE'
 ];
+// ─────────────────────────────────────────────────────────────────────────────
+
 const CH = 40000;
 
 function isAuth_(token) {
@@ -77,15 +97,15 @@ function doGet(e) {
   const p = (e && e.parameter) || {};
   const token = p.token || p.key || '';
   if (!isAuth_(token)) return out_({ ok: false, error: 'auth' });
-  
+
   const action = p.action || 'pull';
-  
+
   if (action === 'ping') {
     const sh = sheet_('State');
     const rev = +sh.getRange('B1').getValue() || 0;
     return out_({ ok: true, rev: rev });
   }
-  
+
   if (action === 'inbox') {
     const since = +(p.since || 0);
     const sh = sheet_('POS_Inbox');
@@ -95,7 +115,7 @@ function doGet(e) {
       .map(r => ({ seq: +r[0], bill: JSON.parse(r[1]) }));
     return out_({ ok: true, rows: rows });
   }
-  
+
   if (action === 'catalog') {
     const sh = sheet_('Products');
     if (!sh.getLastRow()) return out_({ ok: true, items: [] });
@@ -104,7 +124,7 @@ function doGet(e) {
     }));
     return out_({ ok: true, items: rows });
   }
-  
+
   // Default GET: pull full state
   const data = read_();
   return out_({ ok: true, rev: data.rev, state: data.state });
@@ -120,10 +140,10 @@ function doPost(e) {
   } catch (x) {
     return out_({ ok: false, error: 'bad_json' });
   }
-  
+
   const token = d.token || d.key || '';
   if (!isAuth_(token)) return out_({ ok: false, error: 'auth' });
-  
+
   const action = d.action || 'push';
 
   // 1. POST Ping
