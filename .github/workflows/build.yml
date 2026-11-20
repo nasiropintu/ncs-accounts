@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: build-ncs
@@ -114,7 +114,6 @@ jobs:
           printf '{"version":"%s","url":"https://github.com/%s/releases/download/v%s/www.zip"}\n' "$V" "$GITHUB_REPOSITORY" "$V" > release/update.json
           cat release/update.json
       - name: Check APK signature
-        continue-on-error: true
         run: |
           BT=$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -1)
           "$ANDROID_HOME/build-tools/$BT/apksigner" verify --print-certs release/*.apk
@@ -127,6 +126,8 @@ jobs:
   release:
     needs: [version, windows, android]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/download-artifact@v4
         with:

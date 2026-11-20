@@ -3,9 +3,9 @@
 | | |
 |---|---|
 | **Shop** | Nur Computer & Stationery |
-| **Current version** | **v11.16.0** (`versionCode 111600`) |
-| **Service worker cache** | `ncs-v84` |
-| **Last entry** | 2026-11-20 13:00 (UTC+6)
+| **Current version** | **v11.17.0** (`versionCode 111700`) |
+| **Service worker cache** | `ncs-v85` |
+| **Last entry** | 2026-11-20 17:00 (UTC+6)
 | **Contributors** | Claude profiles, Antigravity, Manus |
 
 Two Claude profiles work on this app and **do not share memory**. This file is their shared memory.
@@ -347,6 +347,13 @@ The five-colour chart palette (formerly Phase 1b) was delivered in v10.4.0.
 
 ## 7. Session Log
 *Newest first. Each entry is a version, a timestamp (UTC+6) and an author.*
+
+### v11.17.0 · 2026-11-20 17:00 · Antigravity
+**Phase 2 Build Toolchain, Electron & CI/CD Defense (Manus.im Audit Remediation).**
+- **Electron Upgrade & Vulnerability Elimination:** Upgraded `electron` from 44.9.0 to 44.11.5, remediating high-severity advisory GHSA-jr5w-w6x2-84p9. Full `npm audit fix` executed, clearing locked vulnerabilities across `fast-uri`, `glob`, `rimraf`, and `uuid`. Production dependencies audit confirmed 0 vulnerabilities.
+- **Blocking APK Signature Verification Gate:** Removed `continue-on-error: true` from the `Check APK signature` (`apksigner`) step in `.github/workflows/build.yml`. Cryptographic signing validation is now a mandatory blocking release gate, preventing unsigned or corrupt APK releases.
+- **Least-Privilege CI Security:** Scoped default workflow permissions to `permissions: contents: read`, restricting `contents: write` exclusively to the final `release` publishing job.
+- Bumped version to 11.17.0 (`versionCode 111700`), cache `ncs-v85`. Verified compilation via `npm run prepare-www` and AST syntax validator; mirrored per Rule 39.
 
 ### v11.16.0 · 2026-11-20 13:00 · Antigravity
 **Phase 1 Security & Sync Hardening (Manus.im Audit Remediation).**
