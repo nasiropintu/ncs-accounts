@@ -30,14 +30,29 @@ async function importCatalog(){if(S.catImported||S.products.length||!SY())return
     try{
       const res=await fetch(u,{
         method:'POST',
-        headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body:JSON.stringify({action:'catalog',key:k,token:k})
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({action:'catalog',key:k,token:k}),
+        redirect:'follow'
       });
       if(res.ok)r=await res.json();
     }catch(err){}
     if(!r){
+      try{
+        const res2=await fetch(u,{
+          method:'POST',
+          headers:{'Content-Type':'text/plain;charset=utf-8'},
+          body:JSON.stringify({action:'catalog',key:k,token:k}),
+          redirect:'follow'
+        });
+        if(res2.ok)r=await res2.json();
+      }catch(e2){}
+    }
+    if(!r){
       const sep=u.includes('?')?'&':'?';
-      r=await(await fetch(`${u}${sep}action=catalog&key=${encodeURIComponent(k)}&token=${encodeURIComponent(k)}`)).json();
+      try{
+        const res3=await fetch(`${u}${sep}action=catalog&key=${encodeURIComponent(k)}&token=${encodeURIComponent(k)}`,{redirect:'follow'});
+        if(res3.ok)r=await res3.json();
+      }catch(e3){}
     }
     if(r&&r.ok&&r.items&&r.items.length){r.items.filter(p=>!p.del).forEach(p=>S.products.push({id:p.id,name:p.name,barcode:p.barcode||'',buy:0,price:+p.price||0,img:''}));S.catImported=1;save();if(U)POS.refresh()}
     else{S.catImported=1;persist()}

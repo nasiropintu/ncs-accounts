@@ -186,14 +186,15 @@ function applyTheme(){
         try {
           const res = await fetch(u, {
             method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: 'ping', token: k, key: k })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'ping', token: k, key: k }),
+            redirect: 'follow'
           });
           if (res.ok) r = await res.json();
         } catch (err) {}
         if (!r) {
           const sep = u.includes('?') ? '&' : '?';
-          r = await (await fetch(`${u}${sep}action=ping&key=${encodeURIComponent(k)}&token=${encodeURIComponent(k)}&_t=${Date.now()}`)).json();
+          try{ const res2=await fetch(`${u}${sep}action=ping&key=${encodeURIComponent(k)}&token=${encodeURIComponent(k)}&_t=${Date.now()}`,{redirect:'follow'}); if(res2.ok)r=await res2.json(); }catch(e2){}
         }
         if (r && r.ok) {
           if (stEl) stEl.innerHTML = '<span style="color:var(--pos);font-weight:600">✓ ' + lb('Connected successfully! Server Rev: ', 'সফলভাবে যুক্ত হয়েছে! সার্ভার রিভিশন: ') + (r.rev || 0) + '</span>';
@@ -486,19 +487,26 @@ function rowsOut(){const m=calc();return sorted().map(e=>{const r=m[e.id]||{};re
 function stateOut(){const o={};for(const k in S)if(!LOCAL.includes(k))o[k]=S[k];return o}
 const getRemote=async()=>{
   const u=syncUrl(),k=syncKey();
+  // Try POST first (Phase 1 secure protocol)
   try{
     const res=await fetch(u,{
       method:'POST',
-      headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body:JSON.stringify({action:'pull',key:k,token:k,since:S.synced||0})
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'pull',key:k,token:k,since:S.synced||0}),
+      redirect:'follow'
     });
     if(res.ok){
       const data=await res.json();
       if(data&&typeof data.ok!=='undefined')return data;
     }
   }catch(e){}
+  // GET fallback (backward compat with un-updated Code.gs)
   const sep=u.includes('?')?'&':'?';
-  return (await fetch(`${u}${sep}action=pull&key=${encodeURIComponent(k)}&token=${encodeURIComponent(k)}&_t=${Date.now()}`)).json();
+  try{
+    const res2=await fetch(`${u}${sep}action=pull&key=${encodeURIComponent(k)}&token=${encodeURIComponent(k)}&_t=${Date.now()}`,{redirect:'follow'});
+    if(res2.ok)return res2.json();
+  }catch(e2){}
+  throw new Error('sync_offline');
 };
 
 async function push(isRecovery,tries){
@@ -509,23 +517,36 @@ async function push(isRecovery,tries){
     const nl=(S.log||[]).filter(l=>l.i>(S.logSent||0)).reverse();
     const rev=S.rev||1;
     const u=syncUrl(),k=syncKey();
-    const r=await(await fetch(u,{
-      method:'POST',
-      headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body:JSON.stringify({
-        action:'push',
-        key:k,
-        token:k,
-        base:S.synced||0,
-        isRecovery:!!isRecovery,
-        rev:rev,
-        state:JSON.stringify(stateOut()),
-        head:HEAD,
-        rows:rowsOut(),
-        log:nl.map(l=>[l.ts,l.u,l.a,l.d]),
-        snaps:sn
-      })
-    })).json();
+    const payload=JSON.stringify({
+      action:'push',key:k,token:k,
+      base:S.synced||0,isRecovery:!!isRecovery,rev:rev,
+      state:JSON.stringify(stateOut()),head:HEAD,rows:rowsOut(),
+      log:nl.map(l=>[l.ts,l.u,l.a,l.d]),snaps:sn
+    });
+    // Try POST first (Phase 1 secure protocol); 'application/json' avoids CORS preflight issues with GAS
+    let r=null;
+    try{
+      const res=await fetch(u,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:payload,
+        redirect:'follow'
+      });
+      if(res.ok)r=await res.json();
+    }catch(e){}
+    // text/plain fallback (some GAS deployments prefer this)
+    if(!r){
+      try{
+        const res2=await fetch(u,{
+          method:'POST',
+          headers:{'Content-Type':'text/plain;charset=utf-8'},
+          body:payload,
+          redirect:'follow'
+        });
+        if(res2.ok)r=await res2.json();
+      }catch(e2){}
+    }
+    if(!r)throw new Error('push_failed');
     if(r.conflict){busy=false;if(!isRecovery&&tries<4&&await mergeRemote())return push(false,tries+1);setSt('conf');return}
     if(r.ok===false){busy=false;return badKey()}if(!r.ok)throw 0;
     const nextRev=(r&&r.rev)?r.rev:rev;
@@ -541,14 +562,29 @@ async function importPos(){
     try{
       const res=await fetch(u,{
         method:'POST',
-        headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body:JSON.stringify({action:'inbox',key:k,token:k,since:S.posSince||0})
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({action:'inbox',key:k,token:k,since:S.posSince||0}),
+        redirect:'follow'
       });
       if(res.ok)r=await res.json();
     }catch(e){}
     if(!r){
+      try{
+        const res2=await fetch(u,{
+          method:'POST',
+          headers:{'Content-Type':'text/plain;charset=utf-8'},
+          body:JSON.stringify({action:'inbox',key:k,token:k,since:S.posSince||0}),
+          redirect:'follow'
+        });
+        if(res2.ok)r=await res2.json();
+      }catch(e2){}
+    }
+    if(!r){
       const sep=u.includes('?')?'&':'?';
-      r=await(await fetch(`${u}${sep}action=inbox&key=${encodeURIComponent(k)}&token=${encodeURIComponent(k)}&since=${S.posSince||0}`)).json();
+      try{
+        const res3=await fetch(`${u}${sep}action=inbox&key=${encodeURIComponent(k)}&token=${encodeURIComponent(k)}&since=${S.posSince||0}`,{redirect:'follow'});
+        if(res3.ok)r=await res3.json();
+      }catch(e3){}
     }
     if(!r||!r.ok||!r.rows||!r.rows.length)return;
     let c=0,mx=S.posSince||0;
