@@ -909,7 +909,7 @@ function homeUI(){
   $('hTitle').textContent = lb('Hello, ', 'হ্যালো, ') + (U ? U.name : '');
   $('hQa').querySelectorAll('[data-q]').forEach(function(b){
     var k = b.dataset.q;
-    var l = k === 'sale' ? lb('New sale', 'নতুন বিক্রয়') : k === 'purchase' ? lb('New purchase', 'নতুন ক্রয়') : k === 'acc' ? lb('Accounts', 'হিসাব') : lb("Today's bills", 'আজকের বিল');
+    var l = k === 'invoice' ? lb('New invoice', 'নতুন চালান') : k === 'sale' ? lb('New sale', 'নতুন বিক্রয়') : k === 'purchase' ? lb('New purchase', 'নতুন ক্রয়') : k === 'acc' ? lb('Accounts', 'হিসাব') : lb("Today's bills", 'আজকের বিল');
     b.querySelector('.qal').textContent = l;
   });
 
@@ -1093,7 +1093,8 @@ $('hQa').addEventListener('click', e => {
   const b = e.target.closest('[data-q]');
   if(!b) return;
   const q = b.dataset.q;
-  if(q === 'sale' || q === 'purchase'){ POS.setMode(q); go('pos'); }
+  if(q === 'invoice'){ if(typeof openCustomInvoice === 'function') openCustomInvoice(); }
+  else if(q === 'sale' || q === 'purchase'){ POS.setMode(q); go('pos'); }
   else if(q === 'acc') go('acc');
   else{ go('pos'); POS.bills(); }
 });

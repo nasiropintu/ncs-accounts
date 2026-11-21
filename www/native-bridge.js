@@ -5,7 +5,7 @@
 (function () {
   'use strict';
   var REPO = 'nasiropintu/ncs-accounts';
-  var NATIVE_VERSION = '11.17.0';
+  var NATIVE_VERSION = '11.21.0';
 
   var cap = window.Capacitor;
   var isAndroid = !!(cap && cap.isNativePlatform && cap.isNativePlatform());
@@ -37,7 +37,7 @@
       var d = document.createElement('div');
       d.id = 'ncs-native-notice';
       d.style.cssText = 'position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 72px);z-index:2147483647;' +
-        'background:#2F5D3A;color:#fff;border-radius:12px;padding:10px 14px;font:14px/1.4 system-ui,sans-serif;' +
+        'background:#0F766E;color:#fff;border-radius:12px;padding:10px 14px;font:14px/1.4 system-ui,sans-serif;' +
         'display:flex;gap:10px;align-items:center;box-shadow:0 4px 18px rgba(0,0,0,.3)';
       var s = document.createElement('span');
       s.style.flex = '1';
@@ -46,7 +46,7 @@
       if (btnText) {
         var b = document.createElement('button');
         b.textContent = btnText;
-        b.style.cssText = 'background:#fff;color:#2F5D3A;border:0;border-radius:8px;padding:6px 12px;font-weight:600';
+        b.style.cssText = 'background:#fff;color:#0F766E;border:0;border-radius:8px;padding:6px 12px;font-weight:600';
         b.onclick = function () { d.remove(); if (onBtn) onBtn(); };
         d.appendChild(b);
       }

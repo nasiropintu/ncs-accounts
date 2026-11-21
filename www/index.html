@@ -278,7 +278,7 @@ body{padding-bottom:78px}
 .pbtn{height:26px;font-size:12px}
 .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:20px;font-size:13.5px;z-index:350}
 #sc video{width:100%;border-radius:12px;background:#000}
-#rcp{display:none;white-space:pre;font:13px/1.4 monospace}
+#receiptPrint{display:none}
 .pf1{display:flex;gap:8px;align-items:center;margin-bottom:10px}.pf1 .pimg{width:64px;height:64px;font-size:22px;flex:none}
 @media(max-width:800px){.line{grid-template-columns:1fr 70px auto 54px 38px}#vPos .fab{display:block;position:fixed;left:14px;right:14px;bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:5;width:auto}}
 @media(max-width:700px){.hs{grid-template-columns:1fr 1fr}.qa{grid-template-columns:1fr 1fr}}
@@ -1664,6 +1664,493 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
   :root[data-theme="glass-dark"] *{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
 
+/* ===== CUSTOM INVOICE STUDIO & BRANDED INVOICE ENGINE ===== */
+.ci-modal {
+  max-width: 880px !important;
+  max-height: 92vh !important;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0 !important;
+  background: var(--card);
+  border: 1px solid var(--line);
+}
+.ci-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+  background: var(--soft);
+}
+.ci-head h3 { margin: 0; font-size: 17px; font-weight: 700; color: var(--ink); }
+.ci-head small { display: block; font-size: 11px; color: var(--mut); margin-top: 2px; }
+.ci-head-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--mut);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+.ci-head-close:hover { color: var(--ink); background: var(--line); }
+
+.ci-body {
+  padding: 16px 18px;
+  overflow-y: auto;
+  flex: 1;
+}
+.ci-grid-top {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.ci-field { display: flex; flex-direction: column; gap: 4px; }
+.ci-field label { font-size: 11.5px; font-weight: 600; color: var(--mut); }
+.ci-field input, .ci-field select {
+  height: 36px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.ci-shortcuts { margin-bottom: 14px; }
+.ci-shortcuts-label { font-size: 11px; font-weight: 600; color: var(--mut); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .5px; }
+.ci-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.ci-chip {
+  background: var(--soft);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 5px 11px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .15s ease;
+  white-space: nowrap;
+}
+.ci-chip:hover { background: var(--acc); color: #fff; border-color: var(--acc); transform: translateY(-1px); }
+
+.ci-table-wrap {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow-x: auto;
+  margin-bottom: 14px;
+  background: var(--bg);
+}
+.ci-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+.ci-table th {
+  background: var(--soft);
+  color: var(--ink);
+  padding: 8px 10px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+.ci-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+.ci-table tr:last-child td { border-bottom: none; }
+.ci-table input {
+  width: 100%;
+  height: 32px;
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--ink);
+  font-size: 12.5px;
+  box-sizing: border-box;
+}
+.ci-table .ci-r-num { width: 34px; text-align: center; color: var(--mut); font-weight: 600; }
+.ci-table .ci-r-name { min-width: 160px; }
+.ci-table .ci-r-qty { width: 75px; text-align: right; }
+.ci-table .ci-r-unit { width: 75px; }
+.ci-table .ci-r-price { width: 90px; text-align: right; }
+.ci-table .ci-r-tot { width: 95px; text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ci-table .ci-r-del { width: 34px; text-align: center; }
+.ci-row-del-btn {
+  background: none;
+  border: none;
+  color: var(--neg);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.ci-row-del-btn:hover { background: rgba(220,38,38,.1); }
+
+.ci-add-row-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.ci-add-btn {
+  background: var(--soft);
+  color: var(--ink);
+  border: 1px dashed var(--acc);
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.ci-add-btn:hover { background: var(--acc); color: #fff; border-style: solid; }
+
+.ci-summary-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 16px;
+  padding: 14px;
+  background: var(--soft);
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  margin-bottom: 16px;
+}
+.ci-pay-box { display: flex; flex-direction: column; gap: 10px; }
+.ci-pay-methods { display: flex; flex-wrap: wrap; gap: 6px; }
+.ci-pay-btn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.ci-pay-btn.on { background: var(--acc); color: #fff; border-color: var(--acc); }
+.ci-calc-line { display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; color: var(--mut); padding: 4px 0; }
+.ci-calc-line b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.ci-grand-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+  padding: 9px 12px;
+  background: #0f766e;
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 13px;
+}
+.ci-grand-line b { font-size: 18px; color: #fff; }
+.ci-words-badge {
+  font-size: 11px;
+  color: var(--mut);
+  background: var(--card);
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  margin-top: 4px;
+}
+
+.ci-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+.ci-actions button { min-height: 38px; padding: 0 14px; font-size: 12.5px; font-weight: 600; }
+
+@media (max-width: 760px) {
+  .ci-grid-top { grid-template-columns: 1fr; gap: 8px; }
+  .ci-summary-grid { grid-template-columns: 1fr; gap: 12px; }
+  .ci-actions { justify-content: stretch; }
+  .ci-actions button { flex: 1 1 calc(50% - 4px); }
+}
+
+/* ===== BRANDED INVOICE PREVIEW & PRINT STYLES ===== */
+.invoice-preview-wrap {
+  padding: 10px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: auto;
+  max-height: 60vh;
+}
+.invoice-paper {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 26px 30px;
+  background: #fff;
+  color: #111827;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(15,23,42,.07);
+  font: 12.5px/1.45 Inter, SolaimanLipi, Arial, sans-serif;
+  box-sizing: border-box;
+}
+.invoice-paper[lang="bn"] { font-family: SolaimanLipi, Inter, Arial, sans-serif; }
+
+.invoice-header {
+  border-bottom: 2px solid #0f766e;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+}
+.invoice-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+.invoice-brand-col { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.invoice-logo { width: 50px; height: 50px; object-fit: contain; flex: none; }
+.invoice-shop-name { font-size: 22px; font-weight: 800; line-height: 1.15; color: #0f766e; letter-spacing: -.3px; }
+.invoice-shop-tagline { font-size: 9.5px; font-weight: 600; color: #475569; margin-top: 3px; }
+.invoice-contact-col { text-align: right; font-size: 9.5px; line-height: 1.4; color: #334155; }
+.invoice-contact-col b { color: #0f172a; }
+.invoice-address-line {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed #cbd5e1;
+  font-size: 10px;
+  color: #475569;
+  text-align: center;
+  line-height: 1.35;
+}
+
+.invoice-title-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px;
+  background: #f1f5f9;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  border-left: 4px solid #0f766e;
+}
+.invoice-doc-title { font-size: 14px; font-weight: 750; color: #0f766e; letter-spacing: .5px; }
+.invoice-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: .6px;
+}
+.invoice-status-badge.is-paid { background: #dcfce7; color: #15803d; }
+.invoice-status-badge.is-due { background: #fef3c7; color: #b45309; }
+.invoice-status-badge.is-void { background: #fee2e2; color: #b91c1c; }
+
+.invoice-info-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+.invoice-info-block span { font-size: 9px; font-weight: 750; color: #64748b; text-transform: uppercase; letter-spacing: .6px; }
+.invoice-info-block b { font-size: 11.5px; color: #0f172a; display: block; margin-top: 2px; }
+.invoice-meta-subgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+.invoice-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 14px;
+}
+.invoice-table th {
+  background: #0f766e;
+  color: #fff;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: .4px;
+  padding: 7px 8px;
+  border: 1px solid #0f766e;
+}
+.invoice-table td {
+  padding: 7px 8px;
+  font-size: 11px;
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+  vertical-align: middle;
+}
+.invoice-table .th-num { width: 30px; text-align: center; }
+.invoice-table .th-qty { width: 65px; text-align: right; }
+.invoice-table .th-unit { width: 55px; text-align: center; }
+.invoice-table .th-price { width: 85px; text-align: right; }
+.invoice-table .th-amt { width: 95px; text-align: right; }
+.invoice-table td.td-num { text-align: center; color: #64748b; }
+.invoice-table td.td-qty { text-align: right; font-variant-numeric: tabular-nums; }
+.invoice-table td.td-unit { text-align: center; color: #475569; }
+.invoice-table td.td-price { text-align: right; font-variant-numeric: tabular-nums; }
+.invoice-table td.td-amt { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.invoice-bottom-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 16px;
+  align-items: start;
+  margin-bottom: 20px;
+}
+.invoice-bottom-left {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 11px;
+}
+.invoice-pay-row { display: flex; justify-content: space-between; padding: 3px 0; color: #475569; }
+.invoice-pay-row b { color: #0f172a; }
+.invoice-words-box { margin-top: 6px; padding-top: 6px; border-top: 1px dashed #cbd5e1; font-size: 10px; color: #334155; }
+.invoice-bottom-right { min-width: 0; }
+.invoice-tot-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 11.5px; color: #475569; }
+.invoice-tot-row b { color: #0f172a; font-weight: 650; font-variant-numeric: tabular-nums; }
+.invoice-grand-row {
+  margin-top: 6px;
+  padding: 8px 12px;
+  background: #0f766e;
+  color: #fff;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 750;
+  font-size: 12px;
+}
+.invoice-grand-row b { color: #fff; font-size: 16px; font-weight: 800; }
+.invoice-due-alert {
+  margin-top: 6px;
+  padding: 6px 10px;
+  background: #fef3c7;
+  border-radius: 4px;
+  color: #92400e;
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+}
+
+.invoice-signatures {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 36px;
+  padding-top: 14px;
+}
+.invoice-sign-col { text-align: center; width: 170px; }
+.invoice-sign-line { border-top: 1px dashed #94a3b8; padding-top: 5px; font-size: 10px; color: #475569; font-weight: 600; }
+
+.invoice-footer-note {
+  margin-top: 20px;
+  padding-top: 8px;
+  border-top: 1px solid #e2e8f0;
+  text-align: center;
+  font-size: 9px;
+  color: #64748b;
+}
+
+.invoice-void-watermark {
+  position: absolute;
+  z-index: 2;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-24deg);
+  border: 5px solid rgba(185, 28, 28, .35);
+  padding: 6px 26px;
+  color: rgba(185, 28, 28, .38);
+  font-size: 60px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: 6px;
+  pointer-events: none;
+}
+
+/* ===== THERMAL SLIP STYLES (58mm / 80mm Roll) ===== */
+.thermal-slip {
+  width: 100%;
+  max-width: 290px;
+  margin: 0 auto;
+  padding: 14px 12px;
+  background: #fff;
+  color: #000;
+  border: 1px dashed #94a3b8;
+  font: 11.5px/1.35 'Courier New', monospace, SolaimanLipi, sans-serif;
+  box-sizing: border-box;
+}
+.ts-center { text-align: center; }
+.ts-title { font-size: 14px; font-weight: bold; margin-bottom: 2px; }
+.ts-sub { font-size: 10px; line-height: 1.25; margin-bottom: 4px; }
+.ts-divider { border-bottom: 1px dashed #000; margin: 6px 0; }
+.ts-meta { font-size: 10px; margin-bottom: 6px; }
+.ts-line { display: flex; justify-content: space-between; margin-bottom: 3px; }
+.ts-item-name { font-weight: 600; overflow-wrap: anywhere; }
+.ts-grand { font-size: 13px; font-weight: bold; margin: 4px 0; }
+
+/* Dialog Action Bar */
+.invoice-actionbar {
+  display: grid;
+  grid-template-columns: 1.3fr 1.3fr 1fr 1fr;
+  gap: 8px;
+  margin: 12px 0 2px;
+}
+.invoice-actionbar button { min-height: 38px; padding: 0 10px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+
+/* Print Media Rules */
+@media print {
+  /* A4 Invoice print */
+  body.invoice-print { background: #fff !important; color: #111827 !important; padding: 0 !important; margin: 0 !important; }
+  body.invoice-print > *:not(#receiptPrint) { display: none !important; }
+  body.invoice-print #receiptPrint { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
+  body.invoice-print .invoice-paper {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    page: a4invoice;
+  }
+  body.invoice-print .invoice-table th,
+  body.invoice-print .invoice-grand-row,
+  body.invoice-print .invoice-title-bar,
+  body.invoice-print .invoice-status-badge {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  body.invoice-print .invoice-signatures { break-inside: avoid; }
+  @page a4invoice { size: A4 portrait; margin: 10mm; }
+
+  /* Thermal Slip print */
+  body.thermal-print { background: #fff !important; color: #000 !important; padding: 0 !important; margin: 0 !important; }
+  body.thermal-print > *:not(#receiptPrint) { display: none !important; }
+  body.thermal-print #receiptPrint { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
+  body.thermal-print .thermal-slip {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 2mm 1mm !important;
+    border: none !important;
+    box-shadow: none !important;
+    page: rollReceipt;
+  }
+  @page rollReceipt { size: 58mm auto; margin: 1mm; }
+}
+
 </style>
 <link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0F766E"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes">
 <script src="native-bridge.js"></script><script src="config.js"></script>
@@ -1832,7 +2319,7 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
   <section class="htoday" id="hToday"></section>
   <section class="card howe" id="hOwe"></section>
   <div id="wltWrapH" class="wlt-wrap"></div>
-  <div class="qa" id="hQa"><button type="button" data-q="sale"><span class="qai" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></span><span class="qal">New sale</span></button><button type="button" data-q="purchase"><span class="qai" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></span><span class="qal">New purchase</span></button><button type="button" data-q="acc"><span class="qai" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M9 21V9"/></svg></span><span class="qal">Accounts</span></button><button type="button" data-q="bills"><span class="qai" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span><span class="qal">Today's bills</span></button></div>
+  <div class="qa" id="hQa"><button type="button" data-q="invoice"><span class="qai" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg></span><span class="qal">New invoice</span></button><button type="button" data-q="sale"><span class="qai" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></span><span class="qal">New sale</span></button><button type="button" data-q="purchase"><span class="qai" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></span><span class="qal">New purchase</span></button><button type="button" data-q="acc"><span class="qai" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M9 21V9"/></svg></span><span class="qal">Accounts</span></button><button type="button" data-q="bills"><span class="qai" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span><span class="qal">Today's bills</span></button></div>
   <div class="dgrid"><section class="card dchc"><h3 class="dchh">Sell &amp; Buy · Last 7 days</h3><div class="dchart" id="hChart"></div></section><section class="card dchc"><h3 class="dchh">Sales by payment</h3><div class="dpc" id="hPay"></div><div id="hCatBar" class="dcat-wrap"></div></section></div>
   <section class="card salat-card" id="hSalat"></section>
 </div>
@@ -1860,6 +2347,7 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
           <span id="cartCountBadge" class="b o" style="font-size:11.5px;display:none">0 items</span>
         </div>
         <div class="cart-actions-quick">
+          <button type="button" class="go" id="bCustomInvoice" style="height:32px;padding:0 12px;font-size:12.5px">+ কাস্টম চালান</button>
           <button type="button" class="ghost" id="bHold" style="height:32px;padding:0 12px;font-size:12.5px">Hold bill</button>
           <button type="button" class="ghost" id="bCustom" style="height:32px;padding:0 12px;font-size:12.5px">+ Custom item</button>
           <button type="button" class="ghost" id="bClearCart" style="height:32px;padding:0 10px;font-size:12.5px;color:var(--neg);display:none">Clear</button>
@@ -1907,7 +2395,19 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
 </div>
 <div class="wrap view" id="vLed"></div>
 <div class="wrap view" id="vTask"></div>
-<div id="rcp"></div>
+<div id="receiptPrint" aria-hidden="true"></div>
+<div class="ov" id="customInvoiceModal" hidden>
+  <div class="dlg w ci-modal">
+    <div class="ci-head">
+      <div>
+        <h3 id="ciModalTitle" style="margin:0;font-size:17px;font-weight:700">কাস্টম চালান ও বিলিং স্টুডিও</h3>
+        <small class="mut">নূর কম্পিউটার এন্ড স্টেশনারী · কম্পিউটার সার্ভিস, ফটোকপি ও প্রিন্ট চালান</small>
+      </div>
+      <button type="button" class="ci-head-close" id="ciClose" aria-label="Close">×</button>
+    </div>
+    <div class="ci-body" id="ciBody"></div>
+  </div>
+</div>
 <button type="button" class="tab-bug-fab" id="tabBugFab" aria-label="Bug Report" title="Report issue for this tab">
   <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="14" x="8" y="6" rx="4"/><path d="m19 7-3 2"/><path d="m5 7 3 2"/><path d="m19 19-3-2"/><path d="m5 19 3-2"/><path d="M20 13h-4"/><path d="M4 13h4"/><path d="m10 4 1 2"/><path d="m14 4-1 2"/></svg>
   <span>Bug</span>
@@ -2408,7 +2908,7 @@ $('sg').addEventListener('mousedown',ev=>ev.preventDefault());
 $('sg').addEventListener('click',ev=>{const x=ev.target.closest('.x'),it=ev.target.closest('.si');if(x){const k=sgl[+x.dataset.x];delete S.names[$('fy').value][k];save();sug()}else if(it)pickName(+it.dataset.i)});
 $('fd').addEventListener('blur',()=>setTimeout(()=>$('sg').hidden=true,120));
 if($('accPresets')){$('accPresets').addEventListener('click',e=>{const b=e.target.closest('[data-acc-preset]');if(!b)return;const p=getPresets().find(x=>x.id===b.dataset.accPreset);if(p){$('fy').value='Sale';cats();const title=S.lang==='bn'?(p.bn||p.name):p.name;$('fd').value=title;if(p.cat&&Array.from($('fc').options).some(o=>o.value===p.cat))$('fc').value=p.cat;$('fp').value='Cash';$('fa').value=p.price;preview();$('fa').focus();$('fa').select();toast((S.lang==='bn'?'নির্বাচিত: ':'Selected ')+title);try{Sound.tick()}catch(x){}}});}
-function ask(title,body,onOk,okText,wide){var _rd=$('roleDropdown');if(_rd)_rd.setAttribute('hidden','');try{Sound.tick()}catch(e){}$('ov').firstElementChild.classList.toggle('w',!!wide);$('ok').style.display='';$('ob').onclick=null;$('ob').oninput=null;$('ob').onchange=null;$('ot').textContent=title;$('ob').innerHTML=body;$('ok').textContent=okText||'Confirm';$('ov').hidden=false;
+function ask(title,body,onOk,okText,wide){var _rd=$('roleDropdown');if(_rd)_rd.setAttribute('hidden','');try{Sound.tick()}catch(e){}$('ov').firstElementChild.classList.toggle('w',!!wide);$('ok').style.display='';$('oc').textContent=lb('Cancel','বাতিল');$('ob').onclick=null;$('ob').oninput=null;$('ob').onchange=null;$('ot').textContent=title;$('ob').innerHTML=body;$('ok').textContent=okText||'Confirm';$('ov').hidden=false;
   $('ok').onclick=async()=>{if(await onOk()!==false)$('ov').hidden=true};const f=$('ob').querySelector('input,select');if(f)f.focus()}
 $('oc').onclick=()=>$('ov').hidden=true;
 $('tbl').addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;const e=S.entries.find(x=>x.id==b.dataset.i);
@@ -2488,7 +2988,7 @@ function applyTheme(){
   document.addEventListener('click',function(e){if(wrap&&!wrap.contains(e.target)&&!panel.contains(e.target))close();});
   document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
 })();
- $('set').onclick=()=>ask(lb('Settings','সেটিংস'),`<div class="f"><label>${lb('Starting cash','শুরুর ক্যাশ')}</label><input id="s1" type="number" min="0" step="any" value="${S.start||0}"></div><div class="f"><label class="tg" style="justify-content:space-between"><span>${lb('Sound effects','সাউন্ড ইফেক্ট')} <small class="mut">(tick, cha-ching, buzz, chime)</small></span><input type="checkbox" id="snd" ${S.sound?'checked':''}></label><button type="button" class="ghost" id="sndTest" style="margin-top:6px;height:32px;font-size:13px">▶ ${lb('Test sound','সাউন্ড টেস্ট')}</button></div><div class="f"><label>${lb('Reason for changing opening cash (required when changed)','শুরুর ক্যাশ পরিবর্তনের কারণ (পরিবর্তন করলে আবশ্যক)')}</label><input id="s1r" maxlength="160"></div><div class="f"><label>${lb('Google Sheet sync URL (Web App)','গুগল শিট সিঙ্ক URL (ওয়েব অ্যাপ)')}</label><input id="s4" value="${esc(syncUrl())}"></div><div class="f"><label>${lb('Sync API Key / Token','সিঙ্ক এপিআই কী / টোকেন')}</label><input id="s5" type="password" value="${esc(syncKey())}"></div><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><button type="button" class="ghost" id="testSyncConn" style="height:32px;font-size:12.5px">⚡ ${lb('Test Connection','সংযোগ পরীক্ষা')}</button><div id="testSyncStatus" style="font-size:12.5px"></div></div><button type="button" class="ghost" id="setpin">${lb('Change admin PIN','এডমিন পিন পরিবর্তন')}</button> <button type="button" class="ghost" id="ssu">${lb('Secure sync setup','সিকিউর সিঙ্ক সেটআপ')}</button> <button type="button" class="ghost" id="sfr" style="color:var(--neg)">${lb('Start fresh (carry forward balances)','নতুন শুরু (ব্যালেন্স এগিয়ে নেওয়া)')}</button> <button type="button" class="ghost" id="backupJson">${lb('Download data backup','ডাটা ব্যাকআপ ডাউনলোড')}</button> <button type="button" class="ghost" id="restoreJson">${lb('Restore from backup','ব্যাকআপ থেকে রিস্টোর')}</button><p class="mut" style="font-size:12.5px;margin:8px 0 0">${lb('Backups are files you download; the app does not back up by itself. Data lives in this browser, and in the Google Sheet only if sync is on. Keep a recent download off this device (for example in Drive).','ব্যাকআপ হলো ডাউনলোড করা ফাইল; অ্যাপ নিজে ব্যাকআপ নেয় না। তথ্য এই ব্রাউজারে থাকে, আর সিঙ্ক চালু থাকলে গুগল শিটে। সাম্প্রতিক একটি ডাউনলোড এই ডিভাইসের বাইরে রাখুন (যেমন ড্রাইভে)।')} ${S.lastBackup?lb('Last download from this device: ','এই ডিভাইস থেকে শেষ ডাউনলোড: ')+sd(iso(new Date(S.lastBackup))):lb('No backup downloaded from this device yet.','এই ডিভাইস থেকে এখনো ব্যাকআপ ডাউনলোড হয়নি।')}</p>`,()=>{const before={start:S.start,sync:S.sync,sound:S.sound},raw=$('s1').value.trim(),start=raw===''?NaN:Number(raw),old=+S.start||0,reason=$('s1r').value.trim();if(!Number.isFinite(start)||start<0)return false;if(start!==old){if(!reason){$('s1r').style.borderColor='var(--neg)';return false}lg('Opening cash changed',old+' → '+start+' · '+reason);S.start=start}const u4=$('s4').value.trim(),k5=$('s5').value.trim();if(u4&&k5){S.sync={url:u4,key:k5};try{localStorage.setItem('ncs_sync_url',u4);localStorage.setItem('ncs_sync_key',k5)}catch(e){}}else{S.sync=null;try{localStorage.removeItem('ncs_sync_url');localStorage.removeItem('ncs_sync_key')}catch(e){}}S.sound=!!$('snd').checked;if(!save()){Object.assign(S,before);if(start!==old)S.log.shift();return false}pull();applyTheme();render()},lb('Save','সংরক্ষণ'));
+ $('set').onclick=()=>ask(lb('Settings','সেটিংস'),`<div class="f"><label>${lb('Starting cash','শুরুর ক্যাশ')}</label><input id="s1" type="number" min="0" step="any" value="${S.start||0}"></div><div class="f"><label class="tg" style="justify-content:space-between"><span>${lb('Sound effects','সাউন্ড ইফেক্ট')} <small class="mut">(tick, cha-ching, buzz, chime)</small></span><input type="checkbox" id="snd" ${S.sound?'checked':''}></label><button type="button" class="ghost" id="sndTest" style="margin-top:6px;height:32px;font-size:13px">▶ ${lb('Test sound','সাউন্ড টেস্ট')}</button></div><div class="f"><label>${lb('Reason for changing opening cash (required when changed)','শুরুর ক্যাশ পরিবর্তনের কারণ (পরিবর্তন করলে আবশ্যক)')}</label><input id="s1r" maxlength="160"></div><div class="f"><label>${lb('Google Sheet sync URL (Web App)','গুগল শিট সিঙ্ক URL (ওয়েব অ্যাপ)')}</label><input id="s4" value="${esc(syncUrl())}"></div><div class="f"><label>${lb('Sync API Key / Token','সিঙ্ক এপিআই কী / টোকেন')}</label><input id="s5" type="password" value="${esc(syncKey())}"></div><div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap"><button type="button" class="ghost" id="testSyncConn" style="height:32px;font-size:12.5px">⚡ ${lb('Test Connection','সংযোগ পরীক্ষা')}</button><button type="button" class="ghost" id="clearSyncCreds" style="height:32px;font-size:12.5px;color:var(--neg)">🗑 ${lb('Clear Credentials','ক্রেডেনশিয়াল মুছুন')}</button><div id="testSyncStatus" style="font-size:12.5px"></div></div><button type="button" class="ghost" id="setpin">${lb('Change admin PIN','এডমিন পিন পরিবর্তন')}</button> <button type="button" class="ghost" id="ssu">${lb('Secure sync setup','সিকিউর সিঙ্ক সেটআপ')}</button> <button type="button" class="ghost" id="sfr" style="color:var(--neg)">${lb('Start fresh (carry forward balances)','নতুন শুরু (ব্যালেন্স এগিয়ে নেওয়া)')}</button> <button type="button" class="ghost" id="backupJson">${lb('Download data backup','ডাটা ব্যাকআপ ডাউনলোড')}</button> <button type="button" class="ghost" id="restoreJson">${lb('Restore from backup','ব্যাকআপ থেকে রিস্টোর')}</button><p class="mut" style="font-size:12.5px;margin:8px 0 0">${lb('Backups are files you download; the app does not back up by itself. Data lives in this browser, and in the Google Sheet only if sync is on. Keep a recent download off this device (for example in Drive).','ব্যাকআপ হলো ডাউনলোড করা ফাইল; অ্যাপ নিজে ব্যাকআপ নেয় না। তথ্য এই ব্রাউজারে থাকে, আর সিঙ্ক চালু থাকলে গুগল শিটে। সাম্প্রতিক একটি ডাউনলোড এই ডিভাইসের বাইরে রাখুন (যেমন ড্রাইভে)।')} ${S.lastBackup?lb('Last download from this device: ','এই ডিভাইস থেকে শেষ ডাউনলোড: ')+sd(iso(new Date(S.lastBackup))):lb('No backup downloaded from this device yet.','এই ডিভাইস থেকে এখনো ব্যাকআপ ডাউনলোড হয়নি।')}</p>`,()=>{const before={start:S.start,sync:S.sync,sound:S.sound},raw=$('s1').value.trim(),start=raw===''?NaN:Number(raw),old=+S.start||0,reason=$('s1r').value.trim();if(!Number.isFinite(start)||start<0)return false;if(start!==old){if(!reason){$('s1r').style.borderColor='var(--neg)';return false}lg('Opening cash changed',old+' → '+start+' · '+reason);S.start=start}const u4=$('s4').value.trim(),k5=$('s5').value.trim();if(u4&&k5){S.sync={url:u4,key:k5};try{localStorage.setItem('ncs_sync_url',u4);localStorage.setItem('ncs_sync_key',k5)}catch(e){}}else{S.sync=null;try{localStorage.removeItem('ncs_sync_url');localStorage.removeItem('ncs_sync_key')}catch(e){}}S.sound=!!$('snd').checked;if(!save()){Object.assign(S,before);if(start!==old)S.log.shift();return false}pull();applyTheme();render()},lb('Save','সংরক্ষণ'));
  $('ob').addEventListener('click', async e => {
     if (e.target.id === 'testSyncConn') {
       const u = $('s4') ? $('s4').value.trim() : syncUrl();
@@ -2504,14 +3004,15 @@ function applyTheme(){
         try {
           const res = await fetch(u, {
             method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: 'ping', token: k, key: k })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'ping', token: k, key: k }),
+            redirect: 'follow'
           });
           if (res.ok) r = await res.json();
         } catch (err) {}
         if (!r) {
           const sep = u.includes('?') ? '&' : '?';
-          r = await (await fetch(`${u}${sep}action=ping&key=${encodeURIComponent(k)}&token=${encodeURIComponent(k)}&_t=${Date.now()}`)).json();
+          try{ const res2=await fetch(`${u}${sep}action=ping&key=${encodeURIComponent(k)}&token=${encodeURIComponent(k)}&_t=${Date.now()}`,{redirect:'follow'}); if(res2.ok)r=await res2.json(); }catch(e2){}
         }
         if (r && r.ok) {
           if (stEl) stEl.innerHTML = '<span style="color:var(--pos);font-weight:600">✓ ' + lb('Connected successfully! Server Rev: ', 'সফলভাবে যুক্ত হয়েছে! সার্ভার রিভিশন: ') + (r.rev || 0) + '</span>';
@@ -2524,6 +3025,21 @@ function applyTheme(){
         if (stEl) stEl.innerHTML = '<span style="color:var(--neg)">✗ ' + lb('Connection failed: ', 'সংযোগ ব্যর্থ: ') + (err.message || lb('Network error', 'নেটওয়ার্ক ত্রুটি')) + '</span>';
         try { Sound.buzz(); } catch (x) {}
       }
+    }
+    if (e.target.id === 'clearSyncCreds') {
+      if (!confirm(lb('Clear Google Sheet sync URL and Key from this device?', 'এই ডিভাইস থেকে গুগল শিট সিঙ্ক লিঙ্ক ও কী মুছে ফেলবেন?'))) return;
+      try {
+        localStorage.removeItem('ncs_sync_url');
+        localStorage.removeItem('ncs_sync_key');
+      } catch(x){}
+      S.sync = null;
+      if ($('s4')) $('s4').value = '';
+      if ($('s5')) $('s5').value = '';
+      const stEl = $('testSyncStatus');
+      if (stEl) stEl.innerHTML = '<span style="color:var(--pos)">✓ ' + lb('Credentials cleared.', 'ক্রেডেনশিয়াল মুছে ফেলা হয়েছে।') + '</span>';
+      save();
+      setSt('off');
+      if (typeof ltoast === 'function') ltoast(lb('Sync credentials cleared from this device', 'সিঙ্ক ক্রেডেনশিয়াল মুছে ফেলা হয়েছে'));
     }
     if (e.target.id === 'backupJson') {
       const backup = { app: 'NCS Daily Accounts', version: APP_VERSION, exportedAt: new Date().toISOString(), state: stateOut() };
@@ -2715,7 +3231,13 @@ $('ob').addEventListener('click',async e=>{
 
 S.lang=S.lang||'en';
 const BN={'Daily Accounts':'দৈনিক হিসাব','Nur Computer & Stationery':'নুর কম্পিউটার এন্ড স্টেশনারী','Today':'আজ','Settings':'সেটিংস','Lock':'লক','Total Sell':'মোট বিক্রয়','Total Buy':'মোট ক্রয়','Difference (pending)':'পার্থক্য (বাকি)','Counted vs account':'গণনা বনাম হিসাব','Cash Balance':'ক্যাশ ব্যালেন্স','Account balance now':'বর্তমান হিসাবের ব্যালেন্স','Opening Cash':'প্রারম্ভিক ক্যাশ','Closing Cash':'সমাপনী ক্যাশ','Adjustments today':'আজকের সমন্বয়','Prepared':'প্রস্তুতকারী','Checked':'যাচাইকারী','Open':'খোলা','Closed':'বন্ধ','Close Day':'দিন বন্ধ করুন','Reopen':'পুনরায় খুলুন','Sl':'ক্র.','Time':'সময়','Description':'বিবরণ','Sell':'বিক্রয়','Buy':'ক্রয়','Previous Cash':'পূর্বের ক্যাশ','Actual Cash':'প্রকৃত ক্যাশ','Difference':'পার্থক্য','Type':'ধরন','Category':'ক্যাটাগরি','Payment method':'পেমেন্ট পদ্ধতি','Amount':'পরিমাণ','Actual cash (optional)':'গণনা করা প্রকৃত ক্যাশ (ঐচ্ছিক)','Count':'গণনা','Add entry':'এন্ট্রি যোগ করুন','Save changes':'পরিবর্তন সংরক্ষণ','Cancel edit':'সম্পাদনা বাতিল','Staff':'কর্মী','Change Log':'পরিবর্তন লগ','Print':'প্রিন্ট','Export CSV':'CSV এক্সপোর্ট','Reports':'রিপোর্ট','Undo':'পূর্বাবস্থা','Edit':'সম্পাদনা','Void':'বাতিল','Adjust':'সমন্বয়','Adjusted':'সমন্বিত','Sale':'বিক্রয়','Purchase / Expense':'ক্রয় / খরচ','Owner Deposit':'মালিকের জমা','Owner Withdrawal':'মালিকের উত্তোলন','Cash Adjustment (±)':'ক্যাশ সমন্বয় (±)','Cash':'নগদ','Mobile Banking':'মোবাইল ব্যাংকিং','Bank':'ব্যাংক','Due':'বাকি','All types':'সব ধরন','All payments':'সব পেমেন্ট','Clear':'মুছুন','No entries for this date':'এই তারিখে কোনো এন্ট্রি নেই','Previous':'পূর্বের','Sign in':'সাইন ইন','User':'ব্যবহারকারী','Unlock':'আনলক','Admin':'অ্যাডমিন','Close':'বন্ধ করুন','Cancel':'বাতিল','Confirm':'নিশ্চিত করুন','Day':'দিন','Week (Sat–Fri)':'সপ্তাহ (শনি–শুক্র)','Month':'মাস','Net (Sell − Buy)':'নিট (বিক্রয় − ক্রয়)','Adjustments':'সমন্বয়','Sales by category':'ক্যাটাগরি অনুযায়ী বিক্রয়','Expenses by category':'ক্যাটাগরি অনুযায়ী খরচ','Total':'মোট','Use total':'মোট ব্যবহার করুন','Cash Counter':'ক্যাশ কাউন্টার','Home':'হোম','Products':'পণ্য','POS':'পস','Accounts':'হিসাব','More':'আরও','New sale':'নতুন বিক্রয়','New purchase':'নতুন ক্রয়','Recent bills':'সাম্প্রতিক বিল','Overview':'সারসংক্ষেপ','Customer name':'গ্রাহকের নাম','Supplier name':'সরবরাহকারীর নাম','Phone (optional)':'ফোন (ঐচ্ছিক)','PIN':'পিন','Forgot admin PIN':'অ্যাডমিন পিন ভুলে গেছেন','DAILY ACCOUNTS':'দৈনিক হিসাব','Sync: Off':'সিঙ্ক: বন্ধ','Sync: Synced':'সিঙ্ক: সম্পন্ন','Sync: Pending':'সিঙ্ক: অপেক্ষমাণ','Sync: Offline':'সিঙ্ক: অফলাইন','Sync: Conflict':'সিঙ্ক: দ্বন্দ্ব','Ledger':'খাতা','Today\'s bills':'আজকের বিল','Point of sale':'বিক্রয় কেন্দ্র','Purchase':'ক্রয়','Held':'হোল্ড','Bills':'বিল','Drawer':'ক্যাশ ড্রয়ার','Scan':'স্ক্যান','Sale cart':'বিক্রয় কার্ট','Purchase cart':'ক্রয় কার্ট','Subtotal':'উপমোট','Discount':'ছাড়','Hold bill':'বিল হোল্ড','+ Custom item':'+ নিজের আইটেম','Charge':'বিল নিন','Stock and prices':'স্টক ও দাম','+ New product':'+ নতুন পণ্য','All':'সব','Low stock':'কম স্টক','Out of stock':'স্টক শেষ','Settings and tools':'সেটিংস ও টুলস','Scan barcode':'বারকোড স্ক্যান','This day is closed. An admin can reopen it to add or change entries.':'এই দিনটি বন্ধ। অ্যাডমিন আবার খুলে দিলে এন্ট্রি যোগ বা পরিবর্তন করা যাবে।','Balance would be negative':'ব্যালেন্স ঋণাত্মক হয়ে যাবে','Reason (required)':'কারণ (আবশ্যক)','Account will change by':'হিসাব পরিবর্তিত হবে','to match counted cash':'গণনা করা নগদের সাথে মেলাতে','Other':'অন্যান্য','Starting cash':'শুরুর নগদ','Day starts (Day/Night theme)':'দিন শুরু (দিন/রাত থিম)','Night starts':'রাত শুরু','Google Sheet sync URL':'গুগল শিট সিঙ্ক ইউআরএল','Sync key':'সিঙ্ক কী','Secure sync setup':'নিরাপদ সিঙ্ক সেটআপ','Start fresh (carry forward balances)':'নতুন করে শুরু','Admin PIN':'অ্যাডমিন পিন','Off':'বন্ধ','Role':'ভূমিকা','Reset PIN':'পিন রিসেট','New staff name':'নতুন স্টাফের নাম','Cashier (POS and ledger entry)':'ক্যাশিয়ার (বিক্রয় ও খাতা এন্ট্রি)','Stock manager (Products and More only)':'স্টক ম্যানেজার','Accountant (accounts, ledger, stock and cash; read-only)':'হিসাবরক্ষক','PIN (4+ digits)':'পিন (৪+ সংখ্যা)','New PIN (4+ digits)':'নতুন পিন (৪+ সংখ্যা)','Use Sheet data':'শিটের তথ্য নিন','Keep this device':'এই ডিভাইস রাখুন','Shop passphrase':'দোকানের পাসফ্রেজ','Web app URL':'ওয়েব অ্যাপ ইউআরএল','Repeat passphrase':'পাসফ্রেজ আবার দিন','Copy':'কপি','VOID':'বাতিল','No bills yet':'এখনো কোনো বিল নেই','Long-press or right-click a product to edit it.':'পণ্য এডিট করতে চেপে ধরুন বা রাইট-ক্লিক করুন।','No products yet. Use Add Product, scan a barcode, or use Custom item.':'এখনো কোনো পণ্য নেই।','Cart is empty':'কার্ট খালি','Camera':'ক্যামেরা','Gallery':'গ্যালারি','Name':'নাম','Barcode (optional)':'বারকোড (ঐচ্ছিক)','Buying cost':'ক্রয়মূল্য','Selling price':'বিক্রয়মূল্য','Opening stock':'শুরুর স্টক','Delete product':'পণ্য মছুন','Item name':'আইটেমের নাম','Price':'দাম','Exact':'সঠিক','Short by':'কম আছে','Share':'শেয়ার','Sales':'বিক্রয়','Purchases':'ক্রয়','Receipt':'রসিদ','No bills today':'আজ কোনো বিল নেই','Resume':'চালু করুন','Delete':'মুছুন','No held bills':'কোনো হোল্ড বিল নেই','Add stock':'স্টক যোগ','No products found':'কোনো পণ্য পাওয়া যায়নি','Quantity':'পরিমাণ','How did it come?':'কীভাবে এলো?','Bought':'কেনা','Brought in':'নিয়ে আসা','Date':'তারিখ','Void entry':'এন্ট্রি বাতিল','Adjust cash':'নগদ সমন্বয়','Reopen day':'দিন আবার খুলুন','Sync conflict':'সিঙ্ক দ্বন্দ্ব','Start fresh':'নতুন করে শুরু','Reconnect sync':'সিঙ্ক আবার যুক্ত করুন','Custom item':'নিজের আইটেম','Day closed':'দিন বন্ধ','Held bills':'হোল্ড বিল','Drawer notes and coins':'ড্রয়ারের নোট ও কয়েন','Set drawer counts':'ড্রয়ার গণনা দিন','Search products':'পণ্য খুঁজুন','Saved':'সংরক্ষিত','Copied':'কপি হয়েছে','Voided':'বাতিল হয়েছে','Bill held':'বিল হোল্ড হয়েছে','Stock added':'স্টক যোগ হয়েছে','Search or scan barcode':'খুঁজুন বা বারকোড স্ক্যান করুন','Stock':'স্টক','Cost not set':'ক্রয়মূল্য দেওয়া নেই','Version history':'সংস্করণ ইতিহাস','Units in stock':'মোট ইউনিট','Low or out of stock':'কম বা শেষ স্টক','Stock value (cost)':'স্টকের মূল্য (ক্রয়)','Manage':'ব্যবস্থাপনা','Customer':'কাস্টমার','Check':'যাচাই','Needs check':'যাচাই দরকার','Ledger cash / wallet':'খাতা ক্যাশ / ওয়ালেট','Link customer':'কাস্টমার যুক্ত করুন','Accept':'গ্রহণ','Ledger cash (received − given)':'খাতার ক্যাশ (পেলাম − দিলাম)','Product Name/ID/Barcode':'পণ্যের নাম/আইডি/বারকোড','Add Product':'পণ্য যোগ করুন','Browse products / Add to bill':'পণ্য দেখুন / বিলে যোগ করুন','Cash in':'নগদ এসেছে','Cash out':'নগদ গেছে','Net':'নিট','Entries':'এন্ট্রি','No cash movements today':'আজ কোনো নগদ লেনদেন নেই','Who owes whom':'কার কাছে পাওনা / দেনা','They owe us':'আমরা পাব','We owe':'আমরা দেব','parties':'পক্ষ','Net receivable':'নিট পাওনা','Net payable':'নিট দেনা','Open Ledger':'খাতা খুলুন','Change admin PIN':'অ্যাডমিন পিন পরিবর্তন','Current PIN':'বর্তমান পিন','New PIN (6+ digits)':'নতুন পিন (৬+ সংখ্যা)','Confirm new PIN':'নতুন পিন নিশ্চিত করুন','Wrong PIN':'ভুল পিন','Could not save. Try again.':'সংরক্ষণ হয়নি। আবার চেষ্টা করুন।','Admin PIN changed':'অ্যাডমিন পিন পরিবর্তন হয়েছে','Run self test':'সেলফ টেস্ট','Check calculations, storage and key modules':'হিসাব, স্টোরেজ ও মূল মডিউল পরীক্ষা','Request void':'বাতিলের অনুরোধ','Void request':'বাতিলের অনুরোধ','Review void request':'বাতিলের অনুরোধ দেখুন','Void requested — awaiting Admin':'বাতিলের অনুরোধ অপেক্ষমাণ','A void request is already pending':'বাতিলের অনুরোধ অপেক্ষমাণ','Admin must approve this request before the entry is voided.':'অ্যাডমিন অনুমোদন করার আগে এন্ট্রি বাতিল হবে না।','Request':'অনুরোধ','Reason to reject':'প্রত্যাখ্যানের কারণ','Reject':'প্রত্যাখ্যান','Approve':'অনুমোদন','Reject flag':'চিহ্ন প্রত্যাখ্যান','Flag for Admin check':'অ্যাডমিন যাচাইয়ের জন্য চিহ্নিত করুন','Sound effects':'সাউন্ড ইফেক্ট','Test sound':'সাউন্ড পরীক্ষা'};
-var SHOP_EN='Nur Computer & Stationery',SHOP_BN='নুর কম্পিউটার এন্ড স্টেশনারী';function shopN(){return S.lang==='bn'?SHOP_BN:SHOP_EN}
+var SHOP_EN='Nur Computer & Stationery',SHOP_BN='নূর কম্পিউটার এন্ড স্টেশনারী';
+var SHOP_PROP_BN='মোঃ নাছির উদ্দীন',SHOP_PROP_EN='Md. Nasir Uddin';
+var SHOP_ADDR_BN='চৌধুরী বাজার, দক্ষিণ চর মার্টিন, কমলনগর, লক্ষ্মীপুর',SHOP_ADDR_EN='Choudhury Bazar, Dakshin Char Martin, Kamalnagar, Lakshmipur';
+var SHOP_PHONES='01765-420566, 01753-555695',SHOP_EMAIL='nurotraders@gmail.com';
+var SHOP_TAGLINE_BN='ফটোকপি · ছবি · গ্রাফিক্স · অনলাইন আবেদন · কম্পিউটার কম্পোজ · প্রিন্ট · স্টেশনারী';
+var SHOP_TAGLINE_EN='Photocopy · Photo · Graphics · Online Application · Composing · Print · Stationery';
+function shopN(){return S.lang==='bn'?SHOP_BN:SHOP_EN}
 const orig=new WeakMap();
 function trp(q){var t=q.trim();if(BN[t])return q.replace(t,BN[t]);var m=t.match(/^([A-Za-z][A-Za-z\/ ]*?)(\s+[0-9৳#−+(\-].*)$/);return m&&BN[m[1]]?q.replace(m[1],BN[m[1]]):q}
 BN['Admin PIN (6+ digits)']='অ্যাডমিন পিন (৬+ সংখ্যা)';BN['New PIN (6+ digits)']='নতুন পিন (৬+ সংখ্যা)';BN['PIN (6+ digits)']='পিন (৬+ সংখ্যা)';BN['Confirm PIN']='পিন নিশ্চিত করুন';BN['PINs must match and be 6+ digits']='পিন মিলতে হবে এবং কমপক্ষে ৬ সংখ্যা হতে হবে';
@@ -2804,19 +3326,26 @@ function rowsOut(){const m=calc();return sorted().map(e=>{const r=m[e.id]||{};re
 function stateOut(){const o={};for(const k in S)if(!LOCAL.includes(k))o[k]=S[k];return o}
 const getRemote=async()=>{
   const u=syncUrl(),k=syncKey();
+  // Try POST first (Phase 1 secure protocol)
   try{
     const res=await fetch(u,{
       method:'POST',
-      headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body:JSON.stringify({action:'pull',key:k,token:k,since:S.synced||0})
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'pull',key:k,token:k,since:S.synced||0}),
+      redirect:'follow'
     });
     if(res.ok){
       const data=await res.json();
       if(data&&typeof data.ok!=='undefined')return data;
     }
   }catch(e){}
+  // GET fallback (backward compat with un-updated Code.gs)
   const sep=u.includes('?')?'&':'?';
-  return (await fetch(`${u}${sep}action=pull&key=${encodeURIComponent(k)}&token=${encodeURIComponent(k)}&_t=${Date.now()}`)).json();
+  try{
+    const res2=await fetch(`${u}${sep}action=pull&key=${encodeURIComponent(k)}&token=${encodeURIComponent(k)}&_t=${Date.now()}`,{redirect:'follow'});
+    if(res2.ok)return res2.json();
+  }catch(e2){}
+  throw new Error('sync_offline');
 };
 
 async function push(isRecovery,tries){
@@ -2827,23 +3356,36 @@ async function push(isRecovery,tries){
     const nl=(S.log||[]).filter(l=>l.i>(S.logSent||0)).reverse();
     const rev=S.rev||1;
     const u=syncUrl(),k=syncKey();
-    const r=await(await fetch(u,{
-      method:'POST',
-      headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body:JSON.stringify({
-        action:'push',
-        key:k,
-        token:k,
-        base:S.synced||0,
-        isRecovery:!!isRecovery,
-        rev:rev,
-        state:JSON.stringify(stateOut()),
-        head:HEAD,
-        rows:rowsOut(),
-        log:nl.map(l=>[l.ts,l.u,l.a,l.d]),
-        snaps:sn
-      })
-    })).json();
+    const payload=JSON.stringify({
+      action:'push',key:k,token:k,
+      base:S.synced||0,isRecovery:!!isRecovery,rev:rev,
+      state:JSON.stringify(stateOut()),head:HEAD,rows:rowsOut(),
+      log:nl.map(l=>[l.ts,l.u,l.a,l.d]),snaps:sn
+    });
+    // Try POST first (Phase 1 secure protocol); 'application/json' avoids CORS preflight issues with GAS
+    let r=null;
+    try{
+      const res=await fetch(u,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:payload,
+        redirect:'follow'
+      });
+      if(res.ok)r=await res.json();
+    }catch(e){}
+    // text/plain fallback (some GAS deployments prefer this)
+    if(!r){
+      try{
+        const res2=await fetch(u,{
+          method:'POST',
+          headers:{'Content-Type':'text/plain;charset=utf-8'},
+          body:payload,
+          redirect:'follow'
+        });
+        if(res2.ok)r=await res2.json();
+      }catch(e2){}
+    }
+    if(!r)throw new Error('push_failed');
     if(r.conflict){busy=false;if(!isRecovery&&tries<4&&await mergeRemote())return push(false,tries+1);setSt('conf');return}
     if(r.ok===false){busy=false;return badKey()}if(!r.ok)throw 0;
     const nextRev=(r&&r.rev)?r.rev:rev;
@@ -2859,14 +3401,29 @@ async function importPos(){
     try{
       const res=await fetch(u,{
         method:'POST',
-        headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body:JSON.stringify({action:'inbox',key:k,token:k,since:S.posSince||0})
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({action:'inbox',key:k,token:k,since:S.posSince||0}),
+        redirect:'follow'
       });
       if(res.ok)r=await res.json();
     }catch(e){}
     if(!r){
+      try{
+        const res2=await fetch(u,{
+          method:'POST',
+          headers:{'Content-Type':'text/plain;charset=utf-8'},
+          body:JSON.stringify({action:'inbox',key:k,token:k,since:S.posSince||0}),
+          redirect:'follow'
+        });
+        if(res2.ok)r=await res2.json();
+      }catch(e2){}
+    }
+    if(!r){
       const sep=u.includes('?')?'&':'?';
-      r=await(await fetch(`${u}${sep}action=inbox&key=${encodeURIComponent(k)}&token=${encodeURIComponent(k)}&since=${S.posSince||0}`)).json();
+      try{
+        const res3=await fetch(`${u}${sep}action=inbox&key=${encodeURIComponent(k)}&token=${encodeURIComponent(k)}&since=${S.posSince||0}`,{redirect:'follow'});
+        if(res3.ok)r=await res3.json();
+      }catch(e3){}
     }
     if(!r||!r.ok||!r.rows||!r.rows.length)return;
     let c=0,mx=S.posSince||0;
@@ -2964,14 +3521,29 @@ async function importCatalog(){if(S.catImported||S.products.length||!SY())return
     try{
       const res=await fetch(u,{
         method:'POST',
-        headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body:JSON.stringify({action:'catalog',key:k,token:k})
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({action:'catalog',key:k,token:k}),
+        redirect:'follow'
       });
       if(res.ok)r=await res.json();
     }catch(err){}
     if(!r){
+      try{
+        const res2=await fetch(u,{
+          method:'POST',
+          headers:{'Content-Type':'text/plain;charset=utf-8'},
+          body:JSON.stringify({action:'catalog',key:k,token:k}),
+          redirect:'follow'
+        });
+        if(res2.ok)r=await res2.json();
+      }catch(e2){}
+    }
+    if(!r){
       const sep=u.includes('?')?'&':'?';
-      r=await(await fetch(`${u}${sep}action=catalog&key=${encodeURIComponent(k)}&token=${encodeURIComponent(k)}`)).json();
+      try{
+        const res3=await fetch(`${u}${sep}action=catalog&key=${encodeURIComponent(k)}&token=${encodeURIComponent(k)}`,{redirect:'follow'});
+        if(res3.ok)r=await res3.json();
+      }catch(e3){}
     }
     if(r&&r.ok&&r.items&&r.items.length){r.items.filter(p=>!p.del).forEach(p=>S.products.push({id:p.id,name:p.name,barcode:p.barcode||'',buy:0,price:+p.price||0,img:''}));S.catImported=1;save();if(U)POS.refresh()}
     else{S.catImported=1;persist()}
@@ -3097,6 +3669,11 @@ bugBtn.onclick = function() {
         '<span>' + lb('Download Log', 'লগ ফাইল') + '</span>' +
       '</button>' +
     '</div>' +
+    '<div style="margin-bottom:8px">' +
+      '<button type="button" class="ghost" id="bugClearCreds" style="width:100%;height:34px;font-size:12px;color:var(--neg)">' +
+        '🗑 ' + lb('Clear Local Sync Credentials', 'ডিভাইস থেকে সিঙ্ক তথ্য মুছুন') +
+      '</button>' +
+    '</div>' +
     '<div id="bugStatus" class="mut" style="font-size:12px;text-align:center;min-height:18px"></div>' +
     '<p class="mut" style="font-size:11.5px;margin:4px 0 0;text-align:center">' + lb('Attaches technical log & system state (No customer passwords or private PINs).', 'কারিগরি ডায়াগনস্টিক তথ্য সংযুক্ত থাকবে (কোনো পাসওয়ার্ড বা পিন ছাড়া)।') + '</p>';
 
@@ -3181,6 +3758,23 @@ bugBtn.onclick = function() {
       dlFile(filename, report.text + '\n\n--- JSON ---\n' + JSON.stringify(report, null, 2));
       var st = $('bugStatus');
       if (st) st.innerHTML = '<span style="color:var(--acc)">✓ ' + lb('Downloading bug report file...', 'লগ ফাইল ডাউনলোড হচ্ছে...') + '</span>';
+    };
+  }
+
+  var clrBtn = $('bugClearCreds');
+  if (clrBtn) {
+    clrBtn.onclick = function() {
+      if (!confirm(lb('Remove sync URL and access key from this browser?', 'এই ব্রাউজার থেকে সিঙ্ক লিঙ্ক এবং অ্যাক্সেস কী মুছে ফেলবেন?'))) return;
+      try {
+        localStorage.removeItem('ncs_sync_url');
+        localStorage.removeItem('ncs_sync_key');
+      } catch(e){}
+      S.sync = null;
+      save();
+      setSt('off');
+      var st = $('bugStatus');
+      if (st) st.innerHTML = '<span style="color:var(--pos)">✓ ' + lb('Credentials removed from this device', 'সিঙ্ক তথ্য মুছে ফেলা হয়েছে') + '</span>';
+      if (typeof ltoast === 'function') ltoast(lb('Sync credentials cleared', 'সিঙ্ক তথ্য মোছা হয়েছে'));
     };
   }
 };
@@ -4593,7 +5187,7 @@ function homeUI(){
   $('hTitle').textContent = lb('Hello, ', 'হ্যালো, ') + (U ? U.name : '');
   $('hQa').querySelectorAll('[data-q]').forEach(function(b){
     var k = b.dataset.q;
-    var l = k === 'sale' ? lb('New sale', 'নতুন বিক্রয়') : k === 'purchase' ? lb('New purchase', 'নতুন ক্রয়') : k === 'acc' ? lb('Accounts', 'হিসাব') : lb("Today's bills", 'আজকের বিল');
+    var l = k === 'invoice' ? lb('New invoice', 'নতুন চালান') : k === 'sale' ? lb('New sale', 'নতুন বিক্রয়') : k === 'purchase' ? lb('New purchase', 'নতুন ক্রয়') : k === 'acc' ? lb('Accounts', 'হিসাব') : lb("Today's bills", 'আজকের বিল');
     b.querySelector('.qal').textContent = l;
   });
 
@@ -4777,7 +5371,8 @@ $('hQa').addEventListener('click', e => {
   const b = e.target.closest('[data-q]');
   if(!b) return;
   const q = b.dataset.q;
-  if(q === 'sale' || q === 'purchase'){ POS.setMode(q); go('pos'); }
+  if(q === 'invoice'){ if(typeof openCustomInvoice === 'function') openCustomInvoice(); }
+  else if(q === 'sale' || q === 'purchase'){ POS.setMode(q); go('pos'); }
   else if(q === 'acc') go('acc');
   else{ go('pos'); POS.bills(); }
 });
@@ -5579,6 +6174,7 @@ function pForm(p,code){pimg=p?p.img||'':'';const e=!!p,sm=stockMap();
   $('ob').onchange=ev=>{if(ev.target.type==='file'&&ev.target.files[0])shrink(ev.target.files[0],show)}}
 $('bNew').onclick=()=>pForm(null,'');
 $('bCustom').onclick=()=>dlg('Custom item',`<div class="f"><label>Item name</label><input id="ci1"></div><div class="f"><label>Price</label><input id="ci2" type="number" inputmode="decimal" min="0"></div>`,()=>{const nm=$('ci1').value.trim();if(!nm)return false;addLine({name:nm,price:+$('ci2').value||0})},'Add');
+if($('bCustomInvoice'))$('bCustomInvoice').onclick=()=>openCustomInvoice();
 
 let stream=null,scanning=false;
 function stopScan(){scanning=false;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;$('sc').hidden=true}
@@ -5607,72 +6203,794 @@ function checkout(){const T=total();if(!C.lines.length)return;
     if(d.pay){ck.pay=d.pay;if(d.pay==='Mobile Banking'&&!ck.w)ck.w='bk'}if(d.w)ck.w=d.w;if(d.pl)ck.rec[d.pl]=(ck.rec[d.pl]||0)+1;if(d.m)ck.rec[d.m]=Math.max(0,(ck.rec[d.m]||0)-1);if(d.exact)ck.rec=split(T);draw()}}
 function finishBill(ck){const pm=C.mode==='purchase',T=total(),rec=ck.pay==='Cash'?ck.rec:{},chg=ck.pay==='Cash'?split(sumD(ck.rec)-T):{};
   D.seq++;dsave();const no=D.dev+D.seq,items=C.lines.map(l=>l.qty+'× '+l.name).join(', '),id=uid();
-  const party=ck.pay==='Due'?ck.party.trim():'',phone=ck.pay==='Due'?ck.phone.trim():'',ty=pm?'Purchase':'Sale',gross=sub(),disc=+C.disc||0,discPct=gross?disc/gross*100:0;
-  const b={id,no,d:bizDate(),t:nowT(),ts:Date.now(),user:U.name,mode:C.mode,desc:'POS #'+no+': '+items,lines:C.lines,subtotal:gross,disc:disc,discPct:discPct,...(discPct>5?{discountReview:{state:'pending',pct:discPct,by:U.name,at:Date.now(),note:'Discount exceeds 5% of bill subtotal'}}:{}),total:T,pay:ck.pay,party,phone,rec,chg,...(ck.pay==='Mobile Banking'&&!pm?{w:ck.w||'bk'}:{}),...(ck.cuId&&!pm?{cu:ck.cuId}:{})};
+  const party=(ck.party||'').trim(),phone=(ck.phone||'').trim(),addr=(ck.addr||'').trim(),ty=pm?'Purchase':'Sale',gross=sub(),disc=+C.disc||0,discPct=gross?disc/gross*100:0;
+  const b={id,no,d:bizDate(),t:nowT(),ts:Date.now(),user:U.name,mode:C.mode,desc:'POS #'+no+': '+items,lines:C.lines,subtotal:gross,disc:disc,discPct:discPct,...(discPct>5?{discountReview:{state:'pending',pct:discPct,by:U.name,at:Date.now(),note:'Discount exceeds 5% of bill subtotal'}}:{}),total:T,pay:ck.pay,party,phone,addr,rec,chg,...(ck.pay==='Mobile Banking'&&!pm?{w:ck.w||'bk'}:{}),...(ck.cuId&&!pm?{cu:ck.cuId}:{})};
   S.bills.unshift(b);S.entries.push({id,d:b.d,t:b.t,type:ty,desc:b.desc.slice(0,200),cat:'POS',pay:ck.pay,amt:T,by:U.name,party,phone,pos:1,act:null,...(b.w?{w:b.w}:{}),...(b.cu?{cu:b.cu}:{})});
   C.lines.forEach((l,i)=>{if(l.pid)S.moves.push({id:id+'-'+i,pid:l.pid,q:(pm?1:-1)*l.qty,ref:id,t:pm?'in':'sale',d:b.d})});
   if(party)(S.parties[ty]=S.parties[ty]||{})[party]=phone;
   lg('POS bill','#'+no+' '+tk(T)+' '+ck.pay);save();Sound.chaChing();saveCheck();C.lines=[];C.disc=0;C.dpct=0;C.dm='a';renderGrid();renderCart()}
 $('bPay').onclick=checkout;$('fab').onclick=checkout;
 
-function rtext(b){const W=32,ln=(a,c)=>(a.length>W-c.length-1?a.slice(0,W-c.length-1):a).padEnd(W-c.length)+c,dt=sd(b.d)+' '+t12(b.t);
-  return [(S.lang==='bn'?SHOP_BN:SHOP_EN.toUpperCase()),(b.mode==='purchase'?'Purchase':'Bill')+' #'+b.no,dt,'Cashier: '+b.user,'-'.repeat(W),...b.lines.map(l=>ln(l.qty+'x '+l.name,n(l.price*l.qty))),'-'.repeat(W),...(b.disc?[ln('Discount','-'+n(b.disc))]:[]),ln('TOTAL',n(b.total)),'Paid by '+b.pay+(b.party?' ('+b.party+')':''),b.void?'*** VOID ***':'','Thank you'].filter(x=>x!=='').join('\n')}
-async function printThermalEscPos(text) {
-  if (typeof navigator !== 'undefined' && navigator.serial) {
-    try {
-      const port = await navigator.serial.requestPort();
-      await port.open({ baudRate: 9600 });
-      const writer = port.writable.getWriter();
-      const enc = new TextEncoder();
-      const initCmd = new Uint8Array([0x1B, 0x40]);
-      const kickCmd = new Uint8Array([0x1B, 0x70, 0x00, 0x19, 0xFA]);
-      const cutCmd = new Uint8Array([0x1D, 0x56, 0x41, 0x03]);
-      await writer.write(initCmd);
-      await writer.write(enc.encode(text + '\n\n\n'));
-      await writer.write(kickCmd);
-      await writer.write(cutCmd);
-      writer.releaseLock();
-      await port.close();
-      toast(lb('Printed via USB Thermal', 'ইউএসবি থার্মাল প্রিন্ট সম্পন্ন'));
-      return true;
-    } catch (e) {
-      if (e.name !== 'NotFoundError') console.warn('Serial print error:', e);
-    }
-  }
-  if (typeof navigator !== 'undefined' && navigator.bluetooth) {
-    try {
-      const device = await navigator.bluetooth.requestDevice({
-        acceptAllDevices: true,
-        optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb']
-      });
-      if (device && device.gatt) {
-        const server = await device.gatt.connect();
-        const service = await server.getPrimaryService('000018f0-0000-1000-8000-00805f9b34fb');
-        const char = await service.getCharacteristic('00002af1-0000-1000-8000-00805f9b34fb');
-        const enc = new TextEncoder();
-        await char.writeValue(enc.encode(text + '\n\n\n'));
-        toast(lb('Printed via Bluetooth', 'ব্লুটুথ প্রিন্ট সম্পন্ন'));
-        return true;
-      }
-    } catch (e) {
-      if (e.name !== 'NotFoundError') console.warn('Bluetooth print error:', e);
-    }
-  }
-  return false;
+// --- Bengali Amount in Words ---
+function bnWords(num){
+  num=Math.round(Number(num||0));
+  if(num<=0)return 'শূন্য';
+  var ones=['','এক','দুই','তিন','চার','পাঁচ','ছয়','সাত','আট','নয়','দশ',
+    'এগারো','বারো','তেরো','চৌদ্দ','পনেরো','ষোলো','সতেরো','আঠারো','উনিশ','বিশ',
+    'একুশ','বাইশ','তেইশ','চব্বিশ','পঁচিশ','ছাব্বিশ','সাতাশ','আঠাশ','উনত্রিশ','ত্রিশ',
+    'একত্রিশ','বত্রিশ','তেত্রিশ','চৌত্রিশ','পঁয়ত্রিশ','ছত্রিশ','সাঁইত্রিশ','আটত্রিশ','উনচল্লিশ','চল্লিশ',
+    'একচল্লিশ','বিয়াল্লিশ','তেতাল্লিশ','চুয়াল্লিশ','পঁয়তাল্লিশ','ছেচল্লিশ','সাতচল্লিশ','আটচল্লিশ','উনপঞ্চাশ','পঞ্চাশ',
+    'একান্ন','বায়ান্ন','তিপ্পান্ন','চুয়ান্ন','পঞ্চান্ন','ছাপ্পান্ন','সাতান্ন','আটান্ন','উনষাট','ষাট',
+    'একষট্টি','বাষট্টি','তেষট্টি','চৌষট্টি','পঁয়ষট্টি','ছেষট্টি','সাতষট্টি','আটষট্টি','উনসত্তর','সত্তর',
+    'একাত্তর','বাহাত্তর','তিয়াত্তর','চুয়াত্তর','পঁচাত্তর','ছিয়াত্তর','সাতাত্তর','আটাত্তর','উনআশি','আশি',
+    'একাশি','বিরাশি','তিরাশি','চুরাশি','পঁচাশি','ছিয়াশি','সাতাশি','অষ্টআশি','উনানব্বই','নব্বই',
+    'একানব্বই','বিরানব্বই','তিরানব্বই','চুরানব্বই','পঁচানব্বই','ছিয়ানব্বই','সাতানব্বই','আটানব্বই','নিরানব্বই'];
+
+  var out='';
+  var crore=Math.floor(num/10000000); num%=10000000;
+  var lakh=Math.floor(num/100000); num%=100000;
+  var thousand=Math.floor(num/1000); num%=1000;
+  var hundred=Math.floor(num/100); num%=100;
+  var rest=num;
+
+  if(crore>0) out+=bnWords(crore)+' কোটি ';
+  if(lakh>0) out+=ones[lakh]+' লাখ ';
+  if(thousand>0) out+=ones[thousand]+' হাজার ';
+  if(hundred>0) out+=ones[hundred]+' শত ';
+  if(rest>0) out+=ones[rest]+' ';
+
+  return out.trim()+' টাকা মাত্র';
 }
 
-function receipt(b){const t=rtext(b);dlg('Receipt','<pre style="font:13px monospace;white-space:pre-wrap;margin:0 0 10px">'+esc(t)+'</pre><div class="chips"><button data-sh="1">Share</button><button data-cp="1">Copy</button><button data-pt="1">Print</button><button data-esc="1">⚡ Thermal ESC/POS</button></div>',()=>{},'Close',true);
-  $('ob').onclick=async e=>{const x=e.target.closest('button');if(!x)return;
-    if(x.dataset.sh){try{await navigator.share({text:t})}catch(err){}}
-    if(x.dataset.cp){try{await navigator.clipboard.writeText(t);toast('Copied')}catch(err){}}
-    if(x.dataset.pt){$('rcp').textContent=t;document.body.classList.add('pr');try{window.print()}catch(err){}setTimeout(()=>document.body.classList.remove('pr'),800)}
-    if(x.dataset.esc){
-      const ok = await printThermalEscPos(t);
-      if(!ok){
-        $('rcp').textContent=t;document.body.classList.add('pr');try{window.print()}catch(err){}setTimeout(()=>document.body.classList.remove('pr'),800);
+function invoiceNum(v){
+  var value=Number(v||0).toLocaleString('en-US',{maximumFractionDigits:2});
+  return S.lang==='bn'?toBnNum(value):value;
+}
+function invoiceMoney(v){return '৳ '+invoiceNum(v)}
+function invoiceDate(d){
+  var x=new Date(String(d||iso(new Date()))+'T00:00:00');
+  if(!Number.isFinite(x.getTime()))return esc(d||'');
+  if(S.lang!=='bn')return x.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  var months=['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
+  return toBnNum(x.getDate())+' '+months[x.getMonth()]+' '+toBnNum(x.getFullYear());
+}
+function invoiceTime(t){
+  var parts=String(t||'00:00').split(':'),h=+parts[0]||0,m=parts[1]||'00';
+  if(S.lang!=='bn')return t12(String(parts[0]).padStart(2,'0')+':'+String(m).padStart(2,'0'));
+  var period=h<6?'রাত':h<12?'সকাল':h<15?'দুপুর':h<18?'বিকাল':'রাত';
+  return period+' '+toBnNum((h%12)||12)+':'+toBnNum(m);
+}
+function invoiceMethod(b){
+  var method=b.pay||'Cash';
+  if(method==='Cash')return lb('Cash','নগদ');
+  if(method==='Mobile Banking')return lb('Mobile Banking','মোবাইল ব্যাংকিং')+(b.w?' · '+wN(b.w):'');
+  if(method==='Bank')return lb('Bank','ব্যাংক');
+  if(method==='Due')return lb('Due','বাকি');
+  return esc(method);
+}
+
+function invoiceMarkup(b){
+  var bn=S.lang==='bn',purchase=b.mode==='purchase',voided=!!b.void;
+  var lines=Array.isArray(b.lines)?b.lines:[];
+  var subtotal=b.subtotal!=null?+b.subtotal:lines.reduce(function(sum,l){return sum+(+l.qty||0)*(+l.price||0)},0);
+  var discount=+b.disc||0,total=b.total!=null?+b.total:subtotal-discount;
+  var no=bn?toBnNum(String(b.no||'')):String(b.no||'');
+  var title=purchase?lb('PURCHASE VOUCHER','ক্রয় ভাউচার'):lb('SALES INVOICE / BILL VOUCHER','ইনভয়েস / বিল ভাউচার');
+  var status=voided?lb('VOID','বাতিল'):(b.pay==='Due'?lb('PAYMENT DUE','বাকি আছে'):lb('PAID','পরিশোধিত'));
+  var method=invoiceMethod(b);
+
+  var cashRec=0;
+  if(b.rec&&typeof b.rec==='object'){
+    cashRec=sumD(b.rec);
+  }else if(typeof b.rec==='number'){
+    cashRec=b.rec;
+  }
+  var cashChg=cashRec>total?cashRec-total:0;
+  if(b.chg&&typeof b.chg==='object'){
+    var sChg=sumD(b.chg);
+    if(sChg>0)cashChg=sChg;
+  }else if(typeof b.chg==='number'&&b.chg>0){
+    cashChg=b.chg;
+  }
+
+  var rowHtml=lines.map(function(l,i){
+    var qty=+l.qty||0,price=+l.price||0,amount=r2(qty*price);
+    var unit=l.unit?esc(l.unit):(bn?'টি':'pc');
+    return '<tr>'+
+      '<td class="td-num">'+invoiceNum(i+1)+'</td>'+
+      '<td><b>'+esc(l.name||'')+'</b></td>'+
+      '<td class="td-qty">'+invoiceNum(qty)+'</td>'+
+      '<td class="td-unit">'+unit+'</td>'+
+      '<td class="td-price">'+invoiceMoney(price)+'</td>'+
+      '<td class="td-amt">'+invoiceMoney(amount)+'</td>'+
+    '</tr>';
+  }).join('');
+  if(!rowHtml)rowHtml='<tr><td colspan="6" style="text-align:center;padding:24px;color:#8793a0">'+lb('No line items','কোনো আইটেম নেই')+'</td></tr>';
+
+  var words=b.words||(total>0?bnWords(total):'');
+
+  return '<article class="invoice-paper" lang="'+(bn?'bn':'en')+'">'+
+    (voided?'<div class="invoice-void-watermark">'+lb('VOID','বাতিল')+'</div>':'')+
+    '<header class="invoice-header">'+
+      '<div class="invoice-header-row">'+
+        '<div class="invoice-brand-col">'+
+          '<img class="invoice-logo" src="logo-icon-black.png" alt="NCS">'+
+          '<div>'+
+            '<div class="invoice-shop-name">'+(bn?SHOP_BN:SHOP_EN)+'</div>'+
+            '<div class="invoice-shop-tagline">'+(bn?SHOP_TAGLINE_BN:SHOP_TAGLINE_EN)+'</div>'+
+          '</div>'+
+        '</div>'+
+        '<div class="invoice-contact-col">'+
+          '<div><b>'+lb('Proprietor: ','স্বত্বাধিকারী: ')+'</b>'+(bn?SHOP_PROP_BN:SHOP_PROP_EN)+'</div>'+
+          '<div><b>'+lb('Mobile: ','মোবাইল: ')+'</b>'+(bn?toBnNum(SHOP_PHONES):SHOP_PHONES)+'</div>'+
+          '<div><b>Email: </b>'+SHOP_EMAIL+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="invoice-address-line">'+(bn?SHOP_ADDR_BN:SHOP_ADDR_EN)+'</div>'+
+    '</header>'+
+    '<div class="invoice-title-bar">'+
+      '<div class="invoice-doc-title">'+title+'</div>'+
+      '<span class="invoice-status-badge '+(voided?'is-void':b.pay==='Due'?'is-due':'is-paid')+'">'+status+'</span>'+
+    '</div>'+
+    '<div class="invoice-info-grid">'+
+      '<div class="invoice-info-block">'+
+        '<span>'+lb('BILLED TO (CUSTOMER)','গ্রাহক / প্রতিষ্ঠান')+'</span>'+
+        '<b>'+(b.party?esc(b.party):lb('Walking Customer','সাধারণ গ্রাহক'))+'</b>'+
+        (b.phone?'<div style="font-size:10.5px;color:#475569;margin-top:2px">'+lb('Mobile: ','মোবাইল: ')+esc(bn?toBnNum(b.phone):b.phone)+'</div>':'')+
+        (b.addr?'<div style="font-size:10.5px;color:#475569;margin-top:2px">'+lb('Address: ','ঠিকানা: ')+esc(b.addr)+'</div>':'')+
+      '</div>'+
+      '<div class="invoice-meta-subgrid">'+
+        '<div class="invoice-info-block"><span>'+lb('INVOICE NO.','চালান নং')+'</span><b>#'+esc(no)+'</b></div>'+
+        '<div class="invoice-info-block"><span>'+lb('DATE','তারিখ')+'</span><b>'+invoiceDate(b.d)+'</b></div>'+
+        '<div class="invoice-info-block"><span>'+lb('TIME','সময়')+'</span><b>'+invoiceTime(b.t)+'</b></div>'+
+        '<div class="invoice-info-block"><span>'+lb('SERVED BY','বিল প্রস্তুতকারী')+'</span><b>'+esc(b.user||'—')+'</b></div>'+
+      '</div>'+
+    '</div>'+
+    '<table class="invoice-table">'+
+      '<thead><tr>'+
+        '<th class="th-num">#</th>'+
+        '<th>'+lb('ITEM / SERVICE DESCRIPTION','পণ্যের / কাজের বিবরণ')+'</th>'+
+        '<th class="th-qty">'+lb('QTY','পরিমাণ')+'</th>'+
+        '<th class="th-unit">'+lb('UNIT','একক')+'</th>'+
+        '<th class="th-price">'+lb('UNIT PRICE','দর (৳)')+'</th>'+
+        '<th class="th-amt">'+lb('TOTAL','মোট (৳)')+'</th>'+
+      '</tr></thead>'+
+      '<tbody>'+rowHtml+'</tbody>'+
+    '</table>'+
+    '<div class="invoice-bottom-grid">'+
+      '<div class="invoice-bottom-left">'+
+        '<div class="invoice-pay-row"><span>'+lb('Payment Method:','পেমেন্ট পদ্ধতি:')+'</span><b>'+method+'</b></div>'+
+        '<div class="invoice-pay-row"><span>'+lb('Payment Status:','পেমেন্ট অবস্থা:')+'</span><b>'+status+'</b></div>'+
+        (b.pay==='Cash'&&cashRec>0?'<div class="invoice-pay-row"><span>'+lb('Cash Received:','নগদ গ্রহণ:')+'</span><b>'+invoiceMoney(cashRec)+'</b></div>':'')+
+        (b.pay==='Cash'&&cashChg>0?'<div class="invoice-pay-row"><span>'+lb('Change Returned:','ফেরত প্রদান:')+'</span><b style="color:#0f766e">'+invoiceMoney(cashChg)+'</b></div>':'')+
+        (b.pay==='Due'&&!voided?'<div class="invoice-pay-row" style="color:#b45309"><span>'+lb('Balance Due:','বকেয়া পরিমাণ:')+'</span><b>'+invoiceMoney(total)+'</b></div>':'')+
+        (words?'<div class="invoice-words-box"><b>'+lb('In words: ','টাকার পরিমাণ কথায়: ')+'</b>'+esc(words)+'</div>':'')+
+      '</div>'+
+      '<div class="invoice-bottom-right">'+
+        '<div class="invoice-tot-row"><span>'+lb('Subtotal:','উপমোট:')+'</span><b>'+invoiceMoney(subtotal)+'</b></div>'+
+        (discount>0?'<div class="invoice-tot-row" style="color:#15803d"><span>'+lb('Discount:','ছাড়:')+'</span><b>− '+invoiceMoney(discount)+'</b></div>':'')+
+        '<div class="invoice-grand-row"><span>'+lb('GRAND TOTAL:','সর্বমোট দেয়:')+'</span><b>'+invoiceMoney(total)+'</b></div>'+
+        (b.pay==='Due'&&!voided?'<div class="invoice-due-alert"><span>'+lb('TOTAL DUE:','সর্বমোট বকেয়া:')+'</span><b>'+invoiceMoney(total)+'</b></div>':'')+
+      '</div>'+
+    '</div>'+
+    (voided&&b.vr?'<div style="margin:10px 0;padding:8px 12px;background:#fef2f2;border-left:3px solid #ef4444;color:#991b1b;font-size:11px"><b>'+lb('Void Reason: ','বাতিলের কারণ: ')+'</b>'+esc(b.vr)+'</div>':'')+
+    '<div class="invoice-signatures">'+
+      '<div class="invoice-sign-col"><div class="invoice-sign-line">'+lb('Customer Signature','গ্রাহকের স্বাক্ষর')+'</div></div>'+
+      '<div class="invoice-sign-col"><div class="invoice-sign-line">'+lb('Authorized Signatory','স্বত্বাধিকারী / অনুমোদিত স্বাক্ষর')+'</div></div>'+
+    '</div>'+
+    '<div class="invoice-footer-note">'+lb('Computer-generated bill · Thank you for your business.','কম্পিউটারে তৈরি চালান · আমাদের সেবা নেওয়ার জন্য ধন্যবাদ।')+'</div>'+
+  '</article>';
+}
+
+function thermalSlipMarkup(b){
+  var bn=S.lang==='bn',lines=Array.isArray(b.lines)?b.lines:[];
+  var subtotal=b.subtotal!=null?+b.subtotal:lines.reduce(function(s,l){return s+(+l.qty||0)*(+l.price||0)},0);
+  var discount=+b.disc||0,total=b.total!=null?+b.total:subtotal-discount;
+  var no=bn?toBnNum(String(b.no||'')):String(b.no||'');
+  var method=invoiceMethod(b);
+
+  var cashRec=0;
+  if(b.rec&&typeof b.rec==='object')cashRec=sumD(b.rec);
+  else if(typeof b.rec==='number')cashRec=b.rec;
+  var cashChg=cashRec>total?cashRec-total:0;
+  if(b.chg&&typeof b.chg==='object')cashChg=sumD(b.chg);
+  else if(typeof b.chg==='number'&&b.chg>0)cashChg=b.chg;
+
+  var rows=lines.map(function(l){
+    var qty=+l.qty||0,price=+l.price||0,amt=qty*price;
+    var unitStr=l.unit?(' '+l.unit):'';
+    return '<div class="ts-line"><span class="ts-item-name">'+esc(l.name||'')+'</span></div>'+
+      '<div class="ts-line" style="color:#475569;font-size:10px"><span>'+invoiceNum(qty)+unitStr+' × '+invoiceMoney(price)+'</span><b>'+invoiceMoney(amt)+'</b></div>';
+  }).join('');
+
+  return '<div class="thermal-slip" lang="'+(bn?'bn':'en')+'">'+
+    '<div class="ts-center ts-title">'+(bn?SHOP_BN:SHOP_EN)+'</div>'+
+    '<div class="ts-center ts-sub">'+(bn?SHOP_ADDR_BN:SHOP_ADDR_EN)+'</div>'+
+    '<div class="ts-center ts-sub">'+lb('Mobile: ','মোবাইল: ')+(bn?toBnNum(SHOP_PHONES):SHOP_PHONES)+'</div>'+
+    '<div class="ts-divider"></div>'+
+    '<div class="ts-meta ts-line"><span>'+(b.mode==='purchase'?lb('PURCHASE #','ক্রয় #'):lb('BILL #','বিল #'))+esc(no)+'</span><span>'+invoiceDate(b.d)+'</span></div>'+
+    '<div class="ts-meta ts-line"><span>'+lb('Time: ','সময়: ')+invoiceTime(b.t)+'</span><span>'+lb('Cashier: ','ক্যাশিয়ার: ')+esc(b.user||'—')+'</span></div>'+
+    (b.party?'<div class="ts-meta ts-line"><span>'+lb('Customer: ','গ্রাহক: ')+'<b>'+esc(b.party)+'</b></span>'+(b.phone?'<span>'+esc(bn?toBnNum(b.phone):b.phone)+'</span>':'')+'</div>':'')+
+    '<div class="ts-divider"></div>'+
+    rows+
+    '<div class="ts-divider"></div>'+
+    '<div class="ts-line"><span>'+lb('Subtotal:','উপমোট:')+'</span><b>'+invoiceMoney(subtotal)+'</b></div>'+
+    (discount>0?'<div class="ts-line"><span>'+lb('Discount:','ছাড়:')+'</span><b>− '+invoiceMoney(discount)+'</b></div>':'')+
+    '<div class="ts-line ts-grand"><span>'+lb('TOTAL:','সর্বমোট:')+'</span><b>'+invoiceMoney(total)+'</b></div>'+
+    '<div class="ts-line"><span>'+lb('Payment:','পেমেন্ট:')+'</span><b>'+method+'</b></div>'+
+    (b.pay==='Cash'&&cashRec>0?'<div class="ts-line"><span>'+lb('Cash Rec:','নগদ গ্রহণ:')+'</span><b>'+invoiceMoney(cashRec)+'</b></div>':'')+
+    (b.pay==='Cash'&&cashChg>0?'<div class="ts-line"><span>'+lb('Change:','ফেরত:')+'</span><b>'+invoiceMoney(cashChg)+'</b></div>':'')+
+    (b.pay==='Due'?'<div class="ts-line" style="font-weight:bold"><span>'+lb('DUE:','বকেয়া:')+'</span><b>'+invoiceMoney(total)+'</b></div>':'')+
+    (b.void?'<div class="ts-center" style="font-weight:bold;margin-top:4px">*** '+lb('VOID','বাতিল')+' ***</div>':'')+
+    '<div class="ts-divider"></div>'+
+    '<div class="ts-center" style="font-size:10.5px;font-weight:600;margin-top:4px">'+lb('Thank you! Come again.','আমাদের সেবা নেওয়ার জন্য ধন্যবাদ!')+'</div>'+
+  '</div>';
+}
+
+function rtext(b){
+  var W=32,lines=Array.isArray(b.lines)?b.lines:[];
+  var subtotal=b.subtotal!=null?+b.subtotal:lines.reduce(function(s,l){return s+(+l.qty||0)*(+l.price||0)},0);
+  var discount=+b.disc||0,total=b.total!=null?+b.total:subtotal-discount;
+  var center=function(s){s=String(s);return s.length>=W?s.slice(0,W):' '.repeat(Math.floor((W-s.length)/2))+s};
+  var pair=function(a,c){a=String(a);c=String(c);return a.slice(0,Math.max(0,W-c.length-1)).padEnd(Math.max(0,W-c.length-1))+' '+c};
+  var dt=sd(b.d)+' '+t12(b.t);
+
+  var out=[
+    center(SHOP_EN.toUpperCase()),
+    center('Choudhury Bazar, Kamalnagar'),
+    center('Mob: 01765-420566'),
+    '-'.repeat(W),
+    pair((b.mode==='purchase'?'PURCHASE #':'BILL #')+b.no, dt),
+    pair('Cashier: '+(b.user||'—'), b.pay||'Cash'),
+    '-'.repeat(W)
+  ];
+  if(b.party) out.push('Cust: '+String(b.party).slice(0,25));
+  lines.forEach(function(l){
+    out.push(String(l.name||'').slice(0,W));
+    out.push(pair(String(l.qty)+(l.unit?' '+l.unit:'')+' x '+String(l.price), String(r2((+l.qty||0)*(+l.price||0)))));
+  });
+  out.push('-'.repeat(W), pair('Subtotal', String(subtotal)));
+  if(discount) out.push(pair('Discount', '-'+String(discount)));
+  out.push(pair('TOTAL', 'Tk '+String(total)));
+  if(b.pay==='Due') out.push(pair('DUE BALANCE', 'Tk '+String(total)));
+  if(b.void) out.push(center('*** VOID ***'));
+  out.push('-'.repeat(W), center('Thank you for choosing NCS!'), '');
+  return out.join('\n');
+}
+
+function printA4Invoice(b){
+  var markup = typeof b === 'string' ? b : invoiceMarkup(b);
+  $('receiptPrint').innerHTML = markup;
+  document.body.classList.add('invoice-print');
+  var cleaned = false;
+  var cleanup = function(){
+    if(cleaned) return;
+    cleaned = true;
+    document.body.classList.remove('invoice-print');
+    window.removeEventListener('afterprint', cleanup);
+  };
+  window.addEventListener('afterprint', cleanup);
+  try { window.print(); } catch(err){ console.warn('Print error:', err); }
+  setTimeout(cleanup, 4000);
+}
+
+function printThermalSlip(b){
+  var markup = typeof b === 'string' ? b : thermalSlipMarkup(b);
+  $('receiptPrint').innerHTML = markup;
+  document.body.classList.add('thermal-print');
+  var cleaned = false;
+  var cleanup = function(){
+    if(cleaned) return;
+    cleaned = true;
+    document.body.classList.remove('thermal-print');
+    window.removeEventListener('afterprint', cleanup);
+  };
+  window.addEventListener('afterprint', cleanup);
+  try { window.print(); } catch(err){ console.warn('Print error:', err); }
+  setTimeout(cleanup, 4000);
+}
+
+function receipt(b){
+  var a4Html = invoiceMarkup(b);
+  var thermalHtml = thermalSlipMarkup(b);
+  var textEsc = rtext(b);
+
+  var actions = '<div class="invoice-actionbar">' +
+    '<button type="button" class="go" data-pt-a4="1">' + lb('Print A4 Invoice', 'চালান প্রিন্ট (A4)') + '</button>' +
+    '<button type="button" class="go" data-pt-th="1" style="background:#0284c7">' + lb('Thermal Slip', 'রসিদ (স্লিপ)') + '</button>' +
+    '<button type="button" class="ghost" data-esc="1">' + lb('⚡ ESC/POS', '⚡ থার্মাল প্রিন্টার') + '</button>' +
+    '<button type="button" class="ghost" data-cp="1">' + lb('Copy Text', 'কপি') + '</button>' +
+  '</div>';
+
+  var tabs = '<div class="seg" style="margin-bottom:10px">' +
+    '<button type="button" id="rcpTabA4" class="on">' + lb('A4 Invoice (চালান)', 'A4 চালান') + '</button>' +
+    '<button type="button" id="rcpTabTh">' + lb('Thermal Slip (স্লিপ)', 'রসিদ স্লিপ') + '</button>' +
+  '</div>';
+
+  ask(lb('Invoice & Receipt', 'ইনভয়েস ও রসিদ'), tabs + '<div class="invoice-preview-wrap" id="rcpPreviewBox">' + a4Html + '</div>' + actions, function(){}, lb('Close', 'বন্ধ'), true);
+  $('ok').style.display = 'none';
+
+  $('rcpTabA4').onclick = function(){
+    $('rcpTabA4').classList.add('on');
+    $('rcpTabTh').classList.remove('on');
+    $('rcpPreviewBox').innerHTML = a4Html;
+  };
+  $('rcpTabTh').onclick = function(){
+    $('rcpTabTh').classList.add('on');
+    $('rcpTabA4').classList.remove('on');
+    $('rcpPreviewBox').innerHTML = thermalHtml;
+  };
+
+  $('ob').onclick = async function(e){
+    var x = e.target.closest('button');
+    if(!x) return;
+    if(x.dataset.ptA4) printA4Invoice(b);
+    if(x.dataset.ptTh) printThermalSlip(b);
+    if(x.dataset.cp){
+      try {
+        await navigator.clipboard.writeText(textEsc);
+        toast(lb('Receipt text copied', 'রসিদ টেক্সট কপি হয়েছে'));
+      } catch(err){
+        toast(lb('Copy failed', 'কপি করা যায়নি'));
       }
     }
+    if(x.dataset.esc){
+      var ok = await printThermalEscPos(textEsc);
+      if(!ok) printThermalSlip(b);
+    }
   };
+}
+
+// --- Custom Invoice Studio Controller ---
+var _ciState = null;
+
+function openCustomInvoice(initData){
+  var isBn = S.lang === 'bn';
+  var defItems = (initData && Array.isArray(initData.items) && initData.items.length)
+    ? initData.items
+    : [{ name: '', qty: 1, unit: isBn ? 'কপি' : 'pc', price: 0 }];
+
+  _ciState = {
+    cuId: (initData && initData.cuId) || '',
+    party: (initData && initData.party) || '',
+    phone: (initData && initData.phone) || '',
+    addr: (initData && initData.addr) || '',
+    date: (initData && initData.date) || bizDate(),
+    disc: (initData && initData.disc) || 0,
+    discType: (initData && initData.discType) || 'taka',
+    pay: (initData && initData.pay) || 'Cash',
+    w: (initData && initData.w) || 'bk',
+    cashRec: 0,
+    cashRecEdited: false,
+    items: defItems
+  };
+
+  var modal = $('customInvoiceModal');
+  if(!modal) return;
+  modal.hidden = false;
+  $('ciClose').onclick = function(){ modal.hidden = true; };
+
+  renderCustomInvoiceStudio();
+}
+window.openCustomInvoice = openCustomInvoice;
+
+function renderCustomInvoiceStudio(){
+  var st = _ciState;
+  if(!st) return;
+  var isBn = S.lang === 'bn';
+
+  var subtotal = st.items.reduce(function(sum, it){
+    return sum + ((+it.qty || 0) * (+it.price || 0));
+  }, 0);
+  subtotal = r2(subtotal);
+
+  var discAmt = 0;
+  if(st.discType === 'percent'){
+    discAmt = r2(subtotal * ((+st.disc || 0) / 100));
+  } else {
+    discAmt = r2(+st.disc || 0);
+  }
+  var grandTotal = Math.max(0, r2(subtotal - discAmt));
+
+  if(!st.cashRecEdited){
+    st.cashRec = grandTotal;
+  }
+  var change = Math.max(0, r2(st.cashRec - grandTotal));
+  var dueAmt = st.pay === 'Due' ? grandTotal : 0;
+
+  var custOptions = '<option value="">' + lb('-- Select saved customer / Walk-in --', '-- সংরক্ষিত কাস্টমার নির্বাচন / টাইপ করুন --') + '</option>' +
+    (S.cust || []).filter(function(c){ return !c.del; }).map(function(c){
+      return '<option value="' + c.id + '" ' + (String(st.cuId) === String(c.id) ? 'selected' : '') + '>' +
+        esc(c.name) + (c.phone ? ' (' + esc(c.phone) + ')' : '') +
+      '</option>';
+    }).join('') +
+    '<option value="__new">' + lb('+ Add new party', '+ নতুন কাস্টমার / পক্ষ') + '</option>';
+
+  var shortcuts = [
+    { name: isBn ? 'রুটিন / শিট ফটোকপি' : 'Photocopy', unit: isBn ? 'কপি' : 'copy', price: 2 },
+    { name: isBn ? 'প্রশ্ন / ডকুমেন্ট কম্পোজ' : 'Composing', unit: isBn ? 'পাতা' : 'page', price: 30 },
+    { name: isBn ? 'কম্পিউটার টাইপিং' : 'Typing', unit: isBn ? 'পাতা' : 'page', price: 25 },
+    { name: isBn ? 'পিডিএফ প্রিন্ট' : 'PDF Print', unit: isBn ? 'পাতা' : 'page', price: 2 },
+    { name: isBn ? 'রঙিন ছবি প্রিন্ট' : 'Color Photo Print', unit: isBn ? 'কপি' : 'copy', price: 30 },
+    { name: isBn ? 'অনলাইন আবেদন / ফরম' : 'Online Form Fillup', unit: isBn ? 'টি' : 'app', price: 50 },
+    { name: isBn ? 'লেমিনেটিং' : 'Lamination', unit: isBn ? 'টি' : 'pc', price: 20 },
+    { name: isBn ? 'স্টেশনারী মালামাল' : 'Stationery Supply', unit: isBn ? 'টি' : 'pc', price: 10 }
+  ];
+
+  var rowsHtml = st.items.map(function(it, idx){
+    var lineTot = r2((+it.qty || 0) * (+it.price || 0));
+    return '<tr data-row="' + idx + '">' +
+      '<td class="ci-r-num">' + (idx + 1) + '</td>' +
+      '<td class="ci-r-name"><input type="text" class="ci-in-name" placeholder="' + lb('Item or service name...', 'কাজের বিবরণ (যেমন: প্রশ্ন ফটোকপি, টাইপিং)...') + '" value="' + esc(it.name) + '"></td>' +
+      '<td class="ci-r-qty"><input type="number" step="any" min="0" class="ci-in-qty" value="' + (+it.qty || '') + '" placeholder="1"></td>' +
+      '<td class="ci-r-unit"><input type="text" class="ci-in-unit" list="ciUnitList" placeholder="' + (isBn ? 'কপি/টি' : 'unit') + '" value="' + esc(it.unit || '') + '"></td>' +
+      '<td class="ci-r-price"><input type="number" step="any" min="0" class="ci-in-price" value="' + (it.price !== undefined ? it.price : '') + '" placeholder="0"></td>' +
+      '<td class="ci-r-tot">' + tk(lineTot) + '</td>' +
+      '<td class="ci-r-del"><button type="button" class="ci-row-del-btn" data-del="' + idx + '" title="' + lb('Remove', 'মুছুন') + '">×</button></td>' +
+    '</tr>';
+  }).join('');
+
+  var wordsBn = grandTotal > 0 ? bnWords(grandTotal) : '';
+
+  var html = '<datalist id="ciUnitList"><option value="কপি"><option value="পাতা"><option value="টি"><option value="পিছ"><option value="সেট"><option value="বই"><option value="প্যাকেট"></datalist>' +
+    '<div class="ci-grid-top">' +
+      '<div class="ci-field">' +
+        '<label>' + lb('Select Customer / Party', 'গ্রাহক / প্রতিষ্ঠান নির্বাচন') + '</label>' +
+        '<select id="ciSelectCust">' + custOptions + '</select>' +
+      '</div>' +
+      '<div class="ci-field">' +
+        '<label>' + lb('Customer Name', 'গ্রাহকের নাম') + '</label>' +
+        '<input type="text" id="ciPartyName" placeholder="' + lb('e.g. Nurah Ali Madrasa', 'যেমন: নূরাহ আলী মাদুল্যাহ মাদ্রাসা') + '" value="' + esc(st.party) + '">' +
+      '</div>' +
+      '<div class="ci-field">' +
+        '<label>' + lb('Mobile (optional)', 'মোবাইল (ঐচ্ছিক)') + '</label>' +
+        '<input type="tel" id="ciPartyPhone" placeholder="017xxxxxxxx" value="' + esc(st.phone) + '">' +
+      '</div>' +
+    '</div>' +
+    '<div class="ci-field" style="margin-bottom:14px">' +
+      '<label>' + lb('Customer Address / Memo Note (optional)', 'গ্রাহকের ঠিকানা / নোট (ঐচ্ছিক)') + '</label>' +
+      '<input type="text" id="ciPartyAddr" placeholder="' + lb('e.g. Choudhury Bazar, Kamalnagar', 'যেমন: চৌধুরী বাজার, কমলনগর, লক্ষ্মীপুর') + '" value="' + esc(st.addr) + '">' +
+    '</div>' +
+
+    '<div class="ci-shortcuts">' +
+      '<div class="ci-shortcuts-label">' + lb('Quick Service Shortcuts (এক ক্লিকে যোগ করুন)', 'কুইক সার্ভিস শর্টকাট (এক ক্লিকে যোগ করুন)') + '</div>' +
+      '<div class="ci-chips">' +
+        shortcuts.map(function(sc, i){
+          return '<button type="button" class="ci-chip" data-sc="' + i + '">' + esc(sc.name) + '</button>';
+        }).join('') +
+      '</div>' +
+    '</div>' +
+
+    '<div class="ci-table-wrap">' +
+      '<table class="ci-table">' +
+        '<thead><tr>' +
+          '<th style="width:34px;text-align:center">#</th>' +
+          '<th>' + lb('Item / Service Description', 'কাজের / পণ্যের বিবরণ') + '</th>' +
+          '<th style="width:75px;text-align:right">' + lb('Qty', 'পরিমাণ') + '</th>' +
+          '<th style="width:75px">' + lb('Unit', 'একক') + '</th>' +
+          '<th style="width:90px;text-align:right">' + lb('Unit Price', 'দর (৳)') + '</th>' +
+          '<th style="width:95px;text-align:right">' + lb('Total', 'মোট (৳)') + '</th>' +
+          '<th style="width:34px"></th>' +
+        '</tr></thead>' +
+        '<tbody>' + rowsHtml + '</tbody>' +
+      '</table>' +
+    '</div>' +
+
+    '<div class="ci-add-row-bar">' +
+      '<button type="button" class="ci-add-btn" id="ciAddRow">' + lb('+ Add Another Item', '+ আরেকটি আইটেম যোগ করুন') + '</button>' +
+      '<span class="mut" style="font-size:12px">' + st.items.length + ' ' + lb('items added', 'টি আইটেম যুক্ত') + '</span>' +
+    '</div>' +
+
+    '<div class="ci-summary-grid">' +
+      '<div class="ci-pay-box">' +
+        '<label style="font-size:12px;font-weight:700;color:var(--ink)">' + lb('Payment Method', 'পরিশোধ পদ্ধতি') + '</label>' +
+        '<div class="ci-pay-methods">' +
+          ['Cash', 'Due', 'Mobile Banking', 'Bank'].map(function(m){
+            return '<button type="button" class="ci-pay-btn ' + (st.pay === m ? 'on' : '') + '" data-pay="' + m + '">' +
+              (m === 'Cash' ? lb('Cash', 'নগদ') : m === 'Due' ? lb('Due', 'বাকি') : m === 'Mobile Banking' ? lb('MFS', 'মোবাইল ব্যাংকিং') : lb('Bank', 'ব্যাংক')) +
+            '</button>';
+          }).join('') +
+        '</div>' +
+        (st.pay === 'Mobile Banking' ?
+          '<div style="display:flex;gap:6px;align-items:center;margin-top:4px">' +
+            '<label style="font-size:11px;color:var(--mut)">' + lb('Wallet:', 'ওয়ালেট:') + '</label>' +
+            WLT_MFS.map(function(k){
+              return '<button type="button" class="ci-pay-btn ' + (st.w === k ? 'on' : '') + '" data-w="' + k + '" style="font-size:11px;padding:3px 8px">' + wN(k) + '</button>';
+            }).join('') +
+          '</div>' : '') +
+        (st.pay === 'Cash' ?
+          '<div style="display:flex;gap:12px;align-items:center;margin-top:6px">' +
+            '<div style="display:flex;align-items:center;gap:6px"><label style="font-size:11.5px;color:var(--mut)">' + lb('Cash Rec:', 'নগদ গ্রহণ:') + '</label><input type="number" id="ciCashRec" value="' + st.cashRec + '" style="width:90px;height:30px;padding:2px 6px;text-align:right"></div>' +
+            '<div style="font-size:12px;color:#0f766e"><b>' + lb('Change:', 'ফেরত:') + ' ' + tk(change) + '</b></div>' +
+          '</div>' : '') +
+        (st.pay === 'Due' ?
+          '<div style="font-size:12px;color:#b45309;margin-top:4px;padding:4px 8px;background:rgba(245,158,11,.1);border-radius:6px">' +
+            '<b>' + lb('Due Amount:', 'বকেয়া পরিমাণ:') + ' ' + tk(dueAmt) + '</b> (' + lb('Will post to customer ledger', 'কাস্টমার খতিয়ানে জমা হবে') + ')' +
+          '</div>' : '') +
+        (wordsBn ? '<div class="ci-words-badge"><b>' + lb('In words: ', 'কথায়: ') + '</b>' + esc(wordsBn) + '</div>' : '') +
+      '</div>' +
+
+      '<div class="ci-totals-box">' +
+        '<div class="ci-calc-line"><span>' + lb('Subtotal:', 'উপমোট:') + '</span><b>' + tk(subtotal) + '</b></div>' +
+        '<div class="ci-calc-line">' +
+          '<span>' + lb('Discount:', 'ছাড়:') + '</span>' +
+          '<div style="display:flex;align-items:center;gap:4px">' +
+            '<input type="number" id="ciDiscVal" min="0" step="any" value="' + (st.disc || '') + '" placeholder="0" style="width:70px;height:26px;text-align:right;font-size:12px">' +
+            '<button type="button" class="ghost" id="ciDiscType" style="height:26px;padding:0 6px;font-size:11px">' + (st.discType === 'percent' ? '%' : '৳') + '</button>' +
+          '</div>' +
+        '</div>' +
+        (discAmt > 0 ? '<div class="ci-calc-line" style="color:#15803d"><span>' + lb('Net Discount:', 'মোট ছাড়:') + '</span><b>− ' + tk(discAmt) + '</b></div>' : '') +
+        '<div class="ci-grand-line"><span>' + lb('GRAND TOTAL:', 'সর্বমোট দেয়:') + '</span><b>' + tk(grandTotal) + '</b></div>' +
+      '</div>' +
+    '</div>' +
+
+    '<div class="ci-actions">' +
+      '<button type="button" class="ghost" id="ciCancelBtn">' + lb('Cancel', 'বাতিল') + '</button>' +
+      '<button type="button" class="ghost" id="ciSaveOnlyBtn">' + lb('Save Only', 'শুধু সেভ') + '</button>' +
+      '<button type="button" class="go" id="ciPrintThBtn" style="background:#0284c7">' + lb('Thermal Slip', 'রসিদ (স্লিপ)') + '</button>' +
+      '<button type="button" class="go" id="ciPrintA4Btn">' + lb('Save & Print A4 Invoice', 'চালান প্রিন্ট (A4)') + '</button>' +
+    '</div>';
+
+  $('ciBody').innerHTML = html;
+
+  // Event Listeners for inputs
+  $('ciSelectCust').onchange = function(e){
+    var v = e.target.value;
+    st.cuId = v;
+    if(v && v !== '__new'){
+      var found = (S.cust || []).find(function(c){ return String(c.id) === String(v); });
+      if(found){
+        st.party = found.name;
+        st.phone = found.phone || '';
+        st.addr = found.addr || found.note || '';
+        $('ciPartyName').value = st.party;
+        $('ciPartyPhone').value = st.phone;
+        $('ciPartyAddr').value = st.addr;
+      }
+    } else if(v === '__new'){
+      $('ciPartyName').focus();
+    }
+  };
+
+  $('ciPartyName').oninput = function(e){ st.party = e.target.value; };
+  $('ciPartyPhone').oninput = function(e){ st.phone = e.target.value; };
+  $('ciPartyAddr').oninput = function(e){ st.addr = e.target.value; };
+
+  // Service Shortcut buttons
+  $('ciBody').querySelectorAll('.ci-chip').forEach(function(btn){
+    btn.onclick = function(){
+      var sc = shortcuts[+btn.dataset.sc];
+      if(!sc) return;
+      var last = st.items[st.items.length - 1];
+      if(last && !last.name.trim() && !last.price){
+        last.name = sc.name;
+        last.unit = sc.unit;
+        last.price = sc.price;
+      } else {
+        st.items.push({ name: sc.name, qty: 1, unit: sc.unit, price: sc.price });
+      }
+      renderCustomInvoiceStudio();
+    };
+  });
+
+  // Items table row events
+  $('ciBody').querySelectorAll('tr[data-row]').forEach(function(tr){
+    var idx = +tr.dataset.row;
+    var row = st.items[idx];
+    if(!row) return;
+
+    tr.querySelector('.ci-in-name').oninput = function(e){ row.name = e.target.value; };
+    tr.querySelector('.ci-in-qty').oninput = function(e){
+      row.qty = +e.target.value || 0;
+      updateStudioLiveTotals();
+    };
+    tr.querySelector('.ci-in-unit').oninput = function(e){ row.unit = e.target.value; };
+    tr.querySelector('.ci-in-price').oninput = function(e){
+      row.price = +e.target.value || 0;
+      updateStudioLiveTotals();
+    };
+  });
+
+  // Row deletion
+  $('ciBody').querySelectorAll('.ci-row-del-btn').forEach(function(btn){
+    btn.onclick = function(){
+      var idx = +btn.dataset.del;
+      if(st.items.length > 1){
+        st.items.splice(idx, 1);
+      } else {
+        st.items[0] = { name: '', qty: 1, unit: isBn ? 'কপি' : 'pc', price: 0 };
+      }
+      renderCustomInvoiceStudio();
+    };
+  });
+
+  // Add Row
+  $('ciAddRow').onclick = function(){
+    st.items.push({ name: '', qty: 1, unit: isBn ? 'কপি' : 'pc', price: 0 });
+    renderCustomInvoiceStudio();
+    var rows = $('ciBody').querySelectorAll('tr[data-row]');
+    if(rows.length){
+      var lastIn = rows[rows.length - 1].querySelector('.ci-in-name');
+      if(lastIn) lastIn.focus();
+    }
+  };
+
+  // Payment method buttons
+  $('ciBody').querySelectorAll('.ci-pay-btn[data-pay]').forEach(function(btn){
+    btn.onclick = function(){
+      st.pay = btn.dataset.pay;
+      renderCustomInvoiceStudio();
+    };
+  });
+  $('ciBody').querySelectorAll('.ci-pay-btn[data-w]').forEach(function(btn){
+    btn.onclick = function(){
+      st.w = btn.dataset.w;
+      renderCustomInvoiceStudio();
+    };
+  });
+
+  // Cash received
+  var cashRecInput = $('ciCashRec');
+  if(cashRecInput){
+    cashRecInput.oninput = function(e){
+      st.cashRec = +e.target.value || 0;
+      st.cashRecEdited = true;
+      updateStudioLiveTotals();
+    };
+  }
+
+  // Discount
+  $('ciDiscVal').oninput = function(e){
+    st.disc = +e.target.value || 0;
+    updateStudioLiveTotals();
+  };
+  $('ciDiscType').onclick = function(){
+    st.discType = st.discType === 'percent' ? 'taka' : 'percent';
+    renderCustomInvoiceStudio();
+  };
+
+  // Studio Save & Print Actions
+  $('ciCancelBtn').onclick = function(){ $('customInvoiceModal').hidden = true; };
+  $('ciSaveOnlyBtn').onclick = function(){ commitCustomInvoice('save'); };
+  $('ciPrintThBtn').onclick = function(){ commitCustomInvoice('print_th'); };
+  $('ciPrintA4Btn').onclick = function(){ commitCustomInvoice('print_a4'); };
+}
+
+function updateStudioLiveTotals(){
+  var st = _ciState;
+  if(!st) return;
+  var subtotal = st.items.reduce(function(sum, it){
+    return sum + ((+it.qty || 0) * (+it.price || 0));
+  }, 0);
+  subtotal = r2(subtotal);
+
+  var discAmt = 0;
+  if(st.discType === 'percent'){
+    discAmt = r2(subtotal * ((+st.disc || 0) / 100));
+  } else {
+    discAmt = r2(+st.disc || 0);
+  }
+  var grandTotal = Math.max(0, r2(subtotal - discAmt));
+
+  if(!st.cashRecEdited){
+    st.cashRec = grandTotal;
+    if($('ciCashRec')) $('ciCashRec').value = grandTotal;
+  }
+
+  renderCustomInvoiceStudio();
+}
+
+function commitCustomInvoice(action){
+  var st = _ciState;
+  if(!st) return;
+
+  var validItems = st.items.filter(function(it){
+    return it.name.trim().length > 0 || (+it.price || 0) > 0;
+  });
+
+  if(!validItems.length){
+    toast(lb('Please add at least one line item', 'কমপক্ষে একটি কাজের বিবরণ দিন'));
+    return;
+  }
+
+  if(st.pay === 'Due' && !st.party.trim()){
+    toast(lb('Customer name is required for Due bills', 'বাকি চালানের জন্য গ্রাহকের নাম আবশ্যক'));
+    $('ciPartyName').focus();
+    return;
+  }
+
+  var subtotal = validItems.reduce(function(sum, it){
+    return sum + ((+it.qty || 0) * (+it.price || 0));
+  }, 0);
+  subtotal = r2(subtotal);
+
+  var discAmt = 0;
+  if(st.discType === 'percent'){
+    discAmt = r2(subtotal * ((+st.disc || 0) / 100));
+  } else {
+    discAmt = r2(+st.disc || 0);
+  }
+  var grandTotal = Math.max(0, r2(subtotal - discAmt));
+  var discPct = subtotal > 0 ? (discAmt / subtotal) * 100 : 0;
+
+  D.seq++;
+  dsave();
+  var no = D.dev + D.seq;
+  var id = uid();
+  var desc = 'POS #' + no + ': ' + validItems.map(function(l){ return l.qty + '× ' + l.name; }).join(', ');
+
+  var cuId = st.cuId;
+  if(st.pay === 'Due' || st.party.trim()){
+    if(cuId === '__new' || (!cuId && st.party.trim())){
+      var newCust = custNew(st.party.trim(), st.phone.trim(), 'custom invoice');
+      if(newCust) cuId = newCust.id;
+    }
+  }
+
+  var b = {
+    id: id,
+    no: no,
+    d: st.date || bizDate(),
+    t: nowT(),
+    ts: Date.now(),
+    user: U.name,
+    mode: 'sale',
+    desc: desc,
+    lines: validItems,
+    subtotal: subtotal,
+    disc: discAmt,
+    discPct: discPct,
+    total: grandTotal,
+    pay: st.pay,
+    party: st.party.trim(),
+    phone: st.phone.trim(),
+    addr: st.addr.trim(),
+    words: grandTotal > 0 ? bnWords(grandTotal) : '',
+    rec: st.pay === 'Cash' ? (st.cashRec || grandTotal) : {},
+    chg: st.pay === 'Cash' ? Math.max(0, (st.cashRec || grandTotal) - grandTotal) : {},
+    ...(st.pay === 'Mobile Banking' ? { w: st.w || 'bk' } : {}),
+    ...(cuId ? { cu: cuId } : {})
+  };
+
+  S.bills.unshift(b);
+  S.entries.push({
+    id: id,
+    d: b.d,
+    t: b.t,
+    type: 'Sale',
+    desc: b.desc.slice(0, 200),
+    cat: 'POS',
+    pay: b.pay,
+    amt: b.total,
+    by: U.name,
+    party: b.party,
+    phone: b.phone,
+    pos: 1,
+    act: null,
+    ...(b.w ? { w: b.w } : {}),
+    ...(b.cu ? { cu: b.cu } : {})
+  });
+
+  if(b.party){
+    (S.parties['Sale'] = S.parties['Sale'] || {})[b.party] = b.phone;
+  }
+
+  lg('Custom Invoice', '#' + no + ' ' + tk(grandTotal) + ' ' + b.pay);
+  save();
+  Sound.chaChing();
+  saveCheck();
+
+  $('customInvoiceModal').hidden = true;
+  _ciState = null;
+
+  if(action === 'print_a4'){
+    printA4Invoice(b);
+  } else if(action === 'print_th'){
+    printThermalSlip(b);
+  } else {
+    toast(lb('Invoice saved successfully', 'চালান সফলভাবে সংরক্ষিত হয়েছে'));
+    receipt(b);
+  }
 }
 function voidBill(b){
   if(S.days[b.d]&&S.days[b.d].closed)return dlg('Day closed','<p>That day is closed. Reopen it in Accounts before voiding the bill.</p>',()=>{},'OK');
@@ -7187,7 +8505,19 @@ function animateCounts(){
 function saveCheck(){if(document.documentElement.dataset.rm)return;var d=document.createElement('div');d.className='savechk';d.innerHTML='<svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="22" fill="none" stroke="var(--acc)" stroke-width="3"/><path d="M14 27l8 8 16-16" fill="none" stroke="var(--acc)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';document.body.appendChild(d);setTimeout(function(){d.classList.add('out')},700);setTimeout(function(){d.remove()},1250)}
 (function(){
   var M="Claude Sonnet 5.5 · owner's Claude account";
-  APP_VERSION='11.17.0';
+  APP_VERSION='11.21.0';
+  VERS.unshift({v:'11.21.0',d:'2026-11-20',t:'Unified Header App Icon Across Platforms: Replaced legacy green icons with vector Header Monitor Logo',by:'Antigravity',n:['Replaced old #2F5D3A forest green icons with the exact vector header monitor logo on clean white background','Updated Web PWA icons (icon-192.png, icon-512.png) and manifest.webmanifest theme_color to #0F766E and background to #FFFFFF','Updated Windows Desktop installer & app icon (build/icon.png) to high-res vector header monitor logo','Updated all Android launcher icons (ic_launcher, ic_launcher_round, ic_launcher_foreground) across mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi','Replaced all Android splash screens across 11 portrait and landscape densities with clean white background and centered header monitor logo','Removed all legacy #2F5D3A green references across scripts/android-setup.js and native/bridge.js']});
+  UPC.unshift({v:'11.21.0',s:'Done',t:['Unified app icon with header monitor logo across PWA, Windows and Android','Removed all legacy #2F5D3A dark green background colors','Crisp vector rendering on modern white background for all icon & splash densities']});
+  BUGS.unshift({d:'2026-11-20 20:55 (UTC+6)',v:'11.21.0',w:'Antigravity',a:'App icons across Web, Windows and Android used legacy #2F5D3A forest green background and old logo distinct from the header brand mark',b:'Header switched to modern vector monitor logo in v11.0 but app icons and splash screens still retained old green bitmap branding from early versions',c:'Generated all icon assets and splash screens from the exact header vector monitor logo with clean white backgrounds, and updated manifest and native bridge colors'});
+  VERS.unshift({v:'11.20.0',d:'2026-11-20',t:'Phase 4: Documentation Alignment, Zero-Trust Architecture & Storage Security (SEC-05, DOC-01)',by:'Antigravity',n:['Added 1-tap Clear Credentials button in Settings and Diagnostics modals to instantly purge stored URL and Sync Key from localStorage on shared workstations','Documented client-side storage boundary (SEC-05): localStorage/IndexedDB relies on host OS access controls, while encrypted manual backups use AES-GCM-256 with PBKDF2 (100k iterations)','Complete overhaul of SETUP.md: removed inaccurate statements regarding automated repository encryption, added full in-app credential configuration and zero-downtime dual-key rotation procedures','Reconciled HANDOVER.md: added Rules 40 (Zero-Trust Sync Protocol), 41 (Automated QA & Invariants Gate), and 42 (Storage Security Boundary)']});
+  UPC.unshift({v:'11.20.0',s:'Done',t:['1-tap Clear Credentials in Settings and Diagnostics','Complete SETUP.md and HANDOVER.md documentation alignment','Storage security & trust boundary documentation (SEC-05)','All 4 phases of Manus.im audit and remediation plan fully implemented']});
+  BUGS.unshift({d:'2026-11-20 20:45 (UTC+6)',v:'11.20.0',w:'Antigravity',a:'SETUP.md claimed config.js was encrypted in public repos; no button existed to clear sync credentials on shared PCs; storage security model was undocumented',b:'Legacy setup instructions predated zero-trust in-app sync configuration and modular build toolchain; credentials remained in localStorage indefinitely',c:'Rewrote SETUP.md with zero-trust architecture, added 1-tap credential wipe in Settings & Diagnostics, and updated HANDOVER.md rules and session log'});
+  VERS.unshift({v:'11.19.0',d:'2026-11-20',t:'Phase 3 QA: Automated Test Suite — 97 tests covering accounting, wallets, ledger & sync conflict logic',by:'Antigravity',n:['Created tests/accounting.test.js: 27 tests for cash(), calc(), cashBook() covering Sale/Purchase/Adjustment/Void/Ledger/MobileBanking/Due entry types, r2 rounding, sort order, and df difference calculation','Created tests/wallet.test.js: 26 tests for WLT taxonomy (MFS vs Recharge SIM separation), WLTC category-to-key mapping validation, and isWalletTransfer() classification','Created tests/ledger.test.js: 26 tests for lBal() due in/out balance, void exclusion, lSubAccounts() parent-child resolution, and lCombinedBal() group aggregate balance','Created tests/sync-conflict.test.js: 18 tests for server-side isConflict() revision guard, monotonic nextRev increment, pullDecision() client action logic, push retry budget, and applyRemote LOCAL key preservation','Gated npm run prepare-www on passing tests: build now fails fast if any accounting invariant breaks','Added npm test step to .github/workflows/build.yml: CI enforces tests in the version job before any build artifact is produced']});
+  UPC.unshift({v:'11.19.0',s:'Done',t:['97 automated tests: accounting, wallets, ledger, sync conflict','npm run prepare-www now gated on test pass','CI workflow enforces tests before build artifacts','QA-01 audit checklist item resolved']});
+  BUGS.unshift({d:'2026-11-20 18:28 (UTC+6)',v:'11.19.0',w:'Antigravity',a:'No automated regression coverage — logic changes could silently break financial calculations',b:'calc(), cashBook(), lBal(), lCombinedBal(), isWalletTransfer(), sync conflict guard all had zero unit tests; build had no test gate',c:'Added 97 unit tests across 4 test files and 14 describe suites; gated prepare-www and CI pipeline on test pass'});
+  VERS.unshift({v:'11.18.0',d:'2026-11-20',t:'Sync Reliability Fix: Robust multi-Content-Type POST with redirect:follow & graceful GET fallback',by:'Antigravity',n:['Fixed sync going offline after Phase 1: All fetch calls (getRemote, push, importPos, importCatalog, ping test) now try application/json POST first, then text/plain POST, then GET fallback','Added redirect:follow to all fetch calls to correctly handle Google Apps Script 302 redirects','Strengthened error isolation in getRemote: each fetch attempt wrapped independently so one failure does not suppress the next','Ping test button in Settings uses same multi-attempt strategy for accurate connection diagnostics']});
+  UPC.unshift({v:'11.18.0',s:'Done',t:['Sync no longer goes offline after Phase 1 POST migration','All sync fetch calls now use application/json + redirect:follow with fallback chain','Push function has dual POST Content-Type retry before failing to offline']});
+  BUGS.unshift({d:'2026-11-20 17:11 (UTC+6)',v:'11.18.0',w:'Antigravity',a:'Phase 1 changed all sync calls to POST but push() had no GET fallback and all calls used text/plain which GAS sometimes rejects without redirect:follow',b:'push() threw on JSON parse if GAS returned a redirect HTML page; getRemote() fallback threw uncaught on network error; importPos and importCatalog had no retry layer',c:'Changed Content-Type to application/json (primary), added text/plain as secondary retry, added redirect:follow on all fetches, isolated each attempt in its own try/catch, added GET fallback where payload size permits'});
   VERS.unshift({v:'11.17.0',d:'2026-11-20',t:'Phase 2 Toolchain & CI Defense: Electron Upgrade, Zero Production Vulnerabilities & Blocking APK Signature Gate',by:'Antigravity',n:['Upgraded Electron from 44.9.0 to 44.11.5: Resolved high-severity advisory GHSA-jr5w-w6x2-84p9 regarding compromised intermediate certificates','Remediated Build Vulnerabilities: Fixed lockfile advisories across fast-uri, glob, rimraf, and uuid; verified 0 vulnerabilities in production dependencies','Hardened GitHub Actions Workflow: Removed continue-on-error from APK signature verification (apksigner), making valid cryptographic signing a blocking release gate','Least-Privilege CI Permissions: Reduced default workflow permissions to contents: read, restricting contents: write exclusively to the release job']});
   UPC.unshift({v:'11.17.0',s:'Done',t:['Electron upgraded to 44.11.5 resolving high CVE advisory','Zero production dependencies vulnerabilities','Blocking APK apksigner verification in CI release pipeline','Restricted GitHub Actions workflow permissions (least privilege)']});
   BUGS.unshift({d:'2026-11-20 --:-- (UTC+6)',v:'11.17.0',w:'Antigravity',a:'Electron 44.9.0 had a high-severity certificate advisory; APK signature verification was non-blocking in CI; GitHub Actions had broad global write permissions',b:'Outdated Electron locked in devDependencies, continue-on-error was set to true on apksigner, and workflow-level permissions granted write to all build jobs',c:'Upgraded Electron to 44.11.5, ran npm audit fix, made apksigner verification a mandatory blocking step, and scoped write permissions strictly to the release publishing job'});
@@ -7398,7 +8728,7 @@ if ('serviceWorker' in navigator) {
 
 </script>
 <!-- NCS v10 Sync Engine -->
-<script src="diag.js?v=11.17.0"></script>
-<script src="sync.js?v=11.17.0"></script>
+<script src="diag.js?v=11.21.0"></script>
+<script src="sync.js?v=11.21.0"></script>
 </body>
 </html>

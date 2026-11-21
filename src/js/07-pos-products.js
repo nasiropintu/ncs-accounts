@@ -83,6 +83,7 @@ function pForm(p,code){pimg=p?p.img||'':'';const e=!!p,sm=stockMap();
   $('ob').onchange=ev=>{if(ev.target.type==='file'&&ev.target.files[0])shrink(ev.target.files[0],show)}}
 $('bNew').onclick=()=>pForm(null,'');
 $('bCustom').onclick=()=>dlg('Custom item',`<div class="f"><label>Item name</label><input id="ci1"></div><div class="f"><label>Price</label><input id="ci2" type="number" inputmode="decimal" min="0"></div>`,()=>{const nm=$('ci1').value.trim();if(!nm)return false;addLine({name:nm,price:+$('ci2').value||0})},'Add');
+if($('bCustomInvoice'))$('bCustomInvoice').onclick=()=>openCustomInvoice();
 
 let stream=null,scanning=false;
 function stopScan(){scanning=false;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;$('sc').hidden=true}
@@ -111,72 +112,794 @@ function checkout(){const T=total();if(!C.lines.length)return;
     if(d.pay){ck.pay=d.pay;if(d.pay==='Mobile Banking'&&!ck.w)ck.w='bk'}if(d.w)ck.w=d.w;if(d.pl)ck.rec[d.pl]=(ck.rec[d.pl]||0)+1;if(d.m)ck.rec[d.m]=Math.max(0,(ck.rec[d.m]||0)-1);if(d.exact)ck.rec=split(T);draw()}}
 function finishBill(ck){const pm=C.mode==='purchase',T=total(),rec=ck.pay==='Cash'?ck.rec:{},chg=ck.pay==='Cash'?split(sumD(ck.rec)-T):{};
   D.seq++;dsave();const no=D.dev+D.seq,items=C.lines.map(l=>l.qty+'× '+l.name).join(', '),id=uid();
-  const party=ck.pay==='Due'?ck.party.trim():'',phone=ck.pay==='Due'?ck.phone.trim():'',ty=pm?'Purchase':'Sale',gross=sub(),disc=+C.disc||0,discPct=gross?disc/gross*100:0;
-  const b={id,no,d:bizDate(),t:nowT(),ts:Date.now(),user:U.name,mode:C.mode,desc:'POS #'+no+': '+items,lines:C.lines,subtotal:gross,disc:disc,discPct:discPct,...(discPct>5?{discountReview:{state:'pending',pct:discPct,by:U.name,at:Date.now(),note:'Discount exceeds 5% of bill subtotal'}}:{}),total:T,pay:ck.pay,party,phone,rec,chg,...(ck.pay==='Mobile Banking'&&!pm?{w:ck.w||'bk'}:{}),...(ck.cuId&&!pm?{cu:ck.cuId}:{})};
+  const party=(ck.party||'').trim(),phone=(ck.phone||'').trim(),addr=(ck.addr||'').trim(),ty=pm?'Purchase':'Sale',gross=sub(),disc=+C.disc||0,discPct=gross?disc/gross*100:0;
+  const b={id,no,d:bizDate(),t:nowT(),ts:Date.now(),user:U.name,mode:C.mode,desc:'POS #'+no+': '+items,lines:C.lines,subtotal:gross,disc:disc,discPct:discPct,...(discPct>5?{discountReview:{state:'pending',pct:discPct,by:U.name,at:Date.now(),note:'Discount exceeds 5% of bill subtotal'}}:{}),total:T,pay:ck.pay,party,phone,addr,rec,chg,...(ck.pay==='Mobile Banking'&&!pm?{w:ck.w||'bk'}:{}),...(ck.cuId&&!pm?{cu:ck.cuId}:{})};
   S.bills.unshift(b);S.entries.push({id,d:b.d,t:b.t,type:ty,desc:b.desc.slice(0,200),cat:'POS',pay:ck.pay,amt:T,by:U.name,party,phone,pos:1,act:null,...(b.w?{w:b.w}:{}),...(b.cu?{cu:b.cu}:{})});
   C.lines.forEach((l,i)=>{if(l.pid)S.moves.push({id:id+'-'+i,pid:l.pid,q:(pm?1:-1)*l.qty,ref:id,t:pm?'in':'sale',d:b.d})});
   if(party)(S.parties[ty]=S.parties[ty]||{})[party]=phone;
   lg('POS bill','#'+no+' '+tk(T)+' '+ck.pay);save();Sound.chaChing();saveCheck();C.lines=[];C.disc=0;C.dpct=0;C.dm='a';renderGrid();renderCart()}
 $('bPay').onclick=checkout;$('fab').onclick=checkout;
 
-function rtext(b){const W=32,ln=(a,c)=>(a.length>W-c.length-1?a.slice(0,W-c.length-1):a).padEnd(W-c.length)+c,dt=sd(b.d)+' '+t12(b.t);
-  return [(S.lang==='bn'?SHOP_BN:SHOP_EN.toUpperCase()),(b.mode==='purchase'?'Purchase':'Bill')+' #'+b.no,dt,'Cashier: '+b.user,'-'.repeat(W),...b.lines.map(l=>ln(l.qty+'x '+l.name,n(l.price*l.qty))),'-'.repeat(W),...(b.disc?[ln('Discount','-'+n(b.disc))]:[]),ln('TOTAL',n(b.total)),'Paid by '+b.pay+(b.party?' ('+b.party+')':''),b.void?'*** VOID ***':'','Thank you'].filter(x=>x!=='').join('\n')}
-async function printThermalEscPos(text) {
-  if (typeof navigator !== 'undefined' && navigator.serial) {
-    try {
-      const port = await navigator.serial.requestPort();
-      await port.open({ baudRate: 9600 });
-      const writer = port.writable.getWriter();
-      const enc = new TextEncoder();
-      const initCmd = new Uint8Array([0x1B, 0x40]);
-      const kickCmd = new Uint8Array([0x1B, 0x70, 0x00, 0x19, 0xFA]);
-      const cutCmd = new Uint8Array([0x1D, 0x56, 0x41, 0x03]);
-      await writer.write(initCmd);
-      await writer.write(enc.encode(text + '\n\n\n'));
-      await writer.write(kickCmd);
-      await writer.write(cutCmd);
-      writer.releaseLock();
-      await port.close();
-      toast(lb('Printed via USB Thermal', 'ইউএসবি থার্মাল প্রিন্ট সম্পন্ন'));
-      return true;
-    } catch (e) {
-      if (e.name !== 'NotFoundError') console.warn('Serial print error:', e);
-    }
-  }
-  if (typeof navigator !== 'undefined' && navigator.bluetooth) {
-    try {
-      const device = await navigator.bluetooth.requestDevice({
-        acceptAllDevices: true,
-        optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb']
-      });
-      if (device && device.gatt) {
-        const server = await device.gatt.connect();
-        const service = await server.getPrimaryService('000018f0-0000-1000-8000-00805f9b34fb');
-        const char = await service.getCharacteristic('00002af1-0000-1000-8000-00805f9b34fb');
-        const enc = new TextEncoder();
-        await char.writeValue(enc.encode(text + '\n\n\n'));
-        toast(lb('Printed via Bluetooth', 'ব্লুটুথ প্রিন্ট সম্পন্ন'));
-        return true;
-      }
-    } catch (e) {
-      if (e.name !== 'NotFoundError') console.warn('Bluetooth print error:', e);
-    }
-  }
-  return false;
+// --- Bengali Amount in Words ---
+function bnWords(num){
+  num=Math.round(Number(num||0));
+  if(num<=0)return 'শূন্য';
+  var ones=['','এক','দুই','তিন','চার','পাঁচ','ছয়','সাত','আট','নয়','দশ',
+    'এগারো','বারো','তেরো','চৌদ্দ','পনেরো','ষোলো','সতেরো','আঠারো','উনিশ','বিশ',
+    'একুশ','বাইশ','তেইশ','চব্বিশ','পঁচিশ','ছাব্বিশ','সাতাশ','আঠাশ','উনত্রিশ','ত্রিশ',
+    'একত্রিশ','বত্রিশ','তেত্রিশ','চৌত্রিশ','পঁয়ত্রিশ','ছত্রিশ','সাঁইত্রিশ','আটত্রিশ','উনচল্লিশ','চল্লিশ',
+    'একচল্লিশ','বিয়াল্লিশ','তেতাল্লিশ','চুয়াল্লিশ','পঁয়তাল্লিশ','ছেচল্লিশ','সাতচল্লিশ','আটচল্লিশ','উনপঞ্চাশ','পঞ্চাশ',
+    'একান্ন','বায়ান্ন','তিপ্পান্ন','চুয়ান্ন','পঞ্চান্ন','ছাপ্পান্ন','সাতান্ন','আটান্ন','উনষাট','ষাট',
+    'একষট্টি','বাষট্টি','তেষট্টি','চৌষট্টি','পঁয়ষট্টি','ছেষট্টি','সাতষট্টি','আটষট্টি','উনসত্তর','সত্তর',
+    'একাত্তর','বাহাত্তর','তিয়াত্তর','চুয়াত্তর','পঁচাত্তর','ছিয়াত্তর','সাতাত্তর','আটাত্তর','উনআশি','আশি',
+    'একাশি','বিরাশি','তিরাশি','চুরাশি','পঁচাশি','ছিয়াশি','সাতাশি','অষ্টআশি','উনানব্বই','নব্বই',
+    'একানব্বই','বিরানব্বই','তিরানব্বই','চুরানব্বই','পঁচানব্বই','ছিয়ানব্বই','সাতানব্বই','আটানব্বই','নিরানব্বই'];
+
+  var out='';
+  var crore=Math.floor(num/10000000); num%=10000000;
+  var lakh=Math.floor(num/100000); num%=100000;
+  var thousand=Math.floor(num/1000); num%=1000;
+  var hundred=Math.floor(num/100); num%=100;
+  var rest=num;
+
+  if(crore>0) out+=bnWords(crore)+' কোটি ';
+  if(lakh>0) out+=ones[lakh]+' লাখ ';
+  if(thousand>0) out+=ones[thousand]+' হাজার ';
+  if(hundred>0) out+=ones[hundred]+' শত ';
+  if(rest>0) out+=ones[rest]+' ';
+
+  return out.trim()+' টাকা মাত্র';
 }
 
-function receipt(b){const t=rtext(b);dlg('Receipt','<pre style="font:13px monospace;white-space:pre-wrap;margin:0 0 10px">'+esc(t)+'</pre><div class="chips"><button data-sh="1">Share</button><button data-cp="1">Copy</button><button data-pt="1">Print</button><button data-esc="1">⚡ Thermal ESC/POS</button></div>',()=>{},'Close',true);
-  $('ob').onclick=async e=>{const x=e.target.closest('button');if(!x)return;
-    if(x.dataset.sh){try{await navigator.share({text:t})}catch(err){}}
-    if(x.dataset.cp){try{await navigator.clipboard.writeText(t);toast('Copied')}catch(err){}}
-    if(x.dataset.pt){$('rcp').textContent=t;document.body.classList.add('pr');try{window.print()}catch(err){}setTimeout(()=>document.body.classList.remove('pr'),800)}
-    if(x.dataset.esc){
-      const ok = await printThermalEscPos(t);
-      if(!ok){
-        $('rcp').textContent=t;document.body.classList.add('pr');try{window.print()}catch(err){}setTimeout(()=>document.body.classList.remove('pr'),800);
+function invoiceNum(v){
+  var value=Number(v||0).toLocaleString('en-US',{maximumFractionDigits:2});
+  return S.lang==='bn'?toBnNum(value):value;
+}
+function invoiceMoney(v){return '৳ '+invoiceNum(v)}
+function invoiceDate(d){
+  var x=new Date(String(d||iso(new Date()))+'T00:00:00');
+  if(!Number.isFinite(x.getTime()))return esc(d||'');
+  if(S.lang!=='bn')return x.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  var months=['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
+  return toBnNum(x.getDate())+' '+months[x.getMonth()]+' '+toBnNum(x.getFullYear());
+}
+function invoiceTime(t){
+  var parts=String(t||'00:00').split(':'),h=+parts[0]||0,m=parts[1]||'00';
+  if(S.lang!=='bn')return t12(String(parts[0]).padStart(2,'0')+':'+String(m).padStart(2,'0'));
+  var period=h<6?'রাত':h<12?'সকাল':h<15?'দুপুর':h<18?'বিকাল':'রাত';
+  return period+' '+toBnNum((h%12)||12)+':'+toBnNum(m);
+}
+function invoiceMethod(b){
+  var method=b.pay||'Cash';
+  if(method==='Cash')return lb('Cash','নগদ');
+  if(method==='Mobile Banking')return lb('Mobile Banking','মোবাইল ব্যাংকিং')+(b.w?' · '+wN(b.w):'');
+  if(method==='Bank')return lb('Bank','ব্যাংক');
+  if(method==='Due')return lb('Due','বাকি');
+  return esc(method);
+}
+
+function invoiceMarkup(b){
+  var bn=S.lang==='bn',purchase=b.mode==='purchase',voided=!!b.void;
+  var lines=Array.isArray(b.lines)?b.lines:[];
+  var subtotal=b.subtotal!=null?+b.subtotal:lines.reduce(function(sum,l){return sum+(+l.qty||0)*(+l.price||0)},0);
+  var discount=+b.disc||0,total=b.total!=null?+b.total:subtotal-discount;
+  var no=bn?toBnNum(String(b.no||'')):String(b.no||'');
+  var title=purchase?lb('PURCHASE VOUCHER','ক্রয় ভাউচার'):lb('SALES INVOICE / BILL VOUCHER','ইনভয়েস / বিল ভাউচার');
+  var status=voided?lb('VOID','বাতিল'):(b.pay==='Due'?lb('PAYMENT DUE','বাকি আছে'):lb('PAID','পরিশোধিত'));
+  var method=invoiceMethod(b);
+
+  var cashRec=0;
+  if(b.rec&&typeof b.rec==='object'){
+    cashRec=sumD(b.rec);
+  }else if(typeof b.rec==='number'){
+    cashRec=b.rec;
+  }
+  var cashChg=cashRec>total?cashRec-total:0;
+  if(b.chg&&typeof b.chg==='object'){
+    var sChg=sumD(b.chg);
+    if(sChg>0)cashChg=sChg;
+  }else if(typeof b.chg==='number'&&b.chg>0){
+    cashChg=b.chg;
+  }
+
+  var rowHtml=lines.map(function(l,i){
+    var qty=+l.qty||0,price=+l.price||0,amount=r2(qty*price);
+    var unit=l.unit?esc(l.unit):(bn?'টি':'pc');
+    return '<tr>'+
+      '<td class="td-num">'+invoiceNum(i+1)+'</td>'+
+      '<td><b>'+esc(l.name||'')+'</b></td>'+
+      '<td class="td-qty">'+invoiceNum(qty)+'</td>'+
+      '<td class="td-unit">'+unit+'</td>'+
+      '<td class="td-price">'+invoiceMoney(price)+'</td>'+
+      '<td class="td-amt">'+invoiceMoney(amount)+'</td>'+
+    '</tr>';
+  }).join('');
+  if(!rowHtml)rowHtml='<tr><td colspan="6" style="text-align:center;padding:24px;color:#8793a0">'+lb('No line items','কোনো আইটেম নেই')+'</td></tr>';
+
+  var words=b.words||(total>0?bnWords(total):'');
+
+  return '<article class="invoice-paper" lang="'+(bn?'bn':'en')+'">'+
+    (voided?'<div class="invoice-void-watermark">'+lb('VOID','বাতিল')+'</div>':'')+
+    '<header class="invoice-header">'+
+      '<div class="invoice-header-row">'+
+        '<div class="invoice-brand-col">'+
+          '<img class="invoice-logo" src="logo-icon-black.png" alt="NCS">'+
+          '<div>'+
+            '<div class="invoice-shop-name">'+(bn?SHOP_BN:SHOP_EN)+'</div>'+
+            '<div class="invoice-shop-tagline">'+(bn?SHOP_TAGLINE_BN:SHOP_TAGLINE_EN)+'</div>'+
+          '</div>'+
+        '</div>'+
+        '<div class="invoice-contact-col">'+
+          '<div><b>'+lb('Proprietor: ','স্বত্বাধিকারী: ')+'</b>'+(bn?SHOP_PROP_BN:SHOP_PROP_EN)+'</div>'+
+          '<div><b>'+lb('Mobile: ','মোবাইল: ')+'</b>'+(bn?toBnNum(SHOP_PHONES):SHOP_PHONES)+'</div>'+
+          '<div><b>Email: </b>'+SHOP_EMAIL+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="invoice-address-line">'+(bn?SHOP_ADDR_BN:SHOP_ADDR_EN)+'</div>'+
+    '</header>'+
+    '<div class="invoice-title-bar">'+
+      '<div class="invoice-doc-title">'+title+'</div>'+
+      '<span class="invoice-status-badge '+(voided?'is-void':b.pay==='Due'?'is-due':'is-paid')+'">'+status+'</span>'+
+    '</div>'+
+    '<div class="invoice-info-grid">'+
+      '<div class="invoice-info-block">'+
+        '<span>'+lb('BILLED TO (CUSTOMER)','গ্রাহক / প্রতিষ্ঠান')+'</span>'+
+        '<b>'+(b.party?esc(b.party):lb('Walking Customer','সাধারণ গ্রাহক'))+'</b>'+
+        (b.phone?'<div style="font-size:10.5px;color:#475569;margin-top:2px">'+lb('Mobile: ','মোবাইল: ')+esc(bn?toBnNum(b.phone):b.phone)+'</div>':'')+
+        (b.addr?'<div style="font-size:10.5px;color:#475569;margin-top:2px">'+lb('Address: ','ঠিকানা: ')+esc(b.addr)+'</div>':'')+
+      '</div>'+
+      '<div class="invoice-meta-subgrid">'+
+        '<div class="invoice-info-block"><span>'+lb('INVOICE NO.','চালান নং')+'</span><b>#'+esc(no)+'</b></div>'+
+        '<div class="invoice-info-block"><span>'+lb('DATE','তারিখ')+'</span><b>'+invoiceDate(b.d)+'</b></div>'+
+        '<div class="invoice-info-block"><span>'+lb('TIME','সময়')+'</span><b>'+invoiceTime(b.t)+'</b></div>'+
+        '<div class="invoice-info-block"><span>'+lb('SERVED BY','বিল প্রস্তুতকারী')+'</span><b>'+esc(b.user||'—')+'</b></div>'+
+      '</div>'+
+    '</div>'+
+    '<table class="invoice-table">'+
+      '<thead><tr>'+
+        '<th class="th-num">#</th>'+
+        '<th>'+lb('ITEM / SERVICE DESCRIPTION','পণ্যের / কাজের বিবরণ')+'</th>'+
+        '<th class="th-qty">'+lb('QTY','পরিমাণ')+'</th>'+
+        '<th class="th-unit">'+lb('UNIT','একক')+'</th>'+
+        '<th class="th-price">'+lb('UNIT PRICE','দর (৳)')+'</th>'+
+        '<th class="th-amt">'+lb('TOTAL','মোট (৳)')+'</th>'+
+      '</tr></thead>'+
+      '<tbody>'+rowHtml+'</tbody>'+
+    '</table>'+
+    '<div class="invoice-bottom-grid">'+
+      '<div class="invoice-bottom-left">'+
+        '<div class="invoice-pay-row"><span>'+lb('Payment Method:','পেমেন্ট পদ্ধতি:')+'</span><b>'+method+'</b></div>'+
+        '<div class="invoice-pay-row"><span>'+lb('Payment Status:','পেমেন্ট অবস্থা:')+'</span><b>'+status+'</b></div>'+
+        (b.pay==='Cash'&&cashRec>0?'<div class="invoice-pay-row"><span>'+lb('Cash Received:','নগদ গ্রহণ:')+'</span><b>'+invoiceMoney(cashRec)+'</b></div>':'')+
+        (b.pay==='Cash'&&cashChg>0?'<div class="invoice-pay-row"><span>'+lb('Change Returned:','ফেরত প্রদান:')+'</span><b style="color:#0f766e">'+invoiceMoney(cashChg)+'</b></div>':'')+
+        (b.pay==='Due'&&!voided?'<div class="invoice-pay-row" style="color:#b45309"><span>'+lb('Balance Due:','বকেয়া পরিমাণ:')+'</span><b>'+invoiceMoney(total)+'</b></div>':'')+
+        (words?'<div class="invoice-words-box"><b>'+lb('In words: ','টাকার পরিমাণ কথায়: ')+'</b>'+esc(words)+'</div>':'')+
+      '</div>'+
+      '<div class="invoice-bottom-right">'+
+        '<div class="invoice-tot-row"><span>'+lb('Subtotal:','উপমোট:')+'</span><b>'+invoiceMoney(subtotal)+'</b></div>'+
+        (discount>0?'<div class="invoice-tot-row" style="color:#15803d"><span>'+lb('Discount:','ছাড়:')+'</span><b>− '+invoiceMoney(discount)+'</b></div>':'')+
+        '<div class="invoice-grand-row"><span>'+lb('GRAND TOTAL:','সর্বমোট দেয়:')+'</span><b>'+invoiceMoney(total)+'</b></div>'+
+        (b.pay==='Due'&&!voided?'<div class="invoice-due-alert"><span>'+lb('TOTAL DUE:','সর্বমোট বকেয়া:')+'</span><b>'+invoiceMoney(total)+'</b></div>':'')+
+      '</div>'+
+    '</div>'+
+    (voided&&b.vr?'<div style="margin:10px 0;padding:8px 12px;background:#fef2f2;border-left:3px solid #ef4444;color:#991b1b;font-size:11px"><b>'+lb('Void Reason: ','বাতিলের কারণ: ')+'</b>'+esc(b.vr)+'</div>':'')+
+    '<div class="invoice-signatures">'+
+      '<div class="invoice-sign-col"><div class="invoice-sign-line">'+lb('Customer Signature','গ্রাহকের স্বাক্ষর')+'</div></div>'+
+      '<div class="invoice-sign-col"><div class="invoice-sign-line">'+lb('Authorized Signatory','স্বত্বাধিকারী / অনুমোদিত স্বাক্ষর')+'</div></div>'+
+    '</div>'+
+    '<div class="invoice-footer-note">'+lb('Computer-generated bill · Thank you for your business.','কম্পিউটারে তৈরি চালান · আমাদের সেবা নেওয়ার জন্য ধন্যবাদ।')+'</div>'+
+  '</article>';
+}
+
+function thermalSlipMarkup(b){
+  var bn=S.lang==='bn',lines=Array.isArray(b.lines)?b.lines:[];
+  var subtotal=b.subtotal!=null?+b.subtotal:lines.reduce(function(s,l){return s+(+l.qty||0)*(+l.price||0)},0);
+  var discount=+b.disc||0,total=b.total!=null?+b.total:subtotal-discount;
+  var no=bn?toBnNum(String(b.no||'')):String(b.no||'');
+  var method=invoiceMethod(b);
+
+  var cashRec=0;
+  if(b.rec&&typeof b.rec==='object')cashRec=sumD(b.rec);
+  else if(typeof b.rec==='number')cashRec=b.rec;
+  var cashChg=cashRec>total?cashRec-total:0;
+  if(b.chg&&typeof b.chg==='object')cashChg=sumD(b.chg);
+  else if(typeof b.chg==='number'&&b.chg>0)cashChg=b.chg;
+
+  var rows=lines.map(function(l){
+    var qty=+l.qty||0,price=+l.price||0,amt=qty*price;
+    var unitStr=l.unit?(' '+l.unit):'';
+    return '<div class="ts-line"><span class="ts-item-name">'+esc(l.name||'')+'</span></div>'+
+      '<div class="ts-line" style="color:#475569;font-size:10px"><span>'+invoiceNum(qty)+unitStr+' × '+invoiceMoney(price)+'</span><b>'+invoiceMoney(amt)+'</b></div>';
+  }).join('');
+
+  return '<div class="thermal-slip" lang="'+(bn?'bn':'en')+'">'+
+    '<div class="ts-center ts-title">'+(bn?SHOP_BN:SHOP_EN)+'</div>'+
+    '<div class="ts-center ts-sub">'+(bn?SHOP_ADDR_BN:SHOP_ADDR_EN)+'</div>'+
+    '<div class="ts-center ts-sub">'+lb('Mobile: ','মোবাইল: ')+(bn?toBnNum(SHOP_PHONES):SHOP_PHONES)+'</div>'+
+    '<div class="ts-divider"></div>'+
+    '<div class="ts-meta ts-line"><span>'+(b.mode==='purchase'?lb('PURCHASE #','ক্রয় #'):lb('BILL #','বিল #'))+esc(no)+'</span><span>'+invoiceDate(b.d)+'</span></div>'+
+    '<div class="ts-meta ts-line"><span>'+lb('Time: ','সময়: ')+invoiceTime(b.t)+'</span><span>'+lb('Cashier: ','ক্যাশিয়ার: ')+esc(b.user||'—')+'</span></div>'+
+    (b.party?'<div class="ts-meta ts-line"><span>'+lb('Customer: ','গ্রাহক: ')+'<b>'+esc(b.party)+'</b></span>'+(b.phone?'<span>'+esc(bn?toBnNum(b.phone):b.phone)+'</span>':'')+'</div>':'')+
+    '<div class="ts-divider"></div>'+
+    rows+
+    '<div class="ts-divider"></div>'+
+    '<div class="ts-line"><span>'+lb('Subtotal:','উপমোট:')+'</span><b>'+invoiceMoney(subtotal)+'</b></div>'+
+    (discount>0?'<div class="ts-line"><span>'+lb('Discount:','ছাড়:')+'</span><b>− '+invoiceMoney(discount)+'</b></div>':'')+
+    '<div class="ts-line ts-grand"><span>'+lb('TOTAL:','সর্বমোট:')+'</span><b>'+invoiceMoney(total)+'</b></div>'+
+    '<div class="ts-line"><span>'+lb('Payment:','পেমেন্ট:')+'</span><b>'+method+'</b></div>'+
+    (b.pay==='Cash'&&cashRec>0?'<div class="ts-line"><span>'+lb('Cash Rec:','নগদ গ্রহণ:')+'</span><b>'+invoiceMoney(cashRec)+'</b></div>':'')+
+    (b.pay==='Cash'&&cashChg>0?'<div class="ts-line"><span>'+lb('Change:','ফেরত:')+'</span><b>'+invoiceMoney(cashChg)+'</b></div>':'')+
+    (b.pay==='Due'?'<div class="ts-line" style="font-weight:bold"><span>'+lb('DUE:','বকেয়া:')+'</span><b>'+invoiceMoney(total)+'</b></div>':'')+
+    (b.void?'<div class="ts-center" style="font-weight:bold;margin-top:4px">*** '+lb('VOID','বাতিল')+' ***</div>':'')+
+    '<div class="ts-divider"></div>'+
+    '<div class="ts-center" style="font-size:10.5px;font-weight:600;margin-top:4px">'+lb('Thank you! Come again.','আমাদের সেবা নেওয়ার জন্য ধন্যবাদ!')+'</div>'+
+  '</div>';
+}
+
+function rtext(b){
+  var W=32,lines=Array.isArray(b.lines)?b.lines:[];
+  var subtotal=b.subtotal!=null?+b.subtotal:lines.reduce(function(s,l){return s+(+l.qty||0)*(+l.price||0)},0);
+  var discount=+b.disc||0,total=b.total!=null?+b.total:subtotal-discount;
+  var center=function(s){s=String(s);return s.length>=W?s.slice(0,W):' '.repeat(Math.floor((W-s.length)/2))+s};
+  var pair=function(a,c){a=String(a);c=String(c);return a.slice(0,Math.max(0,W-c.length-1)).padEnd(Math.max(0,W-c.length-1))+' '+c};
+  var dt=sd(b.d)+' '+t12(b.t);
+
+  var out=[
+    center(SHOP_EN.toUpperCase()),
+    center('Choudhury Bazar, Kamalnagar'),
+    center('Mob: 01765-420566'),
+    '-'.repeat(W),
+    pair((b.mode==='purchase'?'PURCHASE #':'BILL #')+b.no, dt),
+    pair('Cashier: '+(b.user||'—'), b.pay||'Cash'),
+    '-'.repeat(W)
+  ];
+  if(b.party) out.push('Cust: '+String(b.party).slice(0,25));
+  lines.forEach(function(l){
+    out.push(String(l.name||'').slice(0,W));
+    out.push(pair(String(l.qty)+(l.unit?' '+l.unit:'')+' x '+String(l.price), String(r2((+l.qty||0)*(+l.price||0)))));
+  });
+  out.push('-'.repeat(W), pair('Subtotal', String(subtotal)));
+  if(discount) out.push(pair('Discount', '-'+String(discount)));
+  out.push(pair('TOTAL', 'Tk '+String(total)));
+  if(b.pay==='Due') out.push(pair('DUE BALANCE', 'Tk '+String(total)));
+  if(b.void) out.push(center('*** VOID ***'));
+  out.push('-'.repeat(W), center('Thank you for choosing NCS!'), '');
+  return out.join('\n');
+}
+
+function printA4Invoice(b){
+  var markup = typeof b === 'string' ? b : invoiceMarkup(b);
+  $('receiptPrint').innerHTML = markup;
+  document.body.classList.add('invoice-print');
+  var cleaned = false;
+  var cleanup = function(){
+    if(cleaned) return;
+    cleaned = true;
+    document.body.classList.remove('invoice-print');
+    window.removeEventListener('afterprint', cleanup);
+  };
+  window.addEventListener('afterprint', cleanup);
+  try { window.print(); } catch(err){ console.warn('Print error:', err); }
+  setTimeout(cleanup, 4000);
+}
+
+function printThermalSlip(b){
+  var markup = typeof b === 'string' ? b : thermalSlipMarkup(b);
+  $('receiptPrint').innerHTML = markup;
+  document.body.classList.add('thermal-print');
+  var cleaned = false;
+  var cleanup = function(){
+    if(cleaned) return;
+    cleaned = true;
+    document.body.classList.remove('thermal-print');
+    window.removeEventListener('afterprint', cleanup);
+  };
+  window.addEventListener('afterprint', cleanup);
+  try { window.print(); } catch(err){ console.warn('Print error:', err); }
+  setTimeout(cleanup, 4000);
+}
+
+function receipt(b){
+  var a4Html = invoiceMarkup(b);
+  var thermalHtml = thermalSlipMarkup(b);
+  var textEsc = rtext(b);
+
+  var actions = '<div class="invoice-actionbar">' +
+    '<button type="button" class="go" data-pt-a4="1">' + lb('Print A4 Invoice', 'চালান প্রিন্ট (A4)') + '</button>' +
+    '<button type="button" class="go" data-pt-th="1" style="background:#0284c7">' + lb('Thermal Slip', 'রসিদ (স্লিপ)') + '</button>' +
+    '<button type="button" class="ghost" data-esc="1">' + lb('⚡ ESC/POS', '⚡ থার্মাল প্রিন্টার') + '</button>' +
+    '<button type="button" class="ghost" data-cp="1">' + lb('Copy Text', 'কপি') + '</button>' +
+  '</div>';
+
+  var tabs = '<div class="seg" style="margin-bottom:10px">' +
+    '<button type="button" id="rcpTabA4" class="on">' + lb('A4 Invoice (চালান)', 'A4 চালান') + '</button>' +
+    '<button type="button" id="rcpTabTh">' + lb('Thermal Slip (স্লিপ)', 'রসিদ স্লিপ') + '</button>' +
+  '</div>';
+
+  ask(lb('Invoice & Receipt', 'ইনভয়েস ও রসিদ'), tabs + '<div class="invoice-preview-wrap" id="rcpPreviewBox">' + a4Html + '</div>' + actions, function(){}, lb('Close', 'বন্ধ'), true);
+  $('ok').style.display = 'none';
+
+  $('rcpTabA4').onclick = function(){
+    $('rcpTabA4').classList.add('on');
+    $('rcpTabTh').classList.remove('on');
+    $('rcpPreviewBox').innerHTML = a4Html;
+  };
+  $('rcpTabTh').onclick = function(){
+    $('rcpTabTh').classList.add('on');
+    $('rcpTabA4').classList.remove('on');
+    $('rcpPreviewBox').innerHTML = thermalHtml;
+  };
+
+  $('ob').onclick = async function(e){
+    var x = e.target.closest('button');
+    if(!x) return;
+    if(x.dataset.ptA4) printA4Invoice(b);
+    if(x.dataset.ptTh) printThermalSlip(b);
+    if(x.dataset.cp){
+      try {
+        await navigator.clipboard.writeText(textEsc);
+        toast(lb('Receipt text copied', 'রসিদ টেক্সট কপি হয়েছে'));
+      } catch(err){
+        toast(lb('Copy failed', 'কপি করা যায়নি'));
       }
     }
+    if(x.dataset.esc){
+      var ok = await printThermalEscPos(textEsc);
+      if(!ok) printThermalSlip(b);
+    }
   };
+}
+
+// --- Custom Invoice Studio Controller ---
+var _ciState = null;
+
+function openCustomInvoice(initData){
+  var isBn = S.lang === 'bn';
+  var defItems = (initData && Array.isArray(initData.items) && initData.items.length)
+    ? initData.items
+    : [{ name: '', qty: 1, unit: isBn ? 'কপি' : 'pc', price: 0 }];
+
+  _ciState = {
+    cuId: (initData && initData.cuId) || '',
+    party: (initData && initData.party) || '',
+    phone: (initData && initData.phone) || '',
+    addr: (initData && initData.addr) || '',
+    date: (initData && initData.date) || bizDate(),
+    disc: (initData && initData.disc) || 0,
+    discType: (initData && initData.discType) || 'taka',
+    pay: (initData && initData.pay) || 'Cash',
+    w: (initData && initData.w) || 'bk',
+    cashRec: 0,
+    cashRecEdited: false,
+    items: defItems
+  };
+
+  var modal = $('customInvoiceModal');
+  if(!modal) return;
+  modal.hidden = false;
+  $('ciClose').onclick = function(){ modal.hidden = true; };
+
+  renderCustomInvoiceStudio();
+}
+window.openCustomInvoice = openCustomInvoice;
+
+function renderCustomInvoiceStudio(){
+  var st = _ciState;
+  if(!st) return;
+  var isBn = S.lang === 'bn';
+
+  var subtotal = st.items.reduce(function(sum, it){
+    return sum + ((+it.qty || 0) * (+it.price || 0));
+  }, 0);
+  subtotal = r2(subtotal);
+
+  var discAmt = 0;
+  if(st.discType === 'percent'){
+    discAmt = r2(subtotal * ((+st.disc || 0) / 100));
+  } else {
+    discAmt = r2(+st.disc || 0);
+  }
+  var grandTotal = Math.max(0, r2(subtotal - discAmt));
+
+  if(!st.cashRecEdited){
+    st.cashRec = grandTotal;
+  }
+  var change = Math.max(0, r2(st.cashRec - grandTotal));
+  var dueAmt = st.pay === 'Due' ? grandTotal : 0;
+
+  var custOptions = '<option value="">' + lb('-- Select saved customer / Walk-in --', '-- সংরক্ষিত কাস্টমার নির্বাচন / টাইপ করুন --') + '</option>' +
+    (S.cust || []).filter(function(c){ return !c.del; }).map(function(c){
+      return '<option value="' + c.id + '" ' + (String(st.cuId) === String(c.id) ? 'selected' : '') + '>' +
+        esc(c.name) + (c.phone ? ' (' + esc(c.phone) + ')' : '') +
+      '</option>';
+    }).join('') +
+    '<option value="__new">' + lb('+ Add new party', '+ নতুন কাস্টমার / পক্ষ') + '</option>';
+
+  var shortcuts = [
+    { name: isBn ? 'রুটিন / শিট ফটোকপি' : 'Photocopy', unit: isBn ? 'কপি' : 'copy', price: 2 },
+    { name: isBn ? 'প্রশ্ন / ডকুমেন্ট কম্পোজ' : 'Composing', unit: isBn ? 'পাতা' : 'page', price: 30 },
+    { name: isBn ? 'কম্পিউটার টাইপিং' : 'Typing', unit: isBn ? 'পাতা' : 'page', price: 25 },
+    { name: isBn ? 'পিডিএফ প্রিন্ট' : 'PDF Print', unit: isBn ? 'পাতা' : 'page', price: 2 },
+    { name: isBn ? 'রঙিন ছবি প্রিন্ট' : 'Color Photo Print', unit: isBn ? 'কপি' : 'copy', price: 30 },
+    { name: isBn ? 'অনলাইন আবেদন / ফরম' : 'Online Form Fillup', unit: isBn ? 'টি' : 'app', price: 50 },
+    { name: isBn ? 'লেমিনেটিং' : 'Lamination', unit: isBn ? 'টি' : 'pc', price: 20 },
+    { name: isBn ? 'স্টেশনারী মালামাল' : 'Stationery Supply', unit: isBn ? 'টি' : 'pc', price: 10 }
+  ];
+
+  var rowsHtml = st.items.map(function(it, idx){
+    var lineTot = r2((+it.qty || 0) * (+it.price || 0));
+    return '<tr data-row="' + idx + '">' +
+      '<td class="ci-r-num">' + (idx + 1) + '</td>' +
+      '<td class="ci-r-name"><input type="text" class="ci-in-name" placeholder="' + lb('Item or service name...', 'কাজের বিবরণ (যেমন: প্রশ্ন ফটোকপি, টাইপিং)...') + '" value="' + esc(it.name) + '"></td>' +
+      '<td class="ci-r-qty"><input type="number" step="any" min="0" class="ci-in-qty" value="' + (+it.qty || '') + '" placeholder="1"></td>' +
+      '<td class="ci-r-unit"><input type="text" class="ci-in-unit" list="ciUnitList" placeholder="' + (isBn ? 'কপি/টি' : 'unit') + '" value="' + esc(it.unit || '') + '"></td>' +
+      '<td class="ci-r-price"><input type="number" step="any" min="0" class="ci-in-price" value="' + (it.price !== undefined ? it.price : '') + '" placeholder="0"></td>' +
+      '<td class="ci-r-tot">' + tk(lineTot) + '</td>' +
+      '<td class="ci-r-del"><button type="button" class="ci-row-del-btn" data-del="' + idx + '" title="' + lb('Remove', 'মুছুন') + '">×</button></td>' +
+    '</tr>';
+  }).join('');
+
+  var wordsBn = grandTotal > 0 ? bnWords(grandTotal) : '';
+
+  var html = '<datalist id="ciUnitList"><option value="কপি"><option value="পাতা"><option value="টি"><option value="পিছ"><option value="সেট"><option value="বই"><option value="প্যাকেট"></datalist>' +
+    '<div class="ci-grid-top">' +
+      '<div class="ci-field">' +
+        '<label>' + lb('Select Customer / Party', 'গ্রাহক / প্রতিষ্ঠান নির্বাচন') + '</label>' +
+        '<select id="ciSelectCust">' + custOptions + '</select>' +
+      '</div>' +
+      '<div class="ci-field">' +
+        '<label>' + lb('Customer Name', 'গ্রাহকের নাম') + '</label>' +
+        '<input type="text" id="ciPartyName" placeholder="' + lb('e.g. Nurah Ali Madrasa', 'যেমন: নূরাহ আলী মাদুল্যাহ মাদ্রাসা') + '" value="' + esc(st.party) + '">' +
+      '</div>' +
+      '<div class="ci-field">' +
+        '<label>' + lb('Mobile (optional)', 'মোবাইল (ঐচ্ছিক)') + '</label>' +
+        '<input type="tel" id="ciPartyPhone" placeholder="017xxxxxxxx" value="' + esc(st.phone) + '">' +
+      '</div>' +
+    '</div>' +
+    '<div class="ci-field" style="margin-bottom:14px">' +
+      '<label>' + lb('Customer Address / Memo Note (optional)', 'গ্রাহকের ঠিকানা / নোট (ঐচ্ছিক)') + '</label>' +
+      '<input type="text" id="ciPartyAddr" placeholder="' + lb('e.g. Choudhury Bazar, Kamalnagar', 'যেমন: চৌধুরী বাজার, কমলনগর, লক্ষ্মীপুর') + '" value="' + esc(st.addr) + '">' +
+    '</div>' +
+
+    '<div class="ci-shortcuts">' +
+      '<div class="ci-shortcuts-label">' + lb('Quick Service Shortcuts (এক ক্লিকে যোগ করুন)', 'কুইক সার্ভিস শর্টকাট (এক ক্লিকে যোগ করুন)') + '</div>' +
+      '<div class="ci-chips">' +
+        shortcuts.map(function(sc, i){
+          return '<button type="button" class="ci-chip" data-sc="' + i + '">' + esc(sc.name) + '</button>';
+        }).join('') +
+      '</div>' +
+    '</div>' +
+
+    '<div class="ci-table-wrap">' +
+      '<table class="ci-table">' +
+        '<thead><tr>' +
+          '<th style="width:34px;text-align:center">#</th>' +
+          '<th>' + lb('Item / Service Description', 'কাজের / পণ্যের বিবরণ') + '</th>' +
+          '<th style="width:75px;text-align:right">' + lb('Qty', 'পরিমাণ') + '</th>' +
+          '<th style="width:75px">' + lb('Unit', 'একক') + '</th>' +
+          '<th style="width:90px;text-align:right">' + lb('Unit Price', 'দর (৳)') + '</th>' +
+          '<th style="width:95px;text-align:right">' + lb('Total', 'মোট (৳)') + '</th>' +
+          '<th style="width:34px"></th>' +
+        '</tr></thead>' +
+        '<tbody>' + rowsHtml + '</tbody>' +
+      '</table>' +
+    '</div>' +
+
+    '<div class="ci-add-row-bar">' +
+      '<button type="button" class="ci-add-btn" id="ciAddRow">' + lb('+ Add Another Item', '+ আরেকটি আইটেম যোগ করুন') + '</button>' +
+      '<span class="mut" style="font-size:12px">' + st.items.length + ' ' + lb('items added', 'টি আইটেম যুক্ত') + '</span>' +
+    '</div>' +
+
+    '<div class="ci-summary-grid">' +
+      '<div class="ci-pay-box">' +
+        '<label style="font-size:12px;font-weight:700;color:var(--ink)">' + lb('Payment Method', 'পরিশোধ পদ্ধতি') + '</label>' +
+        '<div class="ci-pay-methods">' +
+          ['Cash', 'Due', 'Mobile Banking', 'Bank'].map(function(m){
+            return '<button type="button" class="ci-pay-btn ' + (st.pay === m ? 'on' : '') + '" data-pay="' + m + '">' +
+              (m === 'Cash' ? lb('Cash', 'নগদ') : m === 'Due' ? lb('Due', 'বাকি') : m === 'Mobile Banking' ? lb('MFS', 'মোবাইল ব্যাংকিং') : lb('Bank', 'ব্যাংক')) +
+            '</button>';
+          }).join('') +
+        '</div>' +
+        (st.pay === 'Mobile Banking' ?
+          '<div style="display:flex;gap:6px;align-items:center;margin-top:4px">' +
+            '<label style="font-size:11px;color:var(--mut)">' + lb('Wallet:', 'ওয়ালেট:') + '</label>' +
+            WLT_MFS.map(function(k){
+              return '<button type="button" class="ci-pay-btn ' + (st.w === k ? 'on' : '') + '" data-w="' + k + '" style="font-size:11px;padding:3px 8px">' + wN(k) + '</button>';
+            }).join('') +
+          '</div>' : '') +
+        (st.pay === 'Cash' ?
+          '<div style="display:flex;gap:12px;align-items:center;margin-top:6px">' +
+            '<div style="display:flex;align-items:center;gap:6px"><label style="font-size:11.5px;color:var(--mut)">' + lb('Cash Rec:', 'নগদ গ্রহণ:') + '</label><input type="number" id="ciCashRec" value="' + st.cashRec + '" style="width:90px;height:30px;padding:2px 6px;text-align:right"></div>' +
+            '<div style="font-size:12px;color:#0f766e"><b>' + lb('Change:', 'ফেরত:') + ' ' + tk(change) + '</b></div>' +
+          '</div>' : '') +
+        (st.pay === 'Due' ?
+          '<div style="font-size:12px;color:#b45309;margin-top:4px;padding:4px 8px;background:rgba(245,158,11,.1);border-radius:6px">' +
+            '<b>' + lb('Due Amount:', 'বকেয়া পরিমাণ:') + ' ' + tk(dueAmt) + '</b> (' + lb('Will post to customer ledger', 'কাস্টমার খতিয়ানে জমা হবে') + ')' +
+          '</div>' : '') +
+        (wordsBn ? '<div class="ci-words-badge"><b>' + lb('In words: ', 'কথায়: ') + '</b>' + esc(wordsBn) + '</div>' : '') +
+      '</div>' +
+
+      '<div class="ci-totals-box">' +
+        '<div class="ci-calc-line"><span>' + lb('Subtotal:', 'উপমোট:') + '</span><b>' + tk(subtotal) + '</b></div>' +
+        '<div class="ci-calc-line">' +
+          '<span>' + lb('Discount:', 'ছাড়:') + '</span>' +
+          '<div style="display:flex;align-items:center;gap:4px">' +
+            '<input type="number" id="ciDiscVal" min="0" step="any" value="' + (st.disc || '') + '" placeholder="0" style="width:70px;height:26px;text-align:right;font-size:12px">' +
+            '<button type="button" class="ghost" id="ciDiscType" style="height:26px;padding:0 6px;font-size:11px">' + (st.discType === 'percent' ? '%' : '৳') + '</button>' +
+          '</div>' +
+        '</div>' +
+        (discAmt > 0 ? '<div class="ci-calc-line" style="color:#15803d"><span>' + lb('Net Discount:', 'মোট ছাড়:') + '</span><b>− ' + tk(discAmt) + '</b></div>' : '') +
+        '<div class="ci-grand-line"><span>' + lb('GRAND TOTAL:', 'সর্বমোট দেয়:') + '</span><b>' + tk(grandTotal) + '</b></div>' +
+      '</div>' +
+    '</div>' +
+
+    '<div class="ci-actions">' +
+      '<button type="button" class="ghost" id="ciCancelBtn">' + lb('Cancel', 'বাতিল') + '</button>' +
+      '<button type="button" class="ghost" id="ciSaveOnlyBtn">' + lb('Save Only', 'শুধু সেভ') + '</button>' +
+      '<button type="button" class="go" id="ciPrintThBtn" style="background:#0284c7">' + lb('Thermal Slip', 'রসিদ (স্লিপ)') + '</button>' +
+      '<button type="button" class="go" id="ciPrintA4Btn">' + lb('Save & Print A4 Invoice', 'চালান প্রিন্ট (A4)') + '</button>' +
+    '</div>';
+
+  $('ciBody').innerHTML = html;
+
+  // Event Listeners for inputs
+  $('ciSelectCust').onchange = function(e){
+    var v = e.target.value;
+    st.cuId = v;
+    if(v && v !== '__new'){
+      var found = (S.cust || []).find(function(c){ return String(c.id) === String(v); });
+      if(found){
+        st.party = found.name;
+        st.phone = found.phone || '';
+        st.addr = found.addr || found.note || '';
+        $('ciPartyName').value = st.party;
+        $('ciPartyPhone').value = st.phone;
+        $('ciPartyAddr').value = st.addr;
+      }
+    } else if(v === '__new'){
+      $('ciPartyName').focus();
+    }
+  };
+
+  $('ciPartyName').oninput = function(e){ st.party = e.target.value; };
+  $('ciPartyPhone').oninput = function(e){ st.phone = e.target.value; };
+  $('ciPartyAddr').oninput = function(e){ st.addr = e.target.value; };
+
+  // Service Shortcut buttons
+  $('ciBody').querySelectorAll('.ci-chip').forEach(function(btn){
+    btn.onclick = function(){
+      var sc = shortcuts[+btn.dataset.sc];
+      if(!sc) return;
+      var last = st.items[st.items.length - 1];
+      if(last && !last.name.trim() && !last.price){
+        last.name = sc.name;
+        last.unit = sc.unit;
+        last.price = sc.price;
+      } else {
+        st.items.push({ name: sc.name, qty: 1, unit: sc.unit, price: sc.price });
+      }
+      renderCustomInvoiceStudio();
+    };
+  });
+
+  // Items table row events
+  $('ciBody').querySelectorAll('tr[data-row]').forEach(function(tr){
+    var idx = +tr.dataset.row;
+    var row = st.items[idx];
+    if(!row) return;
+
+    tr.querySelector('.ci-in-name').oninput = function(e){ row.name = e.target.value; };
+    tr.querySelector('.ci-in-qty').oninput = function(e){
+      row.qty = +e.target.value || 0;
+      updateStudioLiveTotals();
+    };
+    tr.querySelector('.ci-in-unit').oninput = function(e){ row.unit = e.target.value; };
+    tr.querySelector('.ci-in-price').oninput = function(e){
+      row.price = +e.target.value || 0;
+      updateStudioLiveTotals();
+    };
+  });
+
+  // Row deletion
+  $('ciBody').querySelectorAll('.ci-row-del-btn').forEach(function(btn){
+    btn.onclick = function(){
+      var idx = +btn.dataset.del;
+      if(st.items.length > 1){
+        st.items.splice(idx, 1);
+      } else {
+        st.items[0] = { name: '', qty: 1, unit: isBn ? 'কপি' : 'pc', price: 0 };
+      }
+      renderCustomInvoiceStudio();
+    };
+  });
+
+  // Add Row
+  $('ciAddRow').onclick = function(){
+    st.items.push({ name: '', qty: 1, unit: isBn ? 'কপি' : 'pc', price: 0 });
+    renderCustomInvoiceStudio();
+    var rows = $('ciBody').querySelectorAll('tr[data-row]');
+    if(rows.length){
+      var lastIn = rows[rows.length - 1].querySelector('.ci-in-name');
+      if(lastIn) lastIn.focus();
+    }
+  };
+
+  // Payment method buttons
+  $('ciBody').querySelectorAll('.ci-pay-btn[data-pay]').forEach(function(btn){
+    btn.onclick = function(){
+      st.pay = btn.dataset.pay;
+      renderCustomInvoiceStudio();
+    };
+  });
+  $('ciBody').querySelectorAll('.ci-pay-btn[data-w]').forEach(function(btn){
+    btn.onclick = function(){
+      st.w = btn.dataset.w;
+      renderCustomInvoiceStudio();
+    };
+  });
+
+  // Cash received
+  var cashRecInput = $('ciCashRec');
+  if(cashRecInput){
+    cashRecInput.oninput = function(e){
+      st.cashRec = +e.target.value || 0;
+      st.cashRecEdited = true;
+      updateStudioLiveTotals();
+    };
+  }
+
+  // Discount
+  $('ciDiscVal').oninput = function(e){
+    st.disc = +e.target.value || 0;
+    updateStudioLiveTotals();
+  };
+  $('ciDiscType').onclick = function(){
+    st.discType = st.discType === 'percent' ? 'taka' : 'percent';
+    renderCustomInvoiceStudio();
+  };
+
+  // Studio Save & Print Actions
+  $('ciCancelBtn').onclick = function(){ $('customInvoiceModal').hidden = true; };
+  $('ciSaveOnlyBtn').onclick = function(){ commitCustomInvoice('save'); };
+  $('ciPrintThBtn').onclick = function(){ commitCustomInvoice('print_th'); };
+  $('ciPrintA4Btn').onclick = function(){ commitCustomInvoice('print_a4'); };
+}
+
+function updateStudioLiveTotals(){
+  var st = _ciState;
+  if(!st) return;
+  var subtotal = st.items.reduce(function(sum, it){
+    return sum + ((+it.qty || 0) * (+it.price || 0));
+  }, 0);
+  subtotal = r2(subtotal);
+
+  var discAmt = 0;
+  if(st.discType === 'percent'){
+    discAmt = r2(subtotal * ((+st.disc || 0) / 100));
+  } else {
+    discAmt = r2(+st.disc || 0);
+  }
+  var grandTotal = Math.max(0, r2(subtotal - discAmt));
+
+  if(!st.cashRecEdited){
+    st.cashRec = grandTotal;
+    if($('ciCashRec')) $('ciCashRec').value = grandTotal;
+  }
+
+  renderCustomInvoiceStudio();
+}
+
+function commitCustomInvoice(action){
+  var st = _ciState;
+  if(!st) return;
+
+  var validItems = st.items.filter(function(it){
+    return it.name.trim().length > 0 || (+it.price || 0) > 0;
+  });
+
+  if(!validItems.length){
+    toast(lb('Please add at least one line item', 'কমপক্ষে একটি কাজের বিবরণ দিন'));
+    return;
+  }
+
+  if(st.pay === 'Due' && !st.party.trim()){
+    toast(lb('Customer name is required for Due bills', 'বাকি চালানের জন্য গ্রাহকের নাম আবশ্যক'));
+    $('ciPartyName').focus();
+    return;
+  }
+
+  var subtotal = validItems.reduce(function(sum, it){
+    return sum + ((+it.qty || 0) * (+it.price || 0));
+  }, 0);
+  subtotal = r2(subtotal);
+
+  var discAmt = 0;
+  if(st.discType === 'percent'){
+    discAmt = r2(subtotal * ((+st.disc || 0) / 100));
+  } else {
+    discAmt = r2(+st.disc || 0);
+  }
+  var grandTotal = Math.max(0, r2(subtotal - discAmt));
+  var discPct = subtotal > 0 ? (discAmt / subtotal) * 100 : 0;
+
+  D.seq++;
+  dsave();
+  var no = D.dev + D.seq;
+  var id = uid();
+  var desc = 'POS #' + no + ': ' + validItems.map(function(l){ return l.qty + '× ' + l.name; }).join(', ');
+
+  var cuId = st.cuId;
+  if(st.pay === 'Due' || st.party.trim()){
+    if(cuId === '__new' || (!cuId && st.party.trim())){
+      var newCust = custNew(st.party.trim(), st.phone.trim(), 'custom invoice');
+      if(newCust) cuId = newCust.id;
+    }
+  }
+
+  var b = {
+    id: id,
+    no: no,
+    d: st.date || bizDate(),
+    t: nowT(),
+    ts: Date.now(),
+    user: U.name,
+    mode: 'sale',
+    desc: desc,
+    lines: validItems,
+    subtotal: subtotal,
+    disc: discAmt,
+    discPct: discPct,
+    total: grandTotal,
+    pay: st.pay,
+    party: st.party.trim(),
+    phone: st.phone.trim(),
+    addr: st.addr.trim(),
+    words: grandTotal > 0 ? bnWords(grandTotal) : '',
+    rec: st.pay === 'Cash' ? (st.cashRec || grandTotal) : {},
+    chg: st.pay === 'Cash' ? Math.max(0, (st.cashRec || grandTotal) - grandTotal) : {},
+    ...(st.pay === 'Mobile Banking' ? { w: st.w || 'bk' } : {}),
+    ...(cuId ? { cu: cuId } : {})
+  };
+
+  S.bills.unshift(b);
+  S.entries.push({
+    id: id,
+    d: b.d,
+    t: b.t,
+    type: 'Sale',
+    desc: b.desc.slice(0, 200),
+    cat: 'POS',
+    pay: b.pay,
+    amt: b.total,
+    by: U.name,
+    party: b.party,
+    phone: b.phone,
+    pos: 1,
+    act: null,
+    ...(b.w ? { w: b.w } : {}),
+    ...(b.cu ? { cu: b.cu } : {})
+  });
+
+  if(b.party){
+    (S.parties['Sale'] = S.parties['Sale'] || {})[b.party] = b.phone;
+  }
+
+  lg('Custom Invoice', '#' + no + ' ' + tk(grandTotal) + ' ' + b.pay);
+  save();
+  Sound.chaChing();
+  saveCheck();
+
+  $('customInvoiceModal').hidden = true;
+  _ciState = null;
+
+  if(action === 'print_a4'){
+    printA4Invoice(b);
+  } else if(action === 'print_th'){
+    printThermalSlip(b);
+  } else {
+    toast(lb('Invoice saved successfully', 'চালান সফলভাবে সংরক্ষিত হয়েছে'));
+    receipt(b);
+  }
 }
 function voidBill(b){
   if(S.days[b.d]&&S.days[b.d].closed)return dlg('Day closed','<p>That day is closed. Reopen it in Accounts before voiding the bill.</p>',()=>{},'OK');
