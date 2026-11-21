@@ -8505,7 +8505,10 @@ function animateCounts(){
 function saveCheck(){if(document.documentElement.dataset.rm)return;var d=document.createElement('div');d.className='savechk';d.innerHTML='<svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="22" fill="none" stroke="var(--acc)" stroke-width="3"/><path d="M14 27l8 8 16-16" fill="none" stroke="var(--acc)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';document.body.appendChild(d);setTimeout(function(){d.classList.add('out')},700);setTimeout(function(){d.remove()},1250)}
 (function(){
   var M="Claude Sonnet 5.5 · owner's Claude account";
-  APP_VERSION='11.21.0';
+  APP_VERSION='11.22.0';
+  VERS.unshift({v:'11.22.0',d:'2026-11-22',t:'Custom Invoice Studio, Branded A4 Voucher & 58mm Thermal Roll Billing Engine',by:'Antigravity',n:['Introduced Custom Invoice Studio: fast multi-item computer task, composing, typing, printing & photocopy billing with quick-service presets','Branded A4 Invoice with complete shop information: Proprietor Md. Nasir Uddin, Choudhury Bazar Kamalnagar address, dual phone numbers and email','Dual-mode printing: Branded A4 Invoice / Voucher and dedicated 58mm/80mm roll Thermal Slip with automatic afterprint lifecycle cleanup','Safe ESC/POS direct USB & Bluetooth printing without Bengali UTF-8 encoding corruption on hardware thermal printers','Integrated Bengali amount-in-words generator (কথায়) for formal voucher compliance','Real-time cash tendered & change calculation plus direct Due sales customer ledger integration']});
+  UPC.unshift({v:'11.22.0',s:'Done',t:['Custom Invoice Studio for computer tasks, typing, compose, printing & photocopy','Branded A4 Invoice with complete shop info, customer memo & Bengali words','Dedicated 58mm/80mm roll thermal slip & ESC/POS hardware safety','Real-time cash change and customer ledger due synchronization']});
+  BUGS.unshift({d:'2026-11-22 00:20 (UTC+6)',v:'11.22.0',w:'Antigravity',a:'Invoices were limited to plain ASCII preview without multi-item custom task billing, A4 vouchers, or shop owner branding',b:'Cashiers had to add single custom items one by one through separate popup dialogs; invoices lacked shop phone/address and broke on thermal roll printers',c:'Engineered full Custom Invoice Studio with shortcut service chips, dynamic table, A4 branded voucher, 58mm thermal slip and safe ESC/POS printing'});
   VERS.unshift({v:'11.21.0',d:'2026-11-20',t:'Unified Header App Icon Across Platforms: Replaced legacy green icons with vector Header Monitor Logo',by:'Antigravity',n:['Replaced old #2F5D3A forest green icons with the exact vector header monitor logo on clean white background','Updated Web PWA icons (icon-192.png, icon-512.png) and manifest.webmanifest theme_color to #0F766E and background to #FFFFFF','Updated Windows Desktop installer & app icon (build/icon.png) to high-res vector header monitor logo','Updated all Android launcher icons (ic_launcher, ic_launcher_round, ic_launcher_foreground) across mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi','Replaced all Android splash screens across 11 portrait and landscape densities with clean white background and centered header monitor logo','Removed all legacy #2F5D3A green references across scripts/android-setup.js and native/bridge.js']});
   UPC.unshift({v:'11.21.0',s:'Done',t:['Unified app icon with header monitor logo across PWA, Windows and Android','Removed all legacy #2F5D3A dark green background colors','Crisp vector rendering on modern white background for all icon & splash densities']});
   BUGS.unshift({d:'2026-11-20 20:55 (UTC+6)',v:'11.21.0',w:'Antigravity',a:'App icons across Web, Windows and Android used legacy #2F5D3A forest green background and old logo distinct from the header brand mark',b:'Header switched to modern vector monitor logo in v11.0 but app icons and splash screens still retained old green bitmap branding from early versions',c:'Generated all icon assets and splash screens from the exact header vector monitor logo with clean white backgrounds, and updated manifest and native bridge colors'});
@@ -8728,7 +8731,7 @@ if ('serviceWorker' in navigator) {
 
 </script>
 <!-- NCS v10 Sync Engine -->
-<script src="diag.js?v=11.21.0"></script>
-<script src="sync.js?v=11.21.0"></script>
+<script src="diag.js?v=11.22.0"></script>
+<script src="sync.js?v=11.22.0"></script>
 </body>
 </html>
