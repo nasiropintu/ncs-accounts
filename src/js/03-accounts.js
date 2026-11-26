@@ -127,6 +127,29 @@ $('pick').onchange=e=>{
 $('pd').onclick=()=>shift(-1);$('nd').onclick=()=>shift(1);$('today').onclick=()=>{cur=todayIso();reset();render()};
 
 var _THEMES=['auto','light','dark','glass-dark','glass-light'];
+var _GLASS_VIDEOS={suggested:'assets/videos/suggested.mp4',calm:'assets/videos/calm.mp4',energetic:'assets/videos/energetic.mp4',economy:'assets/videos/economy.mp4',none:''};
+function syncBgVideo(){
+  var m=S.theme||'auto';
+  var gv=S.glassVideo||'suggested';
+  if(!Object.prototype.hasOwnProperty.call(_GLASS_VIDEOS,gv))gv='suggested';
+  S.glassVideo=gv;
+  var isDesktop=window.matchMedia&&window.matchMedia('(min-width: 900px)').matches;
+  var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var active=isDesktop&&!reduced&&(m==='glass-dark'||m==='glass-light')&&gv!=='none';
+  var vid=$('bgVideo');
+  if(active&&vid){
+    document.documentElement.dataset.videoActive='1';
+    var src=_GLASS_VIDEOS[gv];
+    if(vid.getAttribute('src')!==src){vid.setAttribute('src',src);vid.load();}
+    var p=vid.play();
+    if(p&&typeof p.catch==='function')p.catch(function(){});
+  }else{
+    delete document.documentElement.dataset.videoActive;
+    if(vid&&vid.getAttribute('src')){vid.pause();vid.removeAttribute('src');vid.load();}
+  }
+  var panel=$('tppPanel');
+  if(panel) panel.querySelectorAll('.tpp-vid-opt').forEach(function(o){o.classList.toggle('active',o.dataset.gv===gv);});
+}
 function applyTheme(){
   var m=S.theme||'auto';
   if(!_THEMES.includes(m))m='auto';
@@ -145,13 +168,14 @@ function applyTheme(){
   /* Sync active state on picker options */
   var panel=$('tppPanel');
   if(panel) panel.querySelectorAll('.tpp-opt').forEach(function(o){o.classList.toggle('active',o.dataset.tv===m);});
+  syncBgVideo();
 }
 /* Theme picker panel */
 (function(){
   var btn=$('themeBtn'),panel=$('tppPanel'),wrap=$('tppWrap'),closeBtn=$('tppClose');
   if(!btn||!panel) return;
   var panelHome=panel.parentNode,portal=false;
-  function usePortal(){return window.matchMedia&&window.matchMedia('(max-width: 899px)').matches}
+  function usePortal(){return true}
   function open(){
     portal=usePortal();
     if(portal){panel.classList.add('tpp-portal');document.body.appendChild(panel)}
@@ -167,6 +191,23 @@ function applyTheme(){
   panel.querySelectorAll('.tpp-opt').forEach(function(opt){
     opt.onclick=function(e){e.stopPropagation();S.theme=opt.dataset.tv||'auto';save();applyTheme();close();};
   });
+  panel.querySelectorAll('.tpp-vid-opt').forEach(function(opt){
+    opt.onclick=function(e){
+      e.stopPropagation();
+      var gv=opt.dataset.gv||'suggested';
+      S.glassVideo=gv;
+      if(gv!=='none'&&S.theme!=='glass-dark'&&S.theme!=='glass-light'){
+        S.theme=(S.theme==='light')?'glass-light':'glass-dark';
+      }
+      save();applyTheme();
+    };
+  });
+  if(window.matchMedia){
+    var mqDesk=window.matchMedia('(min-width: 900px)');
+    var mqRed=window.matchMedia('(prefers-reduced-motion: reduce)');
+    if(mqDesk.addEventListener)mqDesk.addEventListener('change',syncBgVideo);
+    if(mqRed.addEventListener)mqRed.addEventListener('change',syncBgVideo);
+  }
   document.addEventListener('click',function(e){if(wrap&&!wrap.contains(e.target)&&!panel.contains(e.target))close();});
   document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
 })();
@@ -440,7 +481,7 @@ function applyLang(){const b=S.lang==='bn';document.documentElement.lang=b?'bn':
 $('lang').onclick=()=>{S.lang=S.lang==='bn'?'en':'bn';save();applyLang()};
 
 async function dlFile(name,data){try{if(typeof claude!=='undefined'){const dl=await claude.use('downloads');if(dl)return dl.save({filename:name,data})}const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'text/csv'}));a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){a.remove()},1000)}catch(e){try{window.open('data:text/plain;charset=utf-8,'+encodeURIComponent(data),'_blank')}catch(x){}}}
-const LOCAL=['theme','dayStart','dayEnd','lang','lockout','sync','snaps','logSent','synced','posSince','motion','sound','lastBackup','cardSettings'];
+const LOCAL=['theme','glassVideo','dayStart','dayEnd','lang','lockout','sync','snaps','logSent','synced','posSince','motion','sound','lastBackup','cardSettings'];
 const syncUrl=()=>localStorage.getItem('ncs_sync_url')||(S.sync&&S.sync.url)||(window.NCS_CONFIG&&(window.NCS_CONFIG.API_URL||window.NCS_CONFIG.url))||'';
 const syncKey=()=>localStorage.getItem('ncs_sync_key')||(S.sync&&S.sync.key)||(window.NCS_CONFIG&&(window.NCS_CONFIG.API_TOKEN||window.NCS_CONFIG.key))||'';
 const SY=()=>!!(syncUrl()&&syncKey());

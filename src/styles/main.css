@@ -1288,372 +1288,396 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
 }
 
 /* ============================================================
-   GLASS DARK TOKEN OVERRIDES
+   REDESIGNED GLASSMORPHISM (GLASS DARK & GLASS LIGHT)
+   Qwen AI style: deeply sunken, almost-invisible cards on video.
+   Cards are near-transparent dark shells — only text carries colour.
    ============================================================ */
 :root[data-theme="glass-dark"]{
-  --bg:#060a12;
-  --card:rgba(255,255,255,0.055);
-  --ink:#EEF2FF;
-  --mut:rgba(238,242,255,0.5);
+  --bg:#04070f;
+  --card:rgba(16,22,36,0.38);
+  --ink:#F0F4FA;
+  --mut:rgba(220,230,245,0.60);
   --line:rgba(255,255,255,0.09);
-  --acc:#10B981;
-  --soft:rgba(16,185,129,0.12);
+  --acc:#34D399;
+  --soft:rgba(255,255,255,0.05);
+  --gold:#FBBF24;
   --pos:#34D399;
   --neg:#F87171;
   --warn:#FBBF24;
   --btn:#10B981;
   --btn2:#059669;
-  --btnink:#060a12;
-  --sh:0 8px 32px rgba(0,0,0,.55),0 2px 8px rgba(0,0,0,.35);
-  --t1:rgba(127,29,29,.35);--t2:rgba(120,53,15,.35);--t3:rgba(6,78,59,.35);--t4:rgba(49,46,129,.35);
-  --g1:#10B981;--g2:#059669;--on:#10B981;
-  --cartbg:rgba(255,255,255,.04);--dhg:rgba(16,185,129,.07);
+  --btnink:#04120E;
+  --sh:0 8px 28px rgba(0,0,0,0.44),inset 0 1px 0 rgba(255,255,255,0.07);
+  --t1:rgba(16,22,36,0.38);--t2:rgba(16,22,36,0.38);--t3:rgba(16,22,36,0.38);--t4:rgba(16,22,36,0.38);
+  --g1:#10B981;--g2:#059669;--on:#34D399;
+  --cartbg:rgba(16,22,36,0.42);--dhg:rgba(16,185,129,0.08);
   --ch1:#34D399;--ch2:#60A5FA;--ch3:#A78BFA;--ch4:#FBBF24;--ch5:#FB7185;
-  --table-alt:rgba(255,255,255,.025);--table-hover:rgba(255,255,255,.06);
-  /* glass-specific */
-  --gblu:blur(28px) saturate(180%) brightness(1.05);
-  --gbrd:rgba(255,255,255,0.12);
-  --gshi:rgba(255,255,255,0.14);
-  --gcard:rgba(16,22,40,0.55);
-  --gcard-h:rgba(16,22,40,0.7);
+  --table-alt:rgba(255,255,255,0.018);--table-hover:rgba(255,255,255,0.055);
+  --gblu:blur(14px) saturate(140%);
+  --gbrd:rgba(255,255,255,0.08);
+  --gshi:rgba(255,255,255,0.07);
+  --gcard:rgba(16,22,36,0.38);
+  --gcard-h:rgba(22,30,50,0.52);
   color-scheme:dark
 }
 
-/* ============================================================
-   GLASS LIGHT TOKEN OVERRIDES
-   ============================================================ */
 :root[data-theme="glass-light"]{
-  --bg:#dde8f2;
-  --card:rgba(255,255,255,0.58);
-  --ink:#0A1628;
-  --mut:rgba(10,22,40,0.5);
-  --line:rgba(10,22,40,0.09);
-  --acc:#0D9488;
-  --soft:rgba(13,148,136,0.09);
-  --pos:#0D9488;
+  --bg:#d6e4f0;
+  --card:rgba(248,252,255,0.42);
+  --ink:#0B1324;
+  --mut:rgba(15,23,42,0.62);
+  --line:rgba(255,255,255,0.56);
+  --acc:#0F766E;
+  --soft:rgba(255,255,255,0.36);
+  --gold:#B45309;
+  --pos:#0F766E;
   --neg:#DC2626;
   --warn:#D97706;
-  --btn:#0D9488;
+  --btn:#0F766E;
   --btn2:#14B8A6;
-  --btnink:#FFF;
-  --sh:0 4px 24px rgba(10,22,40,.12),0 1px 4px rgba(10,22,40,.08);
-  --t1:rgba(254,202,202,.75);--t2:rgba(254,240,138,.75);--t3:rgba(187,247,208,.75);--t4:rgba(221,214,254,.75);
-  --g1:#0D9488;--g2:#14B8A6;--on:#0D9488;
-  --cartbg:rgba(255,255,255,.55);--dhg:rgba(187,247,208,.55);
+  --btnink:#FFFFFF;
+  --sh:0 6px 22px rgba(15,23,42,0.11),inset 0 1px 0 rgba(255,255,255,0.78);
+  --t1:rgba(248,252,255,0.42);--t2:rgba(248,252,255,0.42);--t3:rgba(248,252,255,0.42);--t4:rgba(248,252,255,0.42);
+  --g1:#0F766E;--g2:#14B8A6;--on:#0F766E;
+  --cartbg:rgba(248,252,255,0.46);--dhg:rgba(13,148,136,0.08);
   --ch1:#0D9488;--ch2:#2563EB;--ch3:#7C3AED;--ch4:#F59E0B;--ch5:#E11D48;
-  --table-alt:rgba(255,255,255,.45);--table-hover:rgba(13,148,136,.07);
-  /* glass-specific */
-  --gblu:blur(24px) saturate(160%) brightness(1.02);
-  --gbrd:rgba(255,255,255,0.6);
-  --gshi:rgba(255,255,255,0.85);
-  --gcard:rgba(255,255,255,0.45);
-  --gcard-h:rgba(255,255,255,0.65);
+  --table-alt:rgba(255,255,255,0.18);--table-hover:rgba(255,255,255,0.38);
+  --gblu:blur(16px) saturate(160%);
+  --gbrd:rgba(255,255,255,0.58);
+  --gshi:rgba(255,255,255,0.80);
+  --gcard:rgba(248,252,255,0.42);
+  --gcard-h:rgba(255,255,255,0.62);
   color-scheme:light
 }
 
-/* --- Premium glass backdrop — two slow-drifting blobs + base gradient --- */
-:root[data-theme="glass-dark"] body::before,
-:root[data-theme="glass-light"] body::before{
-  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;animation:blob-drift 28s ease-in-out infinite alternate
-}
-@keyframes blob-drift{
-  0%{background-position:0% 0%,100% 100%,50% 50%}
-  100%{background-position:8% 6%,92% 94%,50% 50%}
-}
-:root[data-theme="glass-dark"] body::before{
-  background:
-    radial-gradient(ellipse 55% 48% at 18% 8%,rgba(15,118,110,.28) 0%,transparent 68%),
-    radial-gradient(ellipse 48% 42% at 86% 14%,rgba(37,99,235,.18) 0%,transparent 62%),
-    linear-gradient(160deg,#060a12 0%,#0d1428 50%,#060e18 100%);
-  background-size:200% 200%,200% 200%,100% 100%
-}
-:root[data-theme="glass-light"] body::before{
-  background:
-    radial-gradient(ellipse 55% 48% at 15% 5%,rgba(13,148,136,.16) 0%,transparent 68%),
-    radial-gradient(ellipse 48% 42% at 88% 12%,rgba(99,102,241,.10) 0%,transparent 62%),
-    linear-gradient(160deg,#dde8f2 0%,#e8f0f8 50%,#d4e4ef 100%);
-  background-size:200% 200%,200% 200%,100% 100%
-}
-/* blob behind all content — fixed positioning of children is unaffected */
+.top{position:relative}
 
-/* --- Body background --- */
-:root[data-theme="glass-dark"] body{background:#07090f}
-:root[data-theme="glass-light"] body{background:#eef2f7}
+/* Fallback ambient backdrop when video is Off or on mobile */
+:root[data-theme="glass-dark"] body{
+  background:linear-gradient(155deg,#04070f 0%,#07101f 55%,#050c1a 100%) fixed
+}
+:root[data-theme="glass-light"] body{
+  background:linear-gradient(155deg,#d4e2ef 0%,#e6eff8 52%,#d8e8f4 100%) fixed
+}
 
-/* --- Glass surface mixin — cards, panels, columns --- */
+/* ============================================================
+   1. UNIFIED FROSTED GLASS SURFACES (outer cards / sections)
+   ============================================================ */
 :root[data-theme="glass-dark"] .card,
 :root[data-theme="glass-dark"] .stat,
+:root[data-theme="glass-dark"] .stats .stat,
+:root[data-theme="glass-dark"] #vHome .stat,
+:root[data-theme="glass-dark"] .lsm .stat,
+:root[data-theme="glass-dark"] .dhero,
 :root[data-theme="glass-dark"] .more-card,
 :root[data-theme="glass-dark"] .wlt-card,
 :root[data-theme="glass-dark"] .task-column,
 :root[data-theme="glass-dark"] .task-card,
 :root[data-theme="glass-dark"] .salat-box,
+:root[data-theme="glass-dark"] .salat-card,
 :root[data-theme="glass-dark"] .h-custom-bar,
 :root[data-theme="glass-dark"] .svc-bar-wrap,
+:root[data-theme="glass-dark"] .dchc,
+:root[data-theme="glass-dark"] .cashp,
+:root[data-theme="glass-dark"] .daybar,
+:root[data-theme="glass-dark"] #chkBar,
+:root[data-theme="glass-dark"] #fsec,
 :root[data-theme="glass-dark"] #vPos .pos-cart,
-:root[data-theme="glass-dark"] #vPos .pos-products{
-  background:linear-gradient(145deg,rgba(255,255,255,0.08) 0%,var(--gcard) 60%);
-  -webkit-backdrop-filter:var(--gblu);backdrop-filter:var(--gblu);
-  border:1px solid var(--gbrd);
-  box-shadow:var(--sh),inset 0 1px 0 var(--gshi),inset 0 -1px 0 rgba(0,0,0,0.2)
-}
+:root[data-theme="glass-dark"] #vPos .pos-products,
+:root[data-theme="glass-dark"] .top,
+:root[data-theme="glass-dark"] .tabs,
 :root[data-theme="glass-light"] .card,
 :root[data-theme="glass-light"] .stat,
+:root[data-theme="glass-light"] .stats .stat,
+:root[data-theme="glass-light"] #vHome .stat,
+:root[data-theme="glass-light"] .lsm .stat,
+:root[data-theme="glass-light"] .dhero,
 :root[data-theme="glass-light"] .more-card,
 :root[data-theme="glass-light"] .wlt-card,
 :root[data-theme="glass-light"] .task-column,
 :root[data-theme="glass-light"] .task-card,
 :root[data-theme="glass-light"] .salat-box,
+:root[data-theme="glass-light"] .salat-card,
 :root[data-theme="glass-light"] .h-custom-bar,
 :root[data-theme="glass-light"] .svc-bar-wrap,
+:root[data-theme="glass-light"] .dchc,
+:root[data-theme="glass-light"] .cashp,
+:root[data-theme="glass-light"] .daybar,
+:root[data-theme="glass-light"] #chkBar,
+:root[data-theme="glass-light"] #fsec,
 :root[data-theme="glass-light"] #vPos .pos-cart,
-:root[data-theme="glass-light"] #vPos .pos-products{
-  background:linear-gradient(145deg,rgba(255,255,255,0.75) 0%,var(--gcard) 100%);
-  -webkit-backdrop-filter:var(--gblu);backdrop-filter:var(--gblu);
-  border:1px solid var(--gbrd);
-  box-shadow:var(--sh),inset 0 1px 0 var(--gshi)
-}
-
-/* --- Glass header --- */
-:root[data-theme="glass-dark"] .top{
-  background:linear-gradient(160deg,rgba(255,255,255,0.09) 0%,var(--gcard) 70%);
-  -webkit-backdrop-filter:var(--gblu);backdrop-filter:var(--gblu);
-  border-color:var(--gbrd);
-  box-shadow:0 8px 40px rgba(0,0,0,.35),0 1px 0 var(--gbrd),inset 0 1px 0 var(--gshi)
-}
-:root[data-theme="glass-light"] .top{
-  background:linear-gradient(160deg,rgba(255,255,255,0.8) 0%,var(--gcard) 100%);
-  -webkit-backdrop-filter:var(--gblu);backdrop-filter:var(--gblu);
-  border-color:var(--gbrd);
-  box-shadow:0 4px 24px rgba(10,22,40,.12),inset 0 1px 0 var(--gshi)
-}
-/* Top shine on header */
-:root[data-theme="glass-dark"] .top::after,
-:root[data-theme="glass-light"] .top::after{
-  content:"";position:absolute;inset:0 0 65% 0;border-radius:inherit;
-  background:linear-gradient(180deg,var(--gshi),transparent);pointer-events:none
-}
-.top{position:relative} /* needed for ::after pseudo */
-
-/* --- Glass tabs/nav --- */
-:root[data-theme="glass-dark"] .tabs,
+:root[data-theme="glass-light"] #vPos .pos-products,
+:root[data-theme="glass-light"] .top,
 :root[data-theme="glass-light"] .tabs{
-  background:var(--gcard);-webkit-backdrop-filter:var(--gblu);backdrop-filter:var(--gblu);
-  border-color:var(--gbrd);box-shadow:0 -4px 20px rgba(0,0,0,.12),inset 0 1px 0 var(--gshi)
+  background:var(--gcard)!important;
+  -webkit-backdrop-filter:var(--gblu)!important;
+  backdrop-filter:var(--gblu)!important;
+  border:1px solid var(--gbrd)!important;
+  box-shadow:var(--sh)!important;
+  color:var(--ink)!important
 }
 
-/* --- Glass modals --- */
-:root[data-theme="glass-dark"] .dlg,
-:root[data-theme="glass-light"] .dlg{
-  background:var(--gcard);-webkit-backdrop-filter:blur(32px) saturate(180%);backdrop-filter:blur(32px) saturate(180%);
-  border:1px solid var(--gbrd);box-shadow:0 20px 60px rgba(0,0,0,.3),inset 0 1px 0 var(--gshi)
-}
-:root[data-theme="glass-dark"] .ov{background:rgba(0,0,0,.62)}
-:root[data-theme="glass-light"] .ov{background:rgba(15,23,42,.35)}
-:root[data-theme="glass-dark"] .oa,
-:root[data-theme="glass-light"] .oa{
-  background:var(--gcard);-webkit-backdrop-filter:var(--gblu);backdrop-filter:var(--gblu)
-}
-
-/* --- Glass sync pill --- */
-:root[data-theme="glass-dark"] .top-sync-pill,
-:root[data-theme="glass-light"] .top-sync-pill{
-  background:var(--gcard);-webkit-backdrop-filter:var(--gblu);backdrop-filter:var(--gblu);
-  border-color:var(--gbrd)
-}
-
-/* --- Glass more items --- */
+/* ============================================================
+   2. INNER CARDS — shadow only, no backdrop-filter stacking
+   These live inside a parent glass card; a second blur layer
+   causes the "milky white" artefact the user flagged.
+   ============================================================ */
+:root[data-theme="glass-dark"] .howe-box,
+:root[data-theme="glass-dark"] .wlt-item,
+:root[data-theme="glass-dark"] .svc-chip,
+:root[data-theme="glass-dark"] .ghost,
 :root[data-theme="glass-dark"] .more-item,
+:root[data-theme="glass-light"] .howe-box,
+:root[data-theme="glass-light"] .wlt-item,
+:root[data-theme="glass-light"] .svc-chip,
+:root[data-theme="glass-light"] .ghost,
 :root[data-theme="glass-light"] .more-item{
-  background:var(--gcard);-webkit-backdrop-filter:var(--gblu);backdrop-filter:var(--gblu);
-  border-color:var(--gbrd)
+  background:transparent!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  border:1px solid var(--line)!important;
+  box-shadow:0 2px 10px rgba(0,0,0,0.18)!important;
+  color:var(--ink)!important
 }
-:root[data-theme="glass-dark"] .more-item:hover,
-:root[data-theme="glass-light"] .more-item:hover{background:var(--gcard-h)}
+:root[data-theme="glass-dark"] .howe-box:hover,
+:root[data-theme="glass-dark"] .wlt-item:hover,
+:root[data-theme="glass-dark"] .svc-chip:hover,
+:root[data-theme="glass-dark"] .ghost:hover,
+:root[data-theme="glass-dark"] .more-item:hover{background:rgba(255,255,255,0.05)!important}
+:root[data-theme="glass-light"] .howe-box:hover,
+:root[data-theme="glass-light"] .wlt-item:hover,
+:root[data-theme="glass-light"] .svc-chip:hover,
+:root[data-theme="glass-light"] .ghost:hover,
+:root[data-theme="glass-light"] .more-item:hover{background:rgba(255,255,255,0.32)!important}
 
-/* --- Glass prayer popover & role dropdown --- */
-:root[data-theme="glass-dark"] .hdr-prayer-popover,
-:root[data-theme="glass-dark"] .role-dropdown,
-:root[data-theme="glass-light"] .hdr-prayer-popover,
-:root[data-theme="glass-light"] .role-dropdown{
-  background:var(--gcard);-webkit-backdrop-filter:blur(28px) saturate(170%);backdrop-filter:blur(28px) saturate(170%);
-  border-color:var(--gbrd);box-shadow:0 16px 48px rgba(0,0,0,.22),inset 0 1px 0 var(--gshi)
+/* Header pills & buttons — keep glass but no double-blur */
+:root[data-theme="glass-dark"] .top .ic,
+:root[data-theme="glass-dark"] .hdr-prayer-btn,
+:root[data-theme="glass-dark"] .top-sync-pill,
+:root[data-theme="glass-dark"] .qa button,
+:root[data-theme="glass-dark"] .icon-ptabs button,
+:root[data-theme="glass-dark"] .ptabs button,
+:root[data-theme="glass-dark"] .htoday .tpill,
+:root[data-theme="glass-light"] .top .ic,
+:root[data-theme="glass-light"] .hdr-prayer-btn,
+:root[data-theme="glass-light"] .top-sync-pill,
+:root[data-theme="glass-light"] .qa button,
+:root[data-theme="glass-light"] .icon-ptabs button,
+:root[data-theme="glass-light"] .ptabs button,
+:root[data-theme="glass-light"] .htoday .tpill{
+  background:rgba(255,255,255,0.07)!important;
+  -webkit-backdrop-filter:blur(10px)!important;
+  backdrop-filter:blur(10px)!important;
+  border:1px solid var(--gbrd)!important;
+  box-shadow:0 2px 8px rgba(0,0,0,0.22)!important;
+  color:var(--ink)!important
+}
+:root[data-theme="glass-light"] .top .ic,
+:root[data-theme="glass-light"] .hdr-prayer-btn,
+:root[data-theme="glass-light"] .top-sync-pill,
+:root[data-theme="glass-light"] .qa button,
+:root[data-theme="glass-light"] .icon-ptabs button,
+:root[data-theme="glass-light"] .ptabs button,
+:root[data-theme="glass-light"] .htoday .tpill{
+  background:rgba(255,255,255,0.32)!important;
+  box-shadow:0 2px 8px rgba(15,23,42,0.08)!important
 }
 
-/* --- Glass theme picker panel --- */
-:root[data-theme="glass-dark"] .tpp-panel,
-:root[data-theme="glass-light"] .tpp-panel{
-  background:var(--gcard);-webkit-backdrop-filter:blur(28px) saturate(170%);backdrop-filter:blur(28px) saturate(170%);
-  border-color:var(--gbrd);box-shadow:0 20px 60px rgba(0,0,0,.28),inset 0 1px 0 var(--gshi)
+/* Hover states */
+:root[data-theme="glass-dark"] .top .ic:hover,
+:root[data-theme="glass-dark"] .qa button:hover,
+:root[data-theme="glass-dark"] .icon-ptabs button:hover,
+:root[data-theme="glass-dark"] .ptabs button:hover{background:rgba(255,255,255,0.12)!important}
+:root[data-theme="glass-light"] .top .ic:hover,
+:root[data-theme="glass-light"] .qa button:hover,
+:root[data-theme="glass-light"] .icon-ptabs button:hover,
+:root[data-theme="glass-light"] .ptabs button:hover{background:rgba(255,255,255,0.68)!important}
+
+/* ============================================================
+   3. TYPOGRAPHY COLOURS ONLY — backgrounds stay glass
+   ============================================================ */
+
+/* Cash Balance hero amount */
+:root[data-theme="glass-dark"] .dhero b.cnt,
+:root[data-theme="glass-dark"] .stat.main b{
+  color:#34D399!important;
+  text-shadow:0 0 20px rgba(52,211,153,0.28)
+}
+:root[data-theme="glass-light"] .dhero b.cnt,
+:root[data-theme="glass-light"] .stat.main b{color:#0F766E!important}
+:root[data-theme="glass-dark"] .dhero small,
+:root[data-theme="glass-dark"] .dhero i,
+:root[data-theme="glass-dark"] .dhero .dclk small,
+:root[data-theme="glass-light"] .dhero small,
+:root[data-theme="glass-light"] .dhero i,
+:root[data-theme="glass-light"] .dhero .dclk small{color:var(--mut)!important}
+:root[data-theme="glass-dark"] .dhero .dclk b,
+:root[data-theme="glass-light"] .dhero .dclk b{color:var(--ink)!important}
+
+/* KPI stats */
+:root[data-theme="glass-dark"] .stat small,
+:root[data-theme="glass-light"] .stat small,
+:root[data-theme="glass-dark"] .stat i,
+:root[data-theme="glass-light"] .stat i{color:var(--mut)!important}
+:root[data-theme="glass-dark"] .stat.t3 b{color:#34D399!important}
+:root[data-theme="glass-light"] .stat.t3 b{color:#15803D!important}
+:root[data-theme="glass-dark"] .stat.t2 b{color:#FBBF24!important}
+:root[data-theme="glass-light"] .stat.t2 b{color:#B45309!important}
+:root[data-theme="glass-dark"] .stat.t4 b{color:#A78BFA!important}
+:root[data-theme="glass-light"] .stat.t4 b{color:#7C3AED!important}
+:root[data-theme="glass-dark"] .stat.t1 b{color:#F87171!important}
+:root[data-theme="glass-light"] .stat.t1 b{color:#DC2626!important}
+:root[data-theme="glass-dark"] .stat.sf b{color:#38BDF8!important}
+:root[data-theme="glass-light"] .stat.sf b{color:#0284C7!important}
+
+/* Today pills text */
+:root[data-theme="glass-dark"] .htoday .tpill small,
+:root[data-theme="glass-light"] .htoday .tpill small{color:var(--mut)!important}
+:root[data-theme="glass-dark"] .htoday .tpill.pos b{color:#34D399!important}
+:root[data-theme="glass-light"] .htoday .tpill.pos b{color:#15803D!important}
+:root[data-theme="glass-dark"] .htoday .tpill.neg b{color:#F87171!important}
+:root[data-theme="glass-light"] .htoday .tpill.neg b{color:#DC2626!important}
+:root[data-theme="glass-dark"] .htoday .tpill.net b{color:#34D399!important}
+:root[data-theme="glass-light"] .htoday .tpill.net b{color:#0F766E!important}
+:root[data-theme="glass-dark"] .htoday .tpill b,
+:root[data-theme="glass-light"] .htoday .tpill b{color:var(--ink)!important}
+
+/* Who owes whom */
+:root[data-theme="glass-dark"] .howe-box small,
+:root[data-theme="glass-dark"] .howe-box i,
+:root[data-theme="glass-light"] .howe-box small,
+:root[data-theme="glass-light"] .howe-box i{color:var(--mut)!important}
+:root[data-theme="glass-dark"] .howe-box.recv b{color:#34D399!important}
+:root[data-theme="glass-light"] .howe-box.recv b{color:#15803D!important}
+:root[data-theme="glass-dark"] .howe-box.pay b{color:#FBBF24!important}
+:root[data-theme="glass-light"] .howe-box.pay b{color:#D97706!important}
+
+/* Wallets */
+:root[data-theme="glass-dark"] .wlt-item .wname,
+:root[data-theme="glass-light"] .wlt-item .wname{color:var(--mut)!important}
+:root[data-theme="glass-dark"] .wlt-item .wbal,
+:root[data-theme="glass-light"] .wlt-item .wbal{color:var(--ink)!important}
+:root[data-theme="glass-dark"] .wlt-item.neg .wbal,
+:root[data-theme="glass-light"] .wlt-item.neg .wbal{color:var(--neg)!important}
+
+/* Preset chips */
+:root[data-theme="glass-dark"] .svc-chip small,
+:root[data-theme="glass-light"] .svc-chip small{
+  background:transparent!important;
+  color:var(--acc)!important;
+  font-weight:700
 }
 
-/* --- Glass toast + savechk --- */
-:root[data-theme="glass-dark"] .toast,
-:root[data-theme="glass-light"] .toast{
-  -webkit-backdrop-filter:var(--gblu);backdrop-filter:var(--gblu)
+/* Quick action icon colours */
+:root[data-theme="glass-dark"] .qa .qai,
+:root[data-theme="glass-light"] .qa .qai{background:rgba(255,255,255,0.05)!important}
+:root[data-theme="glass-dark"] .qa button:nth-child(1) .qai{color:#38BDF8!important}
+:root[data-theme="glass-light"] .qa button:nth-child(1) .qai{color:#0284C7!important}
+:root[data-theme="glass-dark"] .qa button:nth-child(2) .qai{color:#FBBF24!important}
+:root[data-theme="glass-light"] .qa button:nth-child(2) .qai{color:#D97706!important}
+:root[data-theme="glass-dark"] .qa button:nth-child(3) .qai{color:#34D399!important}
+:root[data-theme="glass-light"] .qa button:nth-child(3) .qai{color:#15803D!important}
+:root[data-theme="glass-dark"] .qa button:nth-child(4) .qai{color:#A78BFA!important}
+:root[data-theme="glass-light"] .qa button:nth-child(4) .qai{color:#7C3AED!important}
+:root[data-theme="glass-dark"] .qa button:nth-child(5) .qai{color:#FB7185!important}
+:root[data-theme="glass-light"] .qa button:nth-child(5) .qai{color:#E11D48!important}
+
+/* Filter pill active ring */
+:root[data-theme="glass-dark"] .icon-ptabs button.on,
+:root[data-theme="glass-dark"] .ptabs button.on{
+  background:rgba(52,211,153,0.15)!important;
+  border-color:rgba(52,211,153,0.50)!important;
+  color:#34D399!important;
+  box-shadow:0 0 14px rgba(52,211,153,0.18)!important
+}
+:root[data-theme="glass-light"] .icon-ptabs button.on,
+:root[data-theme="glass-light"] .ptabs button.on{
+  background:rgba(15,118,110,0.12)!important;
+  border-color:rgba(15,118,110,0.42)!important;
+  color:#0F766E!important
 }
 
-/* --- SOLID overrides — never glass (readability) ---
-   Transaction tables, inputs, buttons stay fully solid */
+/* Bottom tabs */
+:root[data-theme="glass-light"] .tabs button.on{background:rgba(15,118,110,0.14);color:#0F766E}
+:root[data-theme="glass-dark"] .tabs button.on{background:rgba(52,211,153,0.15);color:#34D399}
+
+/* Inputs & selects */
 :root[data-theme="glass-dark"] input,
 :root[data-theme="glass-dark"] select,
 :root[data-theme="glass-dark"] textarea{
-  background:rgba(0,0,0,.3)!important;border-color:var(--gbrd)!important;color:var(--ink)!important
+  background:rgba(6,10,20,0.52)!important;
+  border-color:rgba(255,255,255,0.12)!important;
+  color:var(--ink)!important
 }
 :root[data-theme="glass-light"] input,
 :root[data-theme="glass-light"] select,
 :root[data-theme="glass-light"] textarea{
-  background:rgba(255,255,255,.75)!important;border-color:var(--gbrd)!important;color:var(--ink)!important
+  background:rgba(255,255,255,0.56)!important;
+  border-color:rgba(15,23,42,0.10)!important;
+  color:var(--ink)!important
 }
 :root[data-theme="glass-dark"] .go,
 :root[data-theme="glass-light"] .go{
   background:linear-gradient(135deg,var(--btn),var(--btn2))!important;
-  -webkit-backdrop-filter:none!important;backdrop-filter:none!important
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important
 }
 
-/* --- Refined acrylic finish --- */
-:root[data-theme="glass-dark"]{
-  --bg:#10182a;
-  --card:rgba(21,31,50,.72);
-  --mut:rgba(231,239,255,.68);
-  --line:rgba(225,238,255,.14);
-  --acc:#58ddc2;
-  --soft:rgba(76,218,194,.14);
-  --btn:#0f9f91;
-  --btn2:#21c5aa;
-  --btnink:#f4fffd;
-  --gblu:blur(22px) saturate(145%);
-  --gbrd:rgba(211,233,255,.18);
-  --gshi:rgba(255,255,255,.16);
-  --gcard:rgba(17,27,46,.78);
-  --gcard-h:rgba(24,38,61,.9);
-  --sh:0 16px 42px rgba(1,7,20,.28),0 2px 8px rgba(1,7,20,.18)
-}
-:root[data-theme="glass-light"]{
-  --bg:#e8f2fb;
-  --card:rgba(250,253,255,.78);
-  --ink:#142942;
-  --mut:rgba(20,41,66,.68);
-  --line:rgba(38,75,112,.13);
-  --acc:#087f83;
-  --soft:rgba(8,127,131,.1);
-  --btn:#087f83;
-  --btn2:#15a99f;
-  --gblu:blur(20px) saturate(145%);
-  --gbrd:rgba(255,255,255,.78);
-  --gshi:rgba(255,255,255,.88);
-  --gcard:rgba(249,253,255,.8);
-  --gcard-h:rgba(255,255,255,.94);
-  --sh:0 14px 34px rgba(41,78,112,.11),0 2px 6px rgba(41,78,112,.06);
-  --t1:rgba(192,241,226,.78);--t2:rgba(255,231,184,.7);--t3:rgba(205,222,255,.78);--t4:rgba(250,207,220,.68);
-  --table-alt:rgba(224,237,249,.58);--table-hover:rgba(8,127,131,.08)
-}
-:root[data-theme="glass-dark"] body,
-:root[data-theme="glass-light"] body{
-  background-color:var(--bg);
-  background-image:
-    radial-gradient(circle at 11% 32%,rgba(61,234,210,.32) 0 3.5%,rgba(61,234,210,.18) 5%,transparent 16%),
-    radial-gradient(circle at 87% 24%,rgba(119,147,255,.3) 0 3%,rgba(119,147,255,.16) 5%,transparent 17%),
-    radial-gradient(circle at 78% 82%,rgba(68,211,198,.2) 0 4%,transparent 18%),
-    radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.32),transparent 55%),
-    linear-gradient(145deg,#dff5f3 0%,#d8e9fa 52%,#e7e0fc 100%);
-  background-attachment:fixed
-}
-:root[data-theme="glass-dark"] body{
-  background-image:
-    radial-gradient(circle at 11% 32%,rgba(28,210,184,.2) 0 3.5%,rgba(28,210,184,.12) 5%,transparent 17%),
-    radial-gradient(circle at 87% 24%,rgba(113,132,255,.22) 0 3%,rgba(113,132,255,.1) 5%,transparent 18%),
-    radial-gradient(circle at 78% 82%,rgba(32,194,185,.12) 0 4%,transparent 18%),
-    linear-gradient(145deg,#101827 0%,#141f35 54%,#1c1932 100%)
-}
-:root[data-theme="glass-light"] body::before,
-:root[data-theme="glass-dark"] body::before{
-  background:none;animation:none
-}
-:root[data-theme="glass-light"] .card,
-:root[data-theme="glass-light"] .more-card,
-:root[data-theme="glass-light"] .wlt-card,
-:root[data-theme="glass-light"] .task-column,
-:root[data-theme="glass-light"] .task-card,
-:root[data-theme="glass-light"] .salat-box,
-:root[data-theme="glass-light"] #vPos .pos-cart,
-:root[data-theme="glass-light"] #vPos .pos-products{
-  background:linear-gradient(145deg,rgba(255,255,255,.88),rgba(241,248,255,.68));
-  border-color:rgba(255,255,255,.86);
-  box-shadow:var(--sh),inset 0 1px 0 #fff
-}
-:root[data-theme="glass-dark"] .card,
-:root[data-theme="glass-dark"] .more-card,
-:root[data-theme="glass-dark"] .wlt-card,
-:root[data-theme="glass-dark"] .task-column,
-:root[data-theme="glass-dark"] .task-card,
-:root[data-theme="glass-dark"] .salat-box,
-:root[data-theme="glass-dark"] #vPos .pos-cart,
-:root[data-theme="glass-dark"] #vPos .pos-products{
-  background:linear-gradient(145deg,rgba(33,49,73,.9),rgba(17,28,47,.82));
-  border-color:rgba(207,229,255,.17);
-  box-shadow:var(--sh),inset 0 1px 0 rgba(255,255,255,.12)
-}
-:root[data-theme="glass-light"] .stat:not(.main){
-  border-color:rgba(255,255,255,.8);
-  box-shadow:0 10px 24px rgba(43,83,120,.08),inset 0 1px 0 rgba(255,255,255,.85)
-}
-:root[data-theme="glass-light"] .stat.main{
-  background:linear-gradient(120deg,#087f83 0%,#12a99a 58%,#28bba7 100%);
-  box-shadow:0 16px 34px rgba(8,127,131,.2),inset 0 1px 0 rgba(255,255,255,.26)
-}
-:root[data-theme="glass-dark"] .stat.main{
-  background:linear-gradient(120deg,#087d78 0%,#0e9e8e 62%,#16b39c 100%);
-  box-shadow:0 16px 34px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.22)
-}
+/* Modals, popovers, toasts */
 :root[data-theme="glass-dark"] .dlg,
 :root[data-theme="glass-dark"] .tpp-panel,
 :root[data-theme="glass-dark"] .role-dropdown,
-:root[data-theme="glass-dark"] .hdr-prayer-popover{
-  background:linear-gradient(145deg,rgba(38,55,80,.96),rgba(19,31,51,.94));
-  border-color:rgba(220,237,255,.2);
-  box-shadow:0 24px 64px rgba(1,7,20,.4),inset 0 1px 0 rgba(255,255,255,.16)
+:root[data-theme="glass-dark"] .hdr-prayer-popover,
+:root[data-theme="glass-dark"] .toast{
+  background:rgba(10,15,26,0.82);
+  -webkit-backdrop-filter:blur(28px) saturate(160%);
+  backdrop-filter:blur(28px) saturate(160%);
+  border-color:rgba(255,255,255,0.14);
+  box-shadow:0 20px 56px rgba(0,0,0,0.60),inset 0 1px 0 rgba(255,255,255,0.12)
 }
 :root[data-theme="glass-light"] .dlg,
 :root[data-theme="glass-light"] .tpp-panel,
 :root[data-theme="glass-light"] .role-dropdown,
-:root[data-theme="glass-light"] .hdr-prayer-popover{
-  background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(235,245,253,.94));
-  border-color:rgba(255,255,255,.9);
-  box-shadow:0 24px 64px rgba(25,59,91,.2),inset 0 1px 0 #fff
+:root[data-theme="glass-light"] .hdr-prayer-popover,
+:root[data-theme="glass-light"] .toast{
+  background:rgba(255,255,255,0.80);
+  -webkit-backdrop-filter:blur(28px) saturate(180%);
+  backdrop-filter:blur(28px) saturate(180%);
+  border-color:rgba(255,255,255,0.86);
+  box-shadow:0 20px 56px rgba(15,23,42,0.14),inset 0 1px 0 #fff
 }
+:root[data-theme="glass-dark"] .ov{background:rgba(0,0,0,0.60)}
+:root[data-theme="glass-light"] .ov{background:rgba(15,23,42,0.24)}
 :root[data-theme="glass-light"] .oa,
-:root[data-theme="glass-dark"] .oa{
-  background:transparent;
-  border-color:var(--line)
-}
-:root[data-theme="glass-light"] .top,
-:root[data-theme="glass-light"] .tabs,
-:root[data-theme="glass-light"] .more-item{
-  box-shadow:var(--sh),inset 0 1px 0 rgba(255,255,255,.9)
-}
-:root[data-theme="glass-light"] .ghost,
-:root[data-theme="glass-light"] .top .ic,
-:root[data-theme="glass-light"] .hdr-prayer-btn{
-  background:rgba(255,255,255,.76);
-  border-color:rgba(34,77,112,.12)
-}
-:root[data-theme="glass-dark"] .ghost,
-:root[data-theme="glass-dark"] .top .ic,
-:root[data-theme="glass-dark"] .hdr-prayer-btn{
-  background:rgba(255,255,255,.07);
-  border-color:rgba(226,240,255,.16)
-}
-:root[data-theme="glass-light"] .tabs button.on{background:rgba(8,127,131,.12);color:#086d70}
-:root[data-theme="glass-dark"] .tabs button.on{background:rgba(88,221,194,.16);color:#78efd6}
-:root[data-theme="glass-light"] .card h2,
-:root[data-theme="glass-light"] .card h3,
-:root[data-theme="glass-light"] .more-sec-title{color:#17334f}
-:root[data-theme="glass-dark"] .more-item-text small,
-:root[data-theme="glass-dark"] .card small{color:rgba(231,239,255,.68)}
+:root[data-theme="glass-dark"] .oa{background:transparent;border-color:var(--line)}
+
 @media(prefers-reduced-motion:reduce){
   :root[data-theme="glass-light"] *,
   :root[data-theme="glass-dark"] *{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+
+/* --- Desktop Ambient Video Background --- */
+.bg-video-wrap{display:none;position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;opacity:0;transition:opacity .45s ease}
+#bgVideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.02)}
+.bg-video-scrim{position:absolute;inset:0}
+.tpp-vid-sec{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.tpp-vid-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;font-size:11.5px;font-weight:700;color:var(--ink)}
+.tpp-vid-head small{font-weight:500;color:var(--mut);font-size:10.5px}
+.tpp-vid-grid{display:flex;flex-wrap:wrap;gap:5px}
+.tpp-vid-opt{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;padding:4px 9px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s ease}
+.tpp-vid-opt:hover{border-color:var(--acc);background:var(--soft)}
+.tpp-vid-opt.active{border-color:var(--acc);background:var(--acc);color:#fff}
+@media(max-width:899px){.tpp-vid-sec,.bg-video-wrap{display:none!important}}
+@media(min-width:900px) and (prefers-reduced-motion:no-preference){
+  :root[data-video-active="1"] .bg-video-wrap{display:block;opacity:1}
+  :root[data-video-active="1"] body{background-image:none!important}
+  :root[data-theme="glass-dark"][data-video-active="1"] body{background:#04070f!important}
+  :root[data-theme="glass-light"][data-video-active="1"] body{background:#d6e4f0!important}
+  :root[data-theme="glass-dark"][data-video-active="1"] .bg-video-scrim{background:rgba(0,0,0,0.54)}
+  :root[data-theme="glass-light"][data-video-active="1"] .bg-video-scrim{background:rgba(230,242,252,0.36)}
+  :root[data-video-active="1"] .wrap,
+  :root[data-video-active="1"] .top,
+  :root[data-video-active="1"] .tabs{position:relative;z-index:1}
 }
 
 /* ===== CUSTOM INVOICE STUDIO & BRANDED INVOICE ENGINE ===== */

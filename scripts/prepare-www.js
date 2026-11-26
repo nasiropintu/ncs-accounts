@@ -33,6 +33,14 @@ const keep = /^(index\.html|config\.js|diag\.js|sync\.js|manifest\.webmanifest|i
 for (const f of fs.readdirSync(root)) {
   if (keep.test(f) && fs.statSync(path.join(root, f)).isFile()) fs.copyFileSync(path.join(root, f), path.join(www, f));
 }
+const videoSrc = path.join(root, 'assets', 'videos');
+if (fs.existsSync(videoSrc)) {
+  const videoDst = path.join(www, 'assets', 'videos');
+  fs.mkdirSync(videoDst, { recursive: true });
+  for (const f of fs.readdirSync(videoSrc)) {
+    if (/\.mp4$/i.test(f)) fs.copyFileSync(path.join(videoSrc, f), path.join(videoDst, f));
+  }
+}
 
 // ---- 4. Native bridge + inject it into the COPY of index.html ----
 let bridge = fs.readFileSync(path.join(root, 'native', 'bridge.js'), 'utf8');
