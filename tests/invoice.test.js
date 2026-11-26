@@ -82,3 +82,35 @@ describe('toBnNum() & invoice calculations', () => {
     assert.equal(due, 1373);
   });
 });
+
+describe('entryBill() & transaction-to-invoice linking', () => {
+  function entryBill(e, bills) {
+    if (!e || !Array.isArray(bills)) return null;
+    return bills.find(b =>
+      !b.removed && !b.void && (b.id === e.id || (e.billId && b.id === e.billId) || b.entryId === e.id)
+    ) || null;
+  }
+
+  it('matches bill by id, billId, or entryId', () => {
+    const e1 = { id: 101 };
+    const e2 = { id: 102, billId: 202 };
+    const e3 = { id: 103 };
+    const bills = [
+      { id: 101, no: 'A1' },
+      { id: 202, no: 'A2' },
+      { id: 303, entryId: 103, no: 'A3' }
+    ];
+    assert.equal(entryBill(e1, bills).no, 'A1');
+    assert.equal(entryBill(e2, bills).no, 'A2');
+    assert.equal(entryBill(e3, bills).no, 'A3');
+  });
+
+  it('ignores voided or removed bills', () => {
+    const e = { id: 101 };
+    const bills = [
+      { id: 101, no: 'A1', void: 1 },
+      { id: 102, entryId: 101, no: 'A2', removed: 1 }
+    ];
+    assert.equal(entryBill(e, bills), null);
+  });
+});

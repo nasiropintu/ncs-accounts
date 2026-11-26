@@ -1,3 +1,9 @@
+function entryBill(e){
+  if(!e||!Array.isArray(S.bills))return null;
+  return S.bills.find(function(b){
+    return !b.removed&&!b.void&&(b.id===e.id||(e.billId&&b.id===e.billId)||b.entryId===e.id);
+  })||null;
+}
 function renderAccPresets(){
   const el=$('accPresets');
   if(!el)return;
@@ -28,12 +34,15 @@ function render(){try{renderWalletCards()}catch(e){}try{applyCardSettings()}catc
   else $('tbl').innerHTML='<table><thead><tr><th>Sl</th><th>Time</th><th>Description</th><th>Sell</th><th>Buy</th><th>Previous Cash</th><th>Cash Balance</th><th>Actual Cash</th><th>Difference</th><th></th></tr></thead><tbody>'+tv.slice(0,ACC_N).map((e,i)=>{
     const r=m[e.id],v=e.void,inn=e.type==='Sale'||e.type==='Deposit'||(e.type==='Adjustment'&&e.amt>0)||(e.type==='Ledger'&&e.ld==='in'),amt=Math.abs(e.amt),wo=e.type==='Ledger'&&!!e.w;
     const isCol=!v&&isWalletCollision(e.id);
+    const eb=!v?entryBill(e):null;
+    const invBadge=eb?`<span class="b inv" title="${lb('Invoiced','চালান তৈরি হয়েছে')} #${esc(eb.no)}">🧾 #${esc(eb.no)}</span>`:'';
     const colBadge=isCol?`<span class="b v" style="background:var(--neg);color:#fff" title="${lb('Wallet deficit after adjustment under review','ওয়ালেট ঘাটতি: রিভিউ প্রয়োজন')}">${lb('Deficit Review','ঘাটতি রিভিউ')}</span>`:'';
-    const badge=(e.type!=='Sale'&&e.type!=='Purchase'?`<span class="b o">${e.type==='Adjustment'?'Adjustment':e.type==='Deposit'?'Deposit':e.type==='Ledger'?'Ledger':'Withdrawal'}</span>`:'')+(e.pay!=='Cash'&&(e.type==='Sale'||e.type==='Purchase')?`<span class="b">${e.pay}</span>`:'')+(v?'<span class="b v">Void</span>':'')+(!v&&likelyDupEntry(e)?'<span class="b ctag">Possible duplicate</span>':'')+(!v&&lEd()&&entChk(e)?'<span class="b ctag">Check</span>':'')+colBadge;
+    const badge=(e.type!=='Sale'&&e.type!=='Purchase'?`<span class="b o">${e.type==='Adjustment'?'Adjustment':e.type==='Deposit'?'Deposit':e.type==='Ledger'?'Ledger':'Withdrawal'}</span>`:'')+(e.pay!=='Cash'&&(e.type==='Sale'||e.type==='Purchase')?`<span class="b">${e.pay}</span>`:'')+invBadge+(v?'<span class="b v">Void</span>':'')+(!v&&likelyDupEntry(e)?'<span class="b ctag">Possible duplicate</span>':'')+(!v&&lEd()&&entChk(e)?'<span class="b ctag">Check</span>':'')+colBadge;
     const sub=v?`Reason: ${esc(e.vr)}`:(f?sd(e.d)+' · ':'')+esc(e.cat)+(e.party?' · '+esc(e.party)+(e.phone?' ('+esc(e.phone)+')':''):'')+(wo?' · '+esc(wN(e.w))+' '+(inn?'+':'−')+n(amt):'')+(e.by?' · '+esc(e.by):'');
     const dfc=!v&&r.df!=null?`<span class="${dc(r.df)}">${dif(r.df)}</span>${e.adj?' <span class="b">Adjusted</span>':''}`:'–';
-    const isDS=e.type==='Sale'&&e.pay==='Due'&&!e.cu,dupAct=(!v&&isA()&&likelyDupEntry(e)?'<button class="lnk" data-a="dd" data-i="'+e.id+'">Dismiss duplicate</button>':''),ck0=(!v&&isA()&&entChk(e))?(isDS?`<button class="lnk" data-a="lc" data-i="${e.id}">Link customer</button>`:'')+`<button class="lnk" data-a="ok" data-i="${e.id}">Accept</button>`:'',acts=dupAct+ck0+((v||f||!isA()||closed()||e.lk)?'':`<button class="lnk" data-a="e" data-i="${e.id}">Edit</button><button class="lnk" data-a="v" data-i="${e.id}">Void</button>`+(r.df&&!e.adj?`<button class="lnk adj" data-a="a" data-i="${e.id}">Adjust</button>`:''));
-    return `<tr class="${v?'void':''}"><td>${i+1}</td><td>${t12(e.t)}</td><td class="d">${badge}${esc(e.desc)}<small>${sub}</small></td><td>${inn&&!wo?money(amt):'–'}</td><td>${!inn&&!wo?money(amt):'–'}</td><td>${v||!r.p?'–':n(r.p)}</td><td class="cb">${v?'–':n(r.bal)}</td><td>${!v&&e.act!=null?n(e.act):'–'}</td><td>${dfc}</td><td>${acts}${attBtn('e'+e.id)}</td></tr>`}).join('')+'</tbody></table>'+(tv.length>ACC_N?'<div class="pgmore" data-amore="1" role="button" tabindex="0">'+lb('Show more','আরও দেখুন')+' ('+(tv.length-ACC_N)+')</div>':'');
+    const invAct=eb?`<button class="lnk inv" data-a="inv" data-i="${e.id}">${lb('View Invoice','চালান দেখুন')}</button>`:((!v&&(e.type==='Sale'||e.type==='Purchase')&&(isA()||role()==='cashier'))?`<button class="lnk mkinv" data-a="mkinv" data-i="${e.id}">+ ${lb('Invoice','চালান')}</button>`:'');
+    const isDS=e.type==='Sale'&&e.pay==='Due'&&!e.cu,dupAct=(!v&&isA()&&likelyDupEntry(e)?'<button class="lnk" data-a="dd" data-i="'+e.id+'">Dismiss duplicate</button>':''),ck0=(!v&&isA()&&entChk(e))?(isDS?`<button class="lnk" data-a="lc" data-i="${e.id}">Link customer</button>`:'')+`<button class="lnk" data-a="ok" data-i="${e.id}">Accept</button>`:'',acts=invAct+dupAct+ck0+((v||f||!isA()||closed()||e.lk)?'':`<button class="lnk" data-a="e" data-i="${e.id}">Edit</button><button class="lnk" data-a="v" data-i="${e.id}">Void</button>`+(r.df&&!e.adj?`<button class="lnk adj" data-a="a" data-i="${e.id}">Adjust</button>`:''));
+    return `<tr class="${v?'void':(eb?'invoiced':'')}"><td>${i+1}</td><td>${t12(e.t)}</td><td class="d">${badge}${esc(e.desc)}<small>${sub}</small></td><td>${inn&&!wo?money(amt):'–'}</td><td>${!inn&&!wo?money(amt):'–'}</td><td>${v||!r.p?'–':n(r.p)}</td><td class="cb">${v?'–':n(r.bal)}</td><td>${!v&&e.act!=null?n(e.act):'–'}</td><td>${dfc}</td><td>${acts}${attBtn('e'+e.id)}</td></tr>`}).join('')+'</tbody></table>'+(tv.length>ACC_N?'<div class="pgmore" data-amore="1" role="button" tabindex="0">'+lb('Show more','আরও দেখুন')+' ('+(tv.length-ACC_N)+')</div>':'');
   preview();dayBar();try{chkBar();if(!$('pcu').hidden)cuOpts()}catch(e){}
 }
 
@@ -94,9 +103,11 @@ function ask(title,body,onOk,okText,wide){var _rd=$('roleDropdown');if(_rd)_rd.s
   $('ok').onclick=async()=>{if(await onOk()!==false)$('ov').hidden=true};const f=$('ob').querySelector('input,select');if(f)f.focus()}
 $('oc').onclick=()=>$('ov').hidden=true;
 $('tbl').addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;const e=S.entries.find(x=>x.id==b.dataset.i);
+  if(b.dataset.a==='inv'){const eb=entryBill(e);if(eb&&typeof POS!=='undefined'&&POS.receipt)POS.receipt(eb);return}
+  if(b.dataset.a==='mkinv'){if(!e||e.void)return;if(entryBill(e)){ltoast(lb('This transaction already has an invoice','এই লেনদেনের জন্য ইতিমধ্যে চালান তৈরি হয়েছে'));return}if(typeof openCustomInvoice==='function'){openCustomInvoice({sourceEntryId:e.id,mode:e.type==='Purchase'?'purchase':'sale',cuId:e.cu||'',party:e.party||'',phone:e.phone||'',date:e.d,pay:e.pay||'Cash',w:e.w||'bk',items:[{name:e.desc||'',qty:1,unit:S.lang==='bn'?'টি':'pc',price:Math.abs(+e.amt||0)}]})}return}
   if(b.dataset.a==='dd'){e.dupDismissed=1;lg('Dismiss duplicate warning',e.desc||e.id);save();render()}
   if(b.dataset.a==='e'){editing=e.id;$('ft').value=e.t;$('fy').value=e.type;cats();$('fd').value=e.desc;$('fc').value=e.cat;$('fp').value=e.pay;$('fa').value=e.amt;party();if(e.w)$('fw').value=e.w;editCu(e);$('fpn').value=e.party||'';$('fph').value=e.phone||'';$('go').textContent='Save changes';$('cancel').style.display='';preview();$('form').scrollIntoView({behavior:document.documentElement.dataset.rm?'auto':'smooth',block:'center'})}
-  if(b.dataset.a==='v')ask('Void entry',`<div class="f"><label>Reason (required)</label><input id="vr" maxlength="100"></div>`,()=>{const r=$('vr').value.trim();if(!r)return false;if(wltVoidBlocked(e))return false;snap();e.void=1;e.vr=r;e.vb=U.name;lg('Void entry',`${e.type} ${e.amt} "${e.desc}" — ${r}`);save();render()},'Void');
+  if(b.dataset.a==='v')ask('Void entry',`<div class="f"><label>Reason (required)</label><input id="vr" maxlength="100"></div>`,()=>{const r=$('vr').value.trim();if(!r)return false;if(wltVoidBlocked(e))return false;snap();e.void=1;e.vr=r;e.vb=U.name;const eb=entryBill(e);if(eb){eb.void=1;eb.vr=r}lg('Void entry',`${e.type} ${e.amt} "${e.desc}" — ${r}`);save();render()},'Void');
   if(b.dataset.a==='a'){const df=calc()[e.id].df;ask('Adjust cash',`<div class="f"><label>Account will change by <b>${dif(df)}</b> to match counted cash</label><select id="ar"><option>${df>0?'Extra cash':'Cash short'}</option><option>Other</option></select></div>`,()=>{snap();S.entries.push({id:Date.now(),d:e.d,t:e.t,type:'Adjustment',desc:'Cash adjustment · '+$('ar').value,cat:'',pay:'Cash',amt:df});e.adj=1;lg('Cash adjust',`${dif(df)} on "${e.desc}"`);save();render()},'Adjust')}});
 
 $('pick').onchange=e=>{

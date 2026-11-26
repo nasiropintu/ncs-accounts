@@ -169,9 +169,14 @@ td.d small{display:block;color:var(--mut);font-size:12px}
 .b{display:inline-block;font-size:11px;font-weight:600;border-radius:6px;padding:1px 7px;margin-right:6px;background:var(--soft);color:var(--acc)}
 .b.o{background:transparent;border:1px solid var(--gold);color:var(--gold)}.b.v{background:transparent;border:1px solid var(--neg);color:var(--neg)}
 tr.void td{opacity:.5;text-decoration:line-through}tr.void td:last-child,tr.void td.d small{text-decoration:none}
+tr.invoiced td{background:rgba(15,118,110,.06)}
+tr.invoiced td:first-child{box-shadow:inset 3px 0 0 var(--acc)}
+.b.inv{background:rgba(15,118,110,.12);border:1px solid rgba(15,118,110,.35);color:var(--acc)}
 td.cb{font-weight:600}.pos{color:var(--pos)}.neg{color:var(--neg)}.zero{color:var(--mut)}.warn{color:var(--warn)}
 .lnk{background:none;border:0;color:var(--mut);cursor:pointer;padding:7px 10px;font-size:13px;border-radius:8px;display:inline-flex;align-items:center;min-height:34px;margin:2px 3px;touch-action:manipulation}
 .lnk:hover{color:var(--ink);background:var(--soft)}.lnk.adj{color:var(--gold);font-weight:600}
+.lnk.inv{color:var(--acc);font-weight:600}
+.lnk.mkinv{color:var(--ink);font-weight:500}
 .empty{padding:34px;text-align:center;color:var(--mut)}
 form{padding:16px}
 .g{display:grid;grid-template-columns:repeat(12,1fr);gap:10px;align-items:end}
@@ -1393,7 +1398,6 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
 :root[data-theme="glass-dark"] #vPos .pos-cart,
 :root[data-theme="glass-dark"] #vPos .pos-products,
 :root[data-theme="glass-dark"] .top,
-:root[data-theme="glass-dark"] .tabs,
 :root[data-theme="glass-light"] .card,
 :root[data-theme="glass-light"] .stat,
 :root[data-theme="glass-light"] .stats .stat,
@@ -1415,13 +1419,23 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
 :root[data-theme="glass-light"] #fsec,
 :root[data-theme="glass-light"] #vPos .pos-cart,
 :root[data-theme="glass-light"] #vPos .pos-products,
-:root[data-theme="glass-light"] .top,
-:root[data-theme="glass-light"] .tabs{
+:root[data-theme="glass-light"] .top{
   background:var(--gcard)!important;
   -webkit-backdrop-filter:var(--gblu)!important;
   backdrop-filter:var(--gblu)!important;
   border:1px solid var(--gbrd)!important;
   box-shadow:var(--sh)!important;
+  color:var(--ink)!important
+}
+:root[data-theme="glass-dark"] .tabs,
+:root[data-theme="glass-light"] .tabs,
+:root[data-theme="glass-dark"] .tabs:hover,
+:root[data-theme="glass-light"] .tabs:hover{
+  background:transparent!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  border:0!important;
+  box-shadow:none!important;
   color:var(--ink)!important
 }
 
@@ -1684,8 +1698,8 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
   :root[data-theme="glass-dark"][data-video-active="1"] .bg-video-scrim{background:rgba(0,0,0,0.54)}
   :root[data-theme="glass-light"][data-video-active="1"] .bg-video-scrim{background:rgba(230,242,252,0.36)}
   :root[data-video-active="1"] .wrap,
-  :root[data-video-active="1"] .top,
-  :root[data-video-active="1"] .tabs{position:relative;z-index:1}
+  :root[data-video-active="1"] .top{position:relative;z-index:1}
+  :root[data-video-active="1"] .tabs{z-index:20}
 }
 
 /* ===== CUSTOM INVOICE STUDIO & BRANDED INVOICE ENGINE ===== */
@@ -1918,21 +1932,21 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
   width: 100%;
   max-width: 760px;
   margin: 0 auto;
-  padding: 26px 30px;
+  padding: 28px 32px;
   background: #fff;
-  color: #111827;
-  border: 1px solid #e2e8f0;
+  color: #1e293b;
+  border: 1px solid #cbd5e1;
   border-radius: 8px;
   box-shadow: 0 8px 24px rgba(15,23,42,.07);
-  font: 12.5px/1.45 Inter, SolaimanLipi, Arial, sans-serif;
+  font: 13.5px/1.5 Inter, SolaimanLipi, Arial, sans-serif;
   box-sizing: border-box;
 }
 .invoice-paper[lang="bn"] { font-family: SolaimanLipi, Inter, Arial, sans-serif; }
 
 .invoice-header {
-  border-bottom: 2px solid #0f766e;
-  padding-bottom: 12px;
-  margin-bottom: 12px;
+  border-bottom: 2px solid #1e293b;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
 }
 .invoice-header-row {
   display: flex;
@@ -1940,41 +1954,42 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
   align-items: center;
   gap: 16px;
 }
-.invoice-brand-col { display: flex; align-items: center; gap: 12px; min-width: 0; }
-.invoice-logo { width: 50px; height: 50px; object-fit: contain; flex: none; }
-.invoice-shop-name { font-size: 22px; font-weight: 800; line-height: 1.15; color: #0f766e; letter-spacing: -.3px; }
-.invoice-shop-tagline { font-size: 9.5px; font-weight: 600; color: #475569; margin-top: 3px; }
-.invoice-contact-col { text-align: right; font-size: 9.5px; line-height: 1.4; color: #334155; }
+.invoice-brand-col { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.invoice-logo { width: 52px; height: 52px; object-fit: contain; border-radius: 10px; flex: none; }
+.invoice-shop-name { font-size: 22px; font-weight: 800; line-height: 1.2; color: #0f172a; letter-spacing: -.2px; }
+.invoice-shop-tagline { font-size: 11.5px; font-weight: 500; color: #475569; margin-top: 3px; }
+.invoice-contact-col { text-align: right; font-size: 11.5px; line-height: 1.45; color: #334155; }
 .invoice-contact-col b { color: #0f172a; }
 .invoice-address-line {
-  margin-top: 6px;
-  padding-top: 6px;
+  margin-top: 8px;
+  padding-top: 8px;
   border-top: 1px dashed #cbd5e1;
-  font-size: 10px;
+  font-size: 11.5px;
   color: #475569;
   text-align: center;
-  line-height: 1.35;
+  line-height: 1.4;
 }
 
 .invoice-title-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 12px;
-  background: #f1f5f9;
+  padding: 8px 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 6px;
-  margin-bottom: 12px;
-  border-left: 4px solid #0f766e;
+  margin-bottom: 14px;
+  border-left: 4px solid #1e293b;
 }
-.invoice-doc-title { font-size: 14px; font-weight: 750; color: #0f766e; letter-spacing: .5px; }
+.invoice-doc-title { font-size: 15px; font-weight: 700; color: #0f172a; letter-spacing: .4px; }
 .invoice-status-badge {
   display: inline-flex;
   align-items: center;
-  padding: 2px 8px;
+  padding: 3px 10px;
   border-radius: 4px;
-  font-size: 9.5px;
-  font-weight: 800;
-  letter-spacing: .6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .5px;
 }
 .invoice-status-badge.is-paid { background: #dcfce7; color: #15803d; }
 .invoice-status-badge.is-due { background: #fef3c7; color: #b45309; }
@@ -1984,40 +1999,41 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
   display: grid;
   grid-template-columns: 1.1fr 1fr;
   gap: 14px;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
   padding-bottom: 12px;
   border-bottom: 1px solid #e2e8f0;
 }
-.invoice-info-block span { font-size: 9px; font-weight: 750; color: #64748b; text-transform: uppercase; letter-spacing: .6px; }
-.invoice-info-block b { font-size: 11.5px; color: #0f172a; display: block; margin-top: 2px; }
+.invoice-info-block span { font-size: 10.5px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: .5px; }
+.invoice-info-block b { font-size: 13px; color: #0f172a; display: block; margin-top: 2px; }
 .invoice-meta-subgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
 .invoice-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 .invoice-table th {
-  background: #0f766e;
-  color: #fff;
-  font-size: 9.5px;
+  background: #f1f5f9;
+  color: #0f172a;
+  font-size: 11.5px;
   font-weight: 700;
-  letter-spacing: .4px;
-  padding: 7px 8px;
-  border: 1px solid #0f766e;
+  letter-spacing: .3px;
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-bottom: 2px solid #94a3b8;
 }
 .invoice-table td {
-  padding: 7px 8px;
-  font-size: 11px;
+  padding: 8px 10px;
+  font-size: 12.5px;
   color: #1e293b;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #cbd5e1;
   vertical-align: middle;
 }
-.invoice-table .th-num { width: 30px; text-align: center; }
+.invoice-table .th-num { width: 32px; text-align: center; }
 .invoice-table .th-qty { width: 65px; text-align: right; }
-.invoice-table .th-unit { width: 55px; text-align: center; }
-.invoice-table .th-price { width: 85px; text-align: right; }
-.invoice-table .th-amt { width: 95px; text-align: right; }
+.invoice-table .th-unit { width: 58px; text-align: center; }
+.invoice-table .th-price { width: 90px; text-align: right; }
+.invoice-table .th-amt { width: 100px; text-align: right; }
 .invoice-table td.td-num { text-align: center; color: #64748b; }
 .invoice-table td.td-qty { text-align: right; font-variant-numeric: tabular-nums; }
 .invoice-table td.td-unit { text-align: center; color: #475569; }
@@ -2035,34 +2051,35 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 6px;
-  padding: 10px 12px;
-  font-size: 11px;
+  padding: 12px 14px;
+  font-size: 12.5px;
 }
 .invoice-pay-row { display: flex; justify-content: space-between; padding: 3px 0; color: #475569; }
 .invoice-pay-row b { color: #0f172a; }
-.invoice-words-box { margin-top: 6px; padding-top: 6px; border-top: 1px dashed #cbd5e1; font-size: 10px; color: #334155; }
+.invoice-words-box { margin-top: 8px; padding-top: 8px; border-top: 1px dashed #cbd5e1; font-size: 12px; color: #334155; }
 .invoice-bottom-right { min-width: 0; }
-.invoice-tot-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 11.5px; color: #475569; }
+.invoice-tot-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 13px; color: #475569; }
 .invoice-tot-row b { color: #0f172a; font-weight: 650; font-variant-numeric: tabular-nums; }
 .invoice-grand-row {
   margin-top: 6px;
-  padding: 8px 12px;
-  background: #0f766e;
+  padding: 9px 12px;
+  background: #1e293b;
   color: #fff;
   border-radius: 6px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-weight: 750;
-  font-size: 12px;
+  font-weight: 700;
+  font-size: 13.5px;
 }
-.invoice-grand-row b { color: #fff; font-size: 16px; font-weight: 800; }
+.invoice-grand-row b { color: #fff; font-size: 17px; font-weight: 800; }
 .invoice-due-alert {
   margin-top: 6px;
   padding: 6px 10px;
   background: #fef3c7;
   border-radius: 4px;
   color: #92400e;
+  font-size: 12.5px;
   font-weight: 700;
   display: flex;
   justify-content: space-between;
@@ -2072,18 +2089,18 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-top: 36px;
+  margin-top: 38px;
   padding-top: 14px;
 }
-.invoice-sign-col { text-align: center; width: 170px; }
-.invoice-sign-line { border-top: 1px dashed #94a3b8; padding-top: 5px; font-size: 10px; color: #475569; font-weight: 600; }
+.invoice-sign-col { text-align: center; width: 180px; }
+.invoice-sign-line { border-top: 1px dashed #94a3b8; padding-top: 6px; font-size: 11.5px; color: #475569; font-weight: 600; }
 
 .invoice-footer-note {
   margin-top: 20px;
   padding-top: 8px;
   border-top: 1px solid #e2e8f0;
   text-align: center;
-  font-size: 9px;
+  font-size: 11px;
   color: #64748b;
 }
 
@@ -2851,6 +2868,12 @@ const CATS={Sale:['Printing','Stationery','Computer Service','Other'].concat(Obj
 
 
 /* --- Module: 03-accounts.js --- */
+function entryBill(e){
+  if(!e||!Array.isArray(S.bills))return null;
+  return S.bills.find(function(b){
+    return !b.removed&&!b.void&&(b.id===e.id||(e.billId&&b.id===e.billId)||b.entryId===e.id);
+  })||null;
+}
 function renderAccPresets(){
   const el=$('accPresets');
   if(!el)return;
@@ -2881,12 +2904,15 @@ function render(){try{renderWalletCards()}catch(e){}try{applyCardSettings()}catc
   else $('tbl').innerHTML='<table><thead><tr><th>Sl</th><th>Time</th><th>Description</th><th>Sell</th><th>Buy</th><th>Previous Cash</th><th>Cash Balance</th><th>Actual Cash</th><th>Difference</th><th></th></tr></thead><tbody>'+tv.slice(0,ACC_N).map((e,i)=>{
     const r=m[e.id],v=e.void,inn=e.type==='Sale'||e.type==='Deposit'||(e.type==='Adjustment'&&e.amt>0)||(e.type==='Ledger'&&e.ld==='in'),amt=Math.abs(e.amt),wo=e.type==='Ledger'&&!!e.w;
     const isCol=!v&&isWalletCollision(e.id);
+    const eb=!v?entryBill(e):null;
+    const invBadge=eb?`<span class="b inv" title="${lb('Invoiced','চালান তৈরি হয়েছে')} #${esc(eb.no)}">🧾 #${esc(eb.no)}</span>`:'';
     const colBadge=isCol?`<span class="b v" style="background:var(--neg);color:#fff" title="${lb('Wallet deficit after adjustment under review','ওয়ালেট ঘাটতি: রিভিউ প্রয়োজন')}">${lb('Deficit Review','ঘাটতি রিভিউ')}</span>`:'';
-    const badge=(e.type!=='Sale'&&e.type!=='Purchase'?`<span class="b o">${e.type==='Adjustment'?'Adjustment':e.type==='Deposit'?'Deposit':e.type==='Ledger'?'Ledger':'Withdrawal'}</span>`:'')+(e.pay!=='Cash'&&(e.type==='Sale'||e.type==='Purchase')?`<span class="b">${e.pay}</span>`:'')+(v?'<span class="b v">Void</span>':'')+(!v&&likelyDupEntry(e)?'<span class="b ctag">Possible duplicate</span>':'')+(!v&&lEd()&&entChk(e)?'<span class="b ctag">Check</span>':'')+colBadge;
+    const badge=(e.type!=='Sale'&&e.type!=='Purchase'?`<span class="b o">${e.type==='Adjustment'?'Adjustment':e.type==='Deposit'?'Deposit':e.type==='Ledger'?'Ledger':'Withdrawal'}</span>`:'')+(e.pay!=='Cash'&&(e.type==='Sale'||e.type==='Purchase')?`<span class="b">${e.pay}</span>`:'')+invBadge+(v?'<span class="b v">Void</span>':'')+(!v&&likelyDupEntry(e)?'<span class="b ctag">Possible duplicate</span>':'')+(!v&&lEd()&&entChk(e)?'<span class="b ctag">Check</span>':'')+colBadge;
     const sub=v?`Reason: ${esc(e.vr)}`:(f?sd(e.d)+' · ':'')+esc(e.cat)+(e.party?' · '+esc(e.party)+(e.phone?' ('+esc(e.phone)+')':''):'')+(wo?' · '+esc(wN(e.w))+' '+(inn?'+':'−')+n(amt):'')+(e.by?' · '+esc(e.by):'');
     const dfc=!v&&r.df!=null?`<span class="${dc(r.df)}">${dif(r.df)}</span>${e.adj?' <span class="b">Adjusted</span>':''}`:'–';
-    const isDS=e.type==='Sale'&&e.pay==='Due'&&!e.cu,dupAct=(!v&&isA()&&likelyDupEntry(e)?'<button class="lnk" data-a="dd" data-i="'+e.id+'">Dismiss duplicate</button>':''),ck0=(!v&&isA()&&entChk(e))?(isDS?`<button class="lnk" data-a="lc" data-i="${e.id}">Link customer</button>`:'')+`<button class="lnk" data-a="ok" data-i="${e.id}">Accept</button>`:'',acts=dupAct+ck0+((v||f||!isA()||closed()||e.lk)?'':`<button class="lnk" data-a="e" data-i="${e.id}">Edit</button><button class="lnk" data-a="v" data-i="${e.id}">Void</button>`+(r.df&&!e.adj?`<button class="lnk adj" data-a="a" data-i="${e.id}">Adjust</button>`:''));
-    return `<tr class="${v?'void':''}"><td>${i+1}</td><td>${t12(e.t)}</td><td class="d">${badge}${esc(e.desc)}<small>${sub}</small></td><td>${inn&&!wo?money(amt):'–'}</td><td>${!inn&&!wo?money(amt):'–'}</td><td>${v||!r.p?'–':n(r.p)}</td><td class="cb">${v?'–':n(r.bal)}</td><td>${!v&&e.act!=null?n(e.act):'–'}</td><td>${dfc}</td><td>${acts}${attBtn('e'+e.id)}</td></tr>`}).join('')+'</tbody></table>'+(tv.length>ACC_N?'<div class="pgmore" data-amore="1" role="button" tabindex="0">'+lb('Show more','আরও দেখুন')+' ('+(tv.length-ACC_N)+')</div>':'');
+    const invAct=eb?`<button class="lnk inv" data-a="inv" data-i="${e.id}">${lb('View Invoice','চালান দেখুন')}</button>`:((!v&&(e.type==='Sale'||e.type==='Purchase')&&(isA()||role()==='cashier'))?`<button class="lnk mkinv" data-a="mkinv" data-i="${e.id}">+ ${lb('Invoice','চালান')}</button>`:'');
+    const isDS=e.type==='Sale'&&e.pay==='Due'&&!e.cu,dupAct=(!v&&isA()&&likelyDupEntry(e)?'<button class="lnk" data-a="dd" data-i="'+e.id+'">Dismiss duplicate</button>':''),ck0=(!v&&isA()&&entChk(e))?(isDS?`<button class="lnk" data-a="lc" data-i="${e.id}">Link customer</button>`:'')+`<button class="lnk" data-a="ok" data-i="${e.id}">Accept</button>`:'',acts=invAct+dupAct+ck0+((v||f||!isA()||closed()||e.lk)?'':`<button class="lnk" data-a="e" data-i="${e.id}">Edit</button><button class="lnk" data-a="v" data-i="${e.id}">Void</button>`+(r.df&&!e.adj?`<button class="lnk adj" data-a="a" data-i="${e.id}">Adjust</button>`:''));
+    return `<tr class="${v?'void':(eb?'invoiced':'')}"><td>${i+1}</td><td>${t12(e.t)}</td><td class="d">${badge}${esc(e.desc)}<small>${sub}</small></td><td>${inn&&!wo?money(amt):'–'}</td><td>${!inn&&!wo?money(amt):'–'}</td><td>${v||!r.p?'–':n(r.p)}</td><td class="cb">${v?'–':n(r.bal)}</td><td>${!v&&e.act!=null?n(e.act):'–'}</td><td>${dfc}</td><td>${acts}${attBtn('e'+e.id)}</td></tr>`}).join('')+'</tbody></table>'+(tv.length>ACC_N?'<div class="pgmore" data-amore="1" role="button" tabindex="0">'+lb('Show more','আরও দেখুন')+' ('+(tv.length-ACC_N)+')</div>':'');
   preview();dayBar();try{chkBar();if(!$('pcu').hidden)cuOpts()}catch(e){}
 }
 
@@ -2947,9 +2973,11 @@ function ask(title,body,onOk,okText,wide){var _rd=$('roleDropdown');if(_rd)_rd.s
   $('ok').onclick=async()=>{if(await onOk()!==false)$('ov').hidden=true};const f=$('ob').querySelector('input,select');if(f)f.focus()}
 $('oc').onclick=()=>$('ov').hidden=true;
 $('tbl').addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;const e=S.entries.find(x=>x.id==b.dataset.i);
+  if(b.dataset.a==='inv'){const eb=entryBill(e);if(eb&&typeof POS!=='undefined'&&POS.receipt)POS.receipt(eb);return}
+  if(b.dataset.a==='mkinv'){if(!e||e.void)return;if(entryBill(e)){ltoast(lb('This transaction already has an invoice','এই লেনদেনের জন্য ইতিমধ্যে চালান তৈরি হয়েছে'));return}if(typeof openCustomInvoice==='function'){openCustomInvoice({sourceEntryId:e.id,mode:e.type==='Purchase'?'purchase':'sale',cuId:e.cu||'',party:e.party||'',phone:e.phone||'',date:e.d,pay:e.pay||'Cash',w:e.w||'bk',items:[{name:e.desc||'',qty:1,unit:S.lang==='bn'?'টি':'pc',price:Math.abs(+e.amt||0)}]})}return}
   if(b.dataset.a==='dd'){e.dupDismissed=1;lg('Dismiss duplicate warning',e.desc||e.id);save();render()}
   if(b.dataset.a==='e'){editing=e.id;$('ft').value=e.t;$('fy').value=e.type;cats();$('fd').value=e.desc;$('fc').value=e.cat;$('fp').value=e.pay;$('fa').value=e.amt;party();if(e.w)$('fw').value=e.w;editCu(e);$('fpn').value=e.party||'';$('fph').value=e.phone||'';$('go').textContent='Save changes';$('cancel').style.display='';preview();$('form').scrollIntoView({behavior:document.documentElement.dataset.rm?'auto':'smooth',block:'center'})}
-  if(b.dataset.a==='v')ask('Void entry',`<div class="f"><label>Reason (required)</label><input id="vr" maxlength="100"></div>`,()=>{const r=$('vr').value.trim();if(!r)return false;if(wltVoidBlocked(e))return false;snap();e.void=1;e.vr=r;e.vb=U.name;lg('Void entry',`${e.type} ${e.amt} "${e.desc}" — ${r}`);save();render()},'Void');
+  if(b.dataset.a==='v')ask('Void entry',`<div class="f"><label>Reason (required)</label><input id="vr" maxlength="100"></div>`,()=>{const r=$('vr').value.trim();if(!r)return false;if(wltVoidBlocked(e))return false;snap();e.void=1;e.vr=r;e.vb=U.name;const eb=entryBill(e);if(eb){eb.void=1;eb.vr=r}lg('Void entry',`${e.type} ${e.amt} "${e.desc}" — ${r}`);save();render()},'Void');
   if(b.dataset.a==='a'){const df=calc()[e.id].df;ask('Adjust cash',`<div class="f"><label>Account will change by <b>${dif(df)}</b> to match counted cash</label><select id="ar"><option>${df>0?'Extra cash':'Cash short'}</option><option>Other</option></select></div>`,()=>{snap();S.entries.push({id:Date.now(),d:e.d,t:e.t,type:'Adjustment',desc:'Cash adjustment · '+$('ar').value,cat:'',pay:'Cash',amt:df});e.adj=1;lg('Cash adjust',`${dif(df)} on "${e.desc}"`);save();render()},'Adjust')}});
 
 $('pick').onchange=e=>{
@@ -6390,7 +6418,7 @@ function invoiceMarkup(b){
     '<header class="invoice-header">'+
       '<div class="invoice-header-row">'+
         '<div class="invoice-brand-col">'+
-          '<img class="invoice-logo" src="logo-icon-black.png" alt="NCS">'+
+          '<img class="invoice-logo" src="icon-192.png" alt="NCS">'+
           '<div>'+
             '<div class="invoice-shop-name">'+(bn?SHOP_BN:SHOP_EN)+'</div>'+
             '<div class="invoice-shop-tagline">'+(bn?SHOP_TAGLINE_BN:SHOP_TAGLINE_EN)+'</div>'+
@@ -6412,8 +6440,8 @@ function invoiceMarkup(b){
       '<div class="invoice-info-block">'+
         '<span>'+lb('BILLED TO (CUSTOMER)','গ্রাহক / প্রতিষ্ঠান')+'</span>'+
         '<b>'+(b.party?esc(b.party):lb('Walking Customer','সাধারণ গ্রাহক'))+'</b>'+
-        (b.phone?'<div style="font-size:10.5px;color:#475569;margin-top:2px">'+lb('Mobile: ','মোবাইল: ')+esc(bn?toBnNum(b.phone):b.phone)+'</div>':'')+
-        (b.addr?'<div style="font-size:10.5px;color:#475569;margin-top:2px">'+lb('Address: ','ঠিকানা: ')+esc(b.addr)+'</div>':'')+
+        (b.phone?'<div style="font-size:12px;color:#475569;margin-top:2px">'+lb('Mobile: ','মোবাইল: ')+esc(bn?toBnNum(b.phone):b.phone)+'</div>':'')+
+        (b.addr?'<div style="font-size:12px;color:#475569;margin-top:2px">'+lb('Address: ','ঠিকানা: ')+esc(b.addr)+'</div>':'')+
       '</div>'+
       '<div class="invoice-meta-subgrid">'+
         '<div class="invoice-info-block"><span>'+lb('INVOICE NO.','চালান নং')+'</span><b>#'+esc(no)+'</b></div>'+
@@ -6627,6 +6655,8 @@ function openCustomInvoice(initData){
     : [{ name: '', qty: 1, unit: isBn ? 'কপি' : 'pc', price: 0 }];
 
   _ciState = {
+    sourceEntryId: (initData && initData.sourceEntryId) || null,
+    mode: (initData && initData.mode) || 'sale',
     cuId: (initData && initData.cuId) || '',
     party: (initData && initData.party) || '',
     phone: (initData && initData.phone) || '',
@@ -6989,10 +7019,17 @@ function commitCustomInvoice(action){
   var grandTotal = Math.max(0, r2(subtotal - discAmt));
   var discPct = subtotal > 0 ? (discAmt / subtotal) * 100 : 0;
 
+  var existingEntry = st.sourceEntryId ? S.entries.find(function(x){ return x.id === st.sourceEntryId; }) : null;
+  if(existingEntry && Array.isArray(S.bills) && S.bills.some(function(x){ return !x.removed && !x.void && (x.id === existingEntry.id || x.id === existingEntry.billId || x.entryId === existingEntry.id); })){
+    toast(lb('This transaction already has an invoice', 'এই লেনদেনের জন্য ইতিমধ্যে চালান তৈরি হয়েছে'));
+    return;
+  }
+
   D.seq++;
   dsave();
   var no = D.dev + D.seq;
-  var id = uid();
+  var id = existingEntry ? existingEntry.id : uid();
+  var billMode = st.mode === 'purchase' ? 'purchase' : 'sale';
   var desc = 'POS #' + no + ': ' + validItems.map(function(l){ return l.qty + '× ' + l.name; }).join(', ');
 
   var cuId = st.cuId;
@@ -7006,11 +7043,11 @@ function commitCustomInvoice(action){
   var b = {
     id: id,
     no: no,
-    d: st.date || bizDate(),
-    t: nowT(),
+    d: st.date || (existingEntry ? existingEntry.d : bizDate()),
+    t: existingEntry ? (existingEntry.t || nowT()) : nowT(),
     ts: Date.now(),
     user: U.name,
-    mode: 'sale',
+    mode: billMode,
     desc: desc,
     lines: validItems,
     subtotal: subtotal,
@@ -7024,47 +7061,67 @@ function commitCustomInvoice(action){
     words: grandTotal > 0 ? bnWords(grandTotal) : '',
     rec: st.pay === 'Cash' ? (st.cashRec || grandTotal) : {},
     chg: st.pay === 'Cash' ? Math.max(0, (st.cashRec || grandTotal) - grandTotal) : {},
+    ...(existingEntry ? { entryId: existingEntry.id } : {}),
     ...(st.pay === 'Mobile Banking' ? { w: st.w || 'bk' } : {}),
     ...(cuId ? { cu: cuId } : {})
   };
 
   S.bills.unshift(b);
-  S.entries.push({
-    id: id,
-    d: b.d,
-    t: b.t,
-    type: 'Sale',
-    desc: b.desc.slice(0, 200),
-    cat: 'POS',
-    pay: b.pay,
-    amt: b.total,
-    by: U.name,
-    party: b.party,
-    phone: b.phone,
-    pos: 1,
-    act: null,
-    ...(b.w ? { w: b.w } : {}),
-    ...(b.cu ? { cu: b.cu } : {})
-  });
-
-  if(b.party){
-    (S.parties['Sale'] = S.parties['Sale'] || {})[b.party] = b.phone;
+  if(existingEntry){
+    existingEntry.billId = b.id;
+    existingEntry.invoiced = 1;
+    if(b.party) existingEntry.party = b.party;
+    if(b.phone) existingEntry.phone = b.phone;
+    if(b.cu) existingEntry.cu = b.cu;
+    if(!(S.days[existingEntry.d] && S.days[existingEntry.d].closed)){
+      existingEntry.amt = b.total;
+      existingEntry.pay = b.pay;
+      if(b.w) existingEntry.w = b.w; else delete existingEntry.w;
+    }
+  } else {
+    S.entries.push({
+      id: id,
+      d: b.d,
+      t: b.t,
+      type: billMode === 'purchase' ? 'Purchase' : 'Sale',
+      desc: b.desc.slice(0, 200),
+      cat: 'POS',
+      pay: b.pay,
+      amt: b.total,
+      by: U.name,
+      party: b.party,
+      phone: b.phone,
+      pos: 1,
+      act: null,
+      ...(b.w ? { w: b.w } : {}),
+      ...(b.cu ? { cu: b.cu } : {})
+    });
   }
 
-  lg('Custom Invoice', '#' + no + ' ' + tk(grandTotal) + ' ' + b.pay);
+  if(b.party){
+    var pKey = billMode === 'purchase' ? 'Purchase' : 'Sale';
+    (S.parties[pKey] = S.parties[pKey] || {})[b.party] = b.phone;
+  }
+
+  lg('Custom Invoice', '#' + no + ' ' + tk(grandTotal) + ' ' + b.pay + (existingEntry ? ' (from transaction)' : ''));
   save();
   Sound.chaChing();
   saveCheck();
+  if(typeof render === 'function') try{ render(); }catch(e){}
 
   $('customInvoiceModal').hidden = true;
   _ciState = null;
 
   if(action === 'print_a4'){
+    toast(lb('Invoice #' + no + ' saved', 'চালান #' + no + ' সংরক্ষিত হয়েছে'));
     printA4Invoice(b);
   } else if(action === 'print_th'){
+    toast(lb('Invoice #' + no + ' saved', 'চালান #' + no + ' সংরক্ষিত হয়েছে'));
     printThermalSlip(b);
   } else {
-    toast(lb('Invoice saved successfully', 'চালান সফলভাবে সংরক্ষিত হয়েছে'));
+    toast(existingEntry
+      ? lb('Invoice #' + no + ' created from transaction', 'লেনদেন থেকে চালান #' + no + ' তৈরি হয়েছে')
+      : lb('Invoice saved successfully', 'চালান সফলভাবে সংরক্ষিত হয়েছে'));
     receipt(b);
   }
 }
@@ -7113,7 +7170,7 @@ function forceStock(p){if(!(isA()||role()==='keeper')||!p)return;if(S.moves.some
 $('pdL').addEventListener('click',e=>{const a=e.target.closest('[data-ad]'),b=e.target.closest('[data-ed]'),f=e.target.closest('[data-fq]');if(a)addStock(byId(a.dataset.ad));if(b)pForm(byId(b.dataset.ed));if(f)forceStock(byId(f.dataset.fq))});
 $('pdNew').onclick=()=>pForm(null,'');$('pdq').addEventListener('input',()=>{PLN=60;prodUI()});$('pdL').addEventListener('click',e=>{if(e.target.closest('[data-pmore]')){PLN+=60;prodUI()}});
 $('pdF').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(b){PF=b.dataset.f;PLN=60;prodUI()}});
-return{refresh(){try{$('q').value=''}catch(e){}renderGrid();renderCart();if(CUR==='prod')prodUI()},setMode,bills:billsUI,prodUI,stock:pid=>stockMap()[pid]||0,stockMap:stockMap}
+return{refresh(){try{$('q').value=''}catch(e){}renderGrid();renderCart();if(CUR==='prod')prodUI()},setMode,bills:billsUI,receipt,prodUI,stock:pid=>stockMap()[pid]||0,stockMap:stockMap}
 })();
 $('q').addEventListener('focus',()=>{});
 /* ---------- customer ledger + version history (v8) ---------- */

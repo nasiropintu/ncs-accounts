@@ -223,7 +223,7 @@ function invoiceMarkup(b){
     '<header class="invoice-header">'+
       '<div class="invoice-header-row">'+
         '<div class="invoice-brand-col">'+
-          '<img class="invoice-logo" src="logo-icon-black.png" alt="NCS">'+
+          '<img class="invoice-logo" src="icon-192.png" alt="NCS">'+
           '<div>'+
             '<div class="invoice-shop-name">'+(bn?SHOP_BN:SHOP_EN)+'</div>'+
             '<div class="invoice-shop-tagline">'+(bn?SHOP_TAGLINE_BN:SHOP_TAGLINE_EN)+'</div>'+
@@ -245,8 +245,8 @@ function invoiceMarkup(b){
       '<div class="invoice-info-block">'+
         '<span>'+lb('BILLED TO (CUSTOMER)','গ্রাহক / প্রতিষ্ঠান')+'</span>'+
         '<b>'+(b.party?esc(b.party):lb('Walking Customer','সাধারণ গ্রাহক'))+'</b>'+
-        (b.phone?'<div style="font-size:10.5px;color:#475569;margin-top:2px">'+lb('Mobile: ','মোবাইল: ')+esc(bn?toBnNum(b.phone):b.phone)+'</div>':'')+
-        (b.addr?'<div style="font-size:10.5px;color:#475569;margin-top:2px">'+lb('Address: ','ঠিকানা: ')+esc(b.addr)+'</div>':'')+
+        (b.phone?'<div style="font-size:12px;color:#475569;margin-top:2px">'+lb('Mobile: ','মোবাইল: ')+esc(bn?toBnNum(b.phone):b.phone)+'</div>':'')+
+        (b.addr?'<div style="font-size:12px;color:#475569;margin-top:2px">'+lb('Address: ','ঠিকানা: ')+esc(b.addr)+'</div>':'')+
       '</div>'+
       '<div class="invoice-meta-subgrid">'+
         '<div class="invoice-info-block"><span>'+lb('INVOICE NO.','চালান নং')+'</span><b>#'+esc(no)+'</b></div>'+
@@ -460,6 +460,8 @@ function openCustomInvoice(initData){
     : [{ name: '', qty: 1, unit: isBn ? 'কপি' : 'pc', price: 0 }];
 
   _ciState = {
+    sourceEntryId: (initData && initData.sourceEntryId) || null,
+    mode: (initData && initData.mode) || 'sale',
     cuId: (initData && initData.cuId) || '',
     party: (initData && initData.party) || '',
     phone: (initData && initData.phone) || '',
@@ -822,10 +824,17 @@ function commitCustomInvoice(action){
   var grandTotal = Math.max(0, r2(subtotal - discAmt));
   var discPct = subtotal > 0 ? (discAmt / subtotal) * 100 : 0;
 
+  var existingEntry = st.sourceEntryId ? S.entries.find(function(x){ return x.id === st.sourceEntryId; }) : null;
+  if(existingEntry && Array.isArray(S.bills) && S.bills.some(function(x){ return !x.removed && !x.void && (x.id === existingEntry.id || x.id === existingEntry.billId || x.entryId === existingEntry.id); })){
+    toast(lb('This transaction already has an invoice', 'এই লেনদেনের জন্য ইতিমধ্যে চালান তৈরি হয়েছে'));
+    return;
+  }
+
   D.seq++;
   dsave();
   var no = D.dev + D.seq;
-  var id = uid();
+  var id = existingEntry ? existingEntry.id : uid();
+  var billMode = st.mode === 'purchase' ? 'purchase' : 'sale';
   var desc = 'POS #' + no + ': ' + validItems.map(function(l){ return l.qty + '× ' + l.name; }).join(', ');
 
   var cuId = st.cuId;
@@ -839,11 +848,11 @@ function commitCustomInvoice(action){
   var b = {
     id: id,
     no: no,
-    d: st.date || bizDate(),
-    t: nowT(),
+    d: st.date || (existingEntry ? existingEntry.d : bizDate()),
+    t: existingEntry ? (existingEntry.t || nowT()) : nowT(),
     ts: Date.now(),
     user: U.name,
-    mode: 'sale',
+    mode: billMode,
     desc: desc,
     lines: validItems,
     subtotal: subtotal,
@@ -857,47 +866,67 @@ function commitCustomInvoice(action){
     words: grandTotal > 0 ? bnWords(grandTotal) : '',
     rec: st.pay === 'Cash' ? (st.cashRec || grandTotal) : {},
     chg: st.pay === 'Cash' ? Math.max(0, (st.cashRec || grandTotal) - grandTotal) : {},
+    ...(existingEntry ? { entryId: existingEntry.id } : {}),
     ...(st.pay === 'Mobile Banking' ? { w: st.w || 'bk' } : {}),
     ...(cuId ? { cu: cuId } : {})
   };
 
   S.bills.unshift(b);
-  S.entries.push({
-    id: id,
-    d: b.d,
-    t: b.t,
-    type: 'Sale',
-    desc: b.desc.slice(0, 200),
-    cat: 'POS',
-    pay: b.pay,
-    amt: b.total,
-    by: U.name,
-    party: b.party,
-    phone: b.phone,
-    pos: 1,
-    act: null,
-    ...(b.w ? { w: b.w } : {}),
-    ...(b.cu ? { cu: b.cu } : {})
-  });
-
-  if(b.party){
-    (S.parties['Sale'] = S.parties['Sale'] || {})[b.party] = b.phone;
+  if(existingEntry){
+    existingEntry.billId = b.id;
+    existingEntry.invoiced = 1;
+    if(b.party) existingEntry.party = b.party;
+    if(b.phone) existingEntry.phone = b.phone;
+    if(b.cu) existingEntry.cu = b.cu;
+    if(!(S.days[existingEntry.d] && S.days[existingEntry.d].closed)){
+      existingEntry.amt = b.total;
+      existingEntry.pay = b.pay;
+      if(b.w) existingEntry.w = b.w; else delete existingEntry.w;
+    }
+  } else {
+    S.entries.push({
+      id: id,
+      d: b.d,
+      t: b.t,
+      type: billMode === 'purchase' ? 'Purchase' : 'Sale',
+      desc: b.desc.slice(0, 200),
+      cat: 'POS',
+      pay: b.pay,
+      amt: b.total,
+      by: U.name,
+      party: b.party,
+      phone: b.phone,
+      pos: 1,
+      act: null,
+      ...(b.w ? { w: b.w } : {}),
+      ...(b.cu ? { cu: b.cu } : {})
+    });
   }
 
-  lg('Custom Invoice', '#' + no + ' ' + tk(grandTotal) + ' ' + b.pay);
+  if(b.party){
+    var pKey = billMode === 'purchase' ? 'Purchase' : 'Sale';
+    (S.parties[pKey] = S.parties[pKey] || {})[b.party] = b.phone;
+  }
+
+  lg('Custom Invoice', '#' + no + ' ' + tk(grandTotal) + ' ' + b.pay + (existingEntry ? ' (from transaction)' : ''));
   save();
   Sound.chaChing();
   saveCheck();
+  if(typeof render === 'function') try{ render(); }catch(e){}
 
   $('customInvoiceModal').hidden = true;
   _ciState = null;
 
   if(action === 'print_a4'){
+    toast(lb('Invoice #' + no + ' saved', 'চালান #' + no + ' সংরক্ষিত হয়েছে'));
     printA4Invoice(b);
   } else if(action === 'print_th'){
+    toast(lb('Invoice #' + no + ' saved', 'চালান #' + no + ' সংরক্ষিত হয়েছে'));
     printThermalSlip(b);
   } else {
-    toast(lb('Invoice saved successfully', 'চালান সফলভাবে সংরক্ষিত হয়েছে'));
+    toast(existingEntry
+      ? lb('Invoice #' + no + ' created from transaction', 'লেনদেন থেকে চালান #' + no + ' তৈরি হয়েছে')
+      : lb('Invoice saved successfully', 'চালান সফলভাবে সংরক্ষিত হয়েছে'));
     receipt(b);
   }
 }
@@ -946,7 +975,7 @@ function forceStock(p){if(!(isA()||role()==='keeper')||!p)return;if(S.moves.some
 $('pdL').addEventListener('click',e=>{const a=e.target.closest('[data-ad]'),b=e.target.closest('[data-ed]'),f=e.target.closest('[data-fq]');if(a)addStock(byId(a.dataset.ad));if(b)pForm(byId(b.dataset.ed));if(f)forceStock(byId(f.dataset.fq))});
 $('pdNew').onclick=()=>pForm(null,'');$('pdq').addEventListener('input',()=>{PLN=60;prodUI()});$('pdL').addEventListener('click',e=>{if(e.target.closest('[data-pmore]')){PLN+=60;prodUI()}});
 $('pdF').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(b){PF=b.dataset.f;PLN=60;prodUI()}});
-return{refresh(){try{$('q').value=''}catch(e){}renderGrid();renderCart();if(CUR==='prod')prodUI()},setMode,bills:billsUI,prodUI,stock:pid=>stockMap()[pid]||0,stockMap:stockMap}
+return{refresh(){try{$('q').value=''}catch(e){}renderGrid();renderCart();if(CUR==='prod')prodUI()},setMode,bills:billsUI,receipt,prodUI,stock:pid=>stockMap()[pid]||0,stockMap:stockMap}
 })();
 $('q').addEventListener('focus',()=>{});
 /* ---------- customer ledger + version history (v8) ---------- */
