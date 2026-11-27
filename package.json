@@ -4,7 +4,9 @@
   "version": "11.24.2",
   "private": true,
   "description": "NCS Daily Accounts - Nur Computer & Stationery",
-  "author": "Nur Computer & Stationery",
+  "author": "NasirPintu <https://github.com/nasiropintu>",
+  "homepage": "https://github.com/nasiropintu",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/nasiropintu/ncs-accounts.git"

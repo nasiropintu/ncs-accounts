@@ -381,3 +381,21 @@ function refreshCurrentView(){
 }
 $('refresh').onclick=refreshCurrentView;
 function setRefreshLabel(){var t=lb('Refresh current view','বর্তমান ট্যাব রিফ্রেশ করুন');$('refresh').title=t;$('refresh').setAttribute('aria-label',t)}
+(function(){
+  var modal=$('aboutBrandModal'),btn=$('creatorBrandBtn'),cls=$('aboutModalClose'),verEl=$('aboutAppVer');
+  function openAbout(){
+    if(!modal)return;
+    if(verEl){var v=(typeof APP_VERSION!=='undefined'?APP_VERSION:(window.APP_VERSION||''));verEl.textContent=v?('· v'+v):'';}
+    modal.hidden=false;
+    document.body.style.overflow='hidden';
+  }
+  function closeAbout(){
+    if(!modal||modal.hidden)return;
+    modal.hidden=true;
+    document.body.style.overflow='';
+  }
+  if(btn)btn.addEventListener('click',openAbout);
+  if(cls)cls.addEventListener('click',closeAbout);
+  if(modal)modal.addEventListener('click',function(e){if(e.target===modal)closeAbout();});
+  window.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal&&!modal.hidden)closeAbout();});
+})();

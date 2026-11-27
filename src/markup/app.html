@@ -243,6 +243,17 @@
         <div class="more-grid" id="moreList"></div>
       </div>
     </div>
+    <div class="more-section more-brand-section">
+      <button type="button" class="creator-sidebar-pill" id="creatorBrandBtn" aria-label="About NasirPintu &amp; Credits">
+        <span class="creator-pill-heart" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        </span>
+        <span class="creator-pill-text">Crafted with ❤️ by <strong>NasirPintu</strong></span>
+        <span class="creator-pill-info" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        </span>
+      </button>
+    </div>
   </div>
 </div>
 <div class="wrap view" id="vLed"></div>
@@ -269,3 +280,95 @@
 
 <div id="rpt"></div>
 <div class="ov lk" id="lk" hidden></div>
+<div class="modal-backdrop" id="aboutBrandModal" role="dialog" aria-modal="true" aria-labelledby="aboutCreatorName" hidden>
+  <div class="about-modal-card" id="aboutBrandCard">
+    <button type="button" class="about-modal-close" id="aboutModalClose" aria-label="Close dialog">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+
+    <div class="creator-hero">
+      <div class="creator-avatar-wrap">
+        <img src="./nasirpintu.jpg" alt="NasirPintu" class="creator-avatar-img" id="aboutAvatarImg" onerror="this.style.display='none';document.getElementById('aboutAvatarFallback').style.display='grid';">
+        <div class="creator-avatar-fallback" id="aboutAvatarFallback" style="display:none"><span>NP</span></div>
+        <div class="creator-avatar-badge" title="Creator Verified" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+        </div>
+      </div>
+
+      <div class="creator-meta">
+        <div class="creator-tagline-pill">
+          <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor" style="color:#e54b24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          <span>Crafted with Love <span id="aboutAppVer"></span></span>
+        </div>
+        <h2 class="creator-name" id="aboutCreatorName">NasirPintu</h2>
+        <p class="creator-subtitle">Mohammad Nasiruddin Pintu · Creator &amp; Architect</p>
+        <p class="creator-bio">
+          Dedicated to building free, private-by-design, serverless tools that empower people without paywalls, subscriptions, or data tracking.
+        </p>
+      </div>
+    </div>
+
+    <div class="about-section">
+      <div class="about-section-label">CONNECT WITH NASIRPINTU</div>
+      <div class="social-links-grid">
+        <a href="https://github.com/nasiropintu" target="_blank" rel="noopener noreferrer" class="social-pill">
+          <span class="social-info"><strong>GitHub</strong><small>@nasiropintu</small></span>
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" class="social-arrow"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+        <a href="https://x.com/nasiropintu" target="_blank" rel="noopener noreferrer" class="social-pill">
+          <span class="social-info"><strong>X (Twitter)</strong><small>@nasiropintu</small></span>
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" class="social-arrow"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+        <a href="https://www.instagram.com/the_np2/" target="_blank" rel="noopener noreferrer" class="social-pill">
+          <span class="social-info"><strong>Instagram</strong><small>@the_np2</small></span>
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" class="social-arrow"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+        <a href="https://www.facebook.com/mohammadnasiruddin.pintu/" target="_blank" rel="noopener noreferrer" class="social-pill">
+          <span class="social-info"><strong>Facebook</strong><small>mohammadnasiruddin.pintu</small></span>
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" class="social-arrow"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="about-section">
+      <div class="about-section-head">
+        <div class="about-section-label">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;margin-right:6px;vertical-align:-2px"><rect width="18" height="10" x="3" y="11" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
+          AI AGENT COLLABORATION CREDITS
+        </div>
+        <span class="ai-sublabel">Human-Directed · Agent-Assisted</span>
+      </div>
+      <p class="about-narrative">
+        Architected and guided by <strong>NasirPintu</strong> in active synergy with frontier artificial intelligence models and autonomous coding agents. This project demonstrates the future of human-directed, agent-assisted engineering.
+      </p>
+      <div class="ai-agents-grid">
+        <div class="ai-agent-chip"><div class="ai-agent-dot"></div><div class="ai-agent-text"><strong>Gemini</strong><span class="ai-agent-provider">Google DeepMind</span><span class="ai-agent-role">Architecture &amp; Agentic Workflows</span></div></div>
+        <div class="ai-agent-chip"><div class="ai-agent-dot"></div><div class="ai-agent-text"><strong>Manus</strong><span class="ai-agent-provider">Manus AI</span><span class="ai-agent-role">Autonomous Planning &amp; Synthesis</span></div></div>
+        <div class="ai-agent-chip"><div class="ai-agent-dot"></div><div class="ai-agent-text"><strong>ChatGPT</strong><span class="ai-agent-provider">OpenAI</span><span class="ai-agent-role">Logic Optimization &amp; Reasoning</span></div></div>
+        <div class="ai-agent-chip"><div class="ai-agent-dot"></div><div class="ai-agent-text"><strong>DeepSeek</strong><span class="ai-agent-provider">DeepSeek</span><span class="ai-agent-role">Algorithmic Engineering &amp; Core Logic</span></div></div>
+        <div class="ai-agent-chip"><div class="ai-agent-dot"></div><div class="ai-agent-text"><strong>Claude</strong><span class="ai-agent-provider">Anthropic</span><span class="ai-agent-role">Systems Architecture &amp; Clean Design</span></div></div>
+        <div class="ai-agent-chip"><div class="ai-agent-dot"></div><div class="ai-agent-text"><strong>Vibe by Mistral</strong><span class="ai-agent-provider">Mistral AI</span><span class="ai-agent-role">Fast Generation &amp; Execution</span></div></div>
+      </div>
+    </div>
+
+    <div class="about-section">
+      <div class="about-section-label">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;margin-right:6px;vertical-align:-2px"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        OPEN-SOURCE COMMUNITY CREDITS
+      </div>
+      <div class="oss-grid">
+        <div class="oss-card"><div class="oss-head"><strong>Electron</strong><span>by OpenJS Foundation</span></div><p>Cross-platform Windows desktop shell and auto-update runtime.</p></div>
+        <div class="oss-card"><div class="oss-head"><strong>Capacitor</strong><span>by Ionic</span></div><p>Native Android runtime bridge, filesystem, and share integration.</p></div>
+        <div class="oss-card"><div class="oss-head"><strong>Google Apps Script</strong><span>by Google</span></div><p>Zero-cost serverless cloud sync backend via Google Sheets.</p></div>
+        <div class="oss-card"><div class="oss-head"><strong>Lora &amp; SolaimanLipi</strong><span>Open Font Contributors</span></div><p>High-legibility English serif and Bengali typography.</p></div>
+        <div class="oss-card"><div class="oss-head"><strong>Web Crypto &amp; IndexedDB</strong><span>W3C Web Standards</span></div><p>Client-side AES-GCM encryption and offline-first local storage.</p></div>
+        <div class="oss-card"><div class="oss-head"><strong>Node.js Test Runner</strong><span>by OpenJS Foundation</span></div><p>Zero-dependency automated unit testing for accounting &amp; sync.</p></div>
+      </div>
+    </div>
+
+    <div class="about-modal-footer">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" style="color:#24755f;flex-shrink:0"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+      <span><strong>Privacy Guarantee:</strong> All processing stays strictly on your device. Zero telemetry. Zero server uploads.</span>
+    </div>
+  </div>
+</div>

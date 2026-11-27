@@ -2207,6 +2207,436 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
   @page rollReceipt { size: 58mm auto; margin: 1mm; }
 }
 
+/* NasirPintu Universal Brand Kit (More/Settings Tab & About Modal) */
+.more-brand-section {
+  margin-top: 2px;
+}
+.creator-sidebar-pill {
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #1d3531 0%, #152926 100%);
+  border: 1px solid #2d554a;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  color: #e4f3eb;
+  text-align: left;
+  transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+.creator-sidebar-pill:hover {
+  background: #24463d;
+  border-color: #428271;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+.creator-pill-heart {
+  color: #ff6b6b;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  animation: heartBeat 2.4s infinite ease-in-out;
+}
+@keyframes heartBeat {
+  0%, 100% { transform: scale(1); }
+  14% { transform: scale(1.22); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.18); }
+  70% { transform: scale(1); }
+}
+.creator-pill-text {
+  font-size: 13px;
+  color: #cce3d8;
+  flex: 1;
+  line-height: 1.35;
+}
+.creator-pill-text strong {
+  color: #ffffff;
+  font-weight: 600;
+}
+.creator-pill-info {
+  color: #8cc2ad;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(14, 25, 23, 0.68);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  animation: brandFadeIn 0.2s ease-out;
+}
+.modal-backdrop[hidden] {
+  display: none;
+}
+@keyframes brandFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.about-modal-card {
+  background: #fcfdfa;
+  color: #172824;
+  border: 1px solid #dce4dd;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 640px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 24px 60px rgba(17, 33, 27, 0.25);
+  padding: 28px 30px;
+  box-sizing: border-box;
+  animation: brandSlideUp 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes brandSlideUp {
+  from { transform: translateY(16px) scale(0.98); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+.about-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid #dbe2dc;
+  background: #f6f8f5;
+  color: #546b60;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.about-modal-close:hover {
+  background: #e9efea;
+}
+.creator-hero {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e4eae4;
+}
+.creator-avatar-wrap {
+  position: relative;
+  width: 78px;
+  height: 78px;
+  flex-shrink: 0;
+}
+.creator-avatar-img,
+.creator-avatar-fallback {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 4px 14px rgba(28, 113, 95, 0.18);
+  border: 2px solid #589b87;
+}
+.creator-avatar-fallback {
+  background: linear-gradient(135deg, #1d3e37 0%, #295d51 100%);
+  color: #e7faee;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 26px;
+}
+.creator-avatar-badge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  background: #ff744e;
+  color: #ffffff;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 2px solid #fcfdfa;
+}
+.creator-tagline-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #fdf0ec;
+  border: 1px solid #f7d5cc;
+  color: #b54024;
+  font-size: 11.5px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.creator-name {
+  font-weight: 800;
+  font-size: 24px;
+  color: #172824;
+  margin: 0 0 4px;
+}
+.creator-subtitle {
+  font-size: 12.5px;
+  color: #4f7061;
+  margin: 0 0 8px;
+}
+.creator-bio {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: #556c60;
+  margin: 0;
+}
+.about-section {
+  padding-top: 18px;
+  margin-top: 16px;
+  border-top: 1px solid #ebf1eb;
+}
+.about-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.about-section-head .about-section-label {
+  margin-bottom: 0;
+}
+.about-section-label {
+  font-weight: 700;
+  font-size: 11.5px;
+  letter-spacing: 1.1px;
+  color: #3b6151;
+  margin-bottom: 10px;
+}
+.ai-sublabel {
+  font-size: 11.5px;
+  color: #4f7061;
+  font-weight: 500;
+}
+.about-narrative {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #556c60;
+  margin: 0 0 12px;
+}
+.social-links-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 9px;
+}
+.social-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  padding: 9px 12px;
+  background: #f4f7f4;
+  border: 1px solid #dfe5e0;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #21352e;
+  transition: all 0.16s ease;
+}
+.social-pill:hover {
+  background: #ffffff;
+  border-color: #4f8c77;
+  transform: translateY(-1px);
+}
+.social-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.social-info strong {
+  font-size: 13px;
+  font-weight: 600;
+}
+.social-info small {
+  font-size: 11.5px;
+  color: #556c60;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.social-arrow {
+  color: #5c7a6c;
+  flex-shrink: 0;
+}
+.ai-agents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 9px;
+}
+.ai-agent-chip {
+  padding: 10px 12px;
+  background: #f5f8f5;
+  border: 1px solid #e0e7e1;
+  border-radius: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+}
+.ai-agent-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4da382;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+.ai-agent-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.ai-agent-text strong {
+  font-size: 13px;
+  color: #172824;
+}
+.ai-agent-provider {
+  font-size: 11.5px;
+  color: #2c7a64;
+  font-weight: 600;
+}
+.ai-agent-role {
+  font-size: 11.5px;
+  color: #556c60;
+  line-height: 1.35;
+}
+.oss-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+  gap: 8px;
+}
+.oss-card {
+  padding: 10px 12px;
+  background: #f7f9f7;
+  border: 1px solid #e4eae4;
+  border-radius: 8px;
+}
+.oss-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+.oss-head strong {
+  font-size: 12.5px;
+  color: #172824;
+}
+.oss-head span {
+  font-size: 11px;
+  color: #5c7a6c;
+}
+.oss-card p {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: #556c60;
+}
+.about-modal-footer {
+  margin-top: 20px;
+  padding: 12px 14px;
+  background: #eef7f3;
+  border: 1px solid #cde5da;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #245746;
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+@media (max-width: 560px) {
+  .about-modal-card {
+    padding: 20px 18px;
+  }
+  .creator-hero {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+:root[data-theme="dark"] .about-modal-card,
+:root[data-theme="glass-dark"] .about-modal-card {
+  background: #141c1a;
+  color: #e6efec;
+  border-color: #283834;
+}
+:root[data-theme="dark"] .about-modal-close,
+:root[data-theme="glass-dark"] .about-modal-close {
+  background: #1d2825;
+  border-color: #2d403b;
+  color: #b7ccc5;
+}
+:root[data-theme="dark"] .creator-hero,
+:root[data-theme="dark"] .about-section,
+:root[data-theme="glass-dark"] .creator-hero,
+:root[data-theme="glass-dark"] .about-section {
+  border-color: #253430;
+}
+:root[data-theme="dark"] .creator-name,
+:root[data-theme="dark"] .ai-agent-text strong,
+:root[data-theme="dark"] .oss-head strong,
+:root[data-theme="glass-dark"] .creator-name,
+:root[data-theme="glass-dark"] .ai-agent-text strong,
+:root[data-theme="glass-dark"] .oss-head strong {
+  color: #f0f6f4;
+}
+:root[data-theme="dark"] .creator-subtitle,
+:root[data-theme="dark"] .creator-bio,
+:root[data-theme="dark"] .about-narrative,
+:root[data-theme="dark"] .ai-agent-role,
+:root[data-theme="dark"] .oss-card p,
+:root[data-theme="dark"] .social-info small,
+:root[data-theme="glass-dark"] .creator-subtitle,
+:root[data-theme="glass-dark"] .creator-bio,
+:root[data-theme="glass-dark"] .about-narrative,
+:root[data-theme="glass-dark"] .ai-agent-role,
+:root[data-theme="glass-dark"] .oss-card p,
+:root[data-theme="glass-dark"] .social-info small {
+  color: #9bb3ab;
+}
+:root[data-theme="dark"] .about-section-label,
+:root[data-theme="dark"] .ai-sublabel,
+:root[data-theme="glass-dark"] .about-section-label,
+:root[data-theme="glass-dark"] .ai-sublabel {
+  color: #79b8a1;
+}
+:root[data-theme="dark"] .social-pill,
+:root[data-theme="dark"] .ai-agent-chip,
+:root[data-theme="dark"] .oss-card,
+:root[data-theme="glass-dark"] .social-pill,
+:root[data-theme="glass-dark"] .ai-agent-chip,
+:root[data-theme="glass-dark"] .oss-card {
+  background: #1a2522;
+  border-color: #2a3b36;
+  color: #e6efec;
+}
+:root[data-theme="dark"] .social-pill:hover,
+:root[data-theme="glass-dark"] .social-pill:hover {
+  background: #22302c;
+  border-color: #4da382;
+}
+:root[data-theme="dark"] .about-modal-footer,
+:root[data-theme="glass-dark"] .about-modal-footer {
+  background: #162924;
+  border-color: #26483e;
+  color: #a9d8c7;
+}
+@media print {
+  .modal-backdrop,
+  .more-brand-section {
+    display: none !important;
+  }
+}
+
 </style>
 <link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0F766E"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes">
 <script src="config.js"></script>
@@ -2459,6 +2889,17 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
         <div class="more-grid" id="moreList"></div>
       </div>
     </div>
+    <div class="more-section more-brand-section">
+      <button type="button" class="creator-sidebar-pill" id="creatorBrandBtn" aria-label="About NasirPintu &amp; Credits">
+        <span class="creator-pill-heart" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        </span>
+        <span class="creator-pill-text">Crafted with ❤️ by <strong>NasirPintu</strong></span>
+        <span class="creator-pill-info" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        </span>
+      </button>
+    </div>
   </div>
 </div>
 <div class="wrap view" id="vLed"></div>
@@ -2485,6 +2926,98 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
 
 <div id="rpt"></div>
 <div class="ov lk" id="lk" hidden></div>
+<div class="modal-backdrop" id="aboutBrandModal" role="dialog" aria-modal="true" aria-labelledby="aboutCreatorName" hidden>
+  <div class="about-modal-card" id="aboutBrandCard">
+    <button type="button" class="about-modal-close" id="aboutModalClose" aria-label="Close dialog">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+
+    <div class="creator-hero">
+      <div class="creator-avatar-wrap">
+        <img src="./nasirpintu.jpg" alt="NasirPintu" class="creator-avatar-img" id="aboutAvatarImg" onerror="this.style.display='none';document.getElementById('aboutAvatarFallback').style.display='grid';">
+        <div class="creator-avatar-fallback" id="aboutAvatarFallback" style="display:none"><span>NP</span></div>
+        <div class="creator-avatar-badge" title="Creator Verified" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+        </div>
+      </div>
+
+      <div class="creator-meta">
+        <div class="creator-tagline-pill">
+          <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor" style="color:#e54b24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          <span>Crafted with Love <span id="aboutAppVer"></span></span>
+        </div>
+        <h2 class="creator-name" id="aboutCreatorName">NasirPintu</h2>
+        <p class="creator-subtitle">Mohammad Nasiruddin Pintu · Creator &amp; Architect</p>
+        <p class="creator-bio">
+          Dedicated to building free, private-by-design, serverless tools that empower people without paywalls, subscriptions, or data tracking.
+        </p>
+      </div>
+    </div>
+
+    <div class="about-section">
+      <div class="about-section-label">CONNECT WITH NASIRPINTU</div>
+      <div class="social-links-grid">
+        <a href="https://github.com/nasiropintu" target="_blank" rel="noopener noreferrer" class="social-pill">
+          <span class="social-info"><strong>GitHub</strong><small>@nasiropintu</small></span>
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" class="social-arrow"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+        <a href="https://x.com/nasiropintu" target="_blank" rel="noopener noreferrer" class="social-pill">
+          <span class="social-info"><strong>X (Twitter)</strong><small>@nasiropintu</small></span>
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" class="social-arrow"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+        <a href="https://www.instagram.com/the_np2/" target="_blank" rel="noopener noreferrer" class="social-pill">
+          <span class="social-info"><strong>Instagram</strong><small>@the_np2</small></span>
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" class="social-arrow"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+        <a href="https://www.facebook.com/mohammadnasiruddin.pintu/" target="_blank" rel="noopener noreferrer" class="social-pill">
+          <span class="social-info"><strong>Facebook</strong><small>mohammadnasiruddin.pintu</small></span>
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" class="social-arrow"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="about-section">
+      <div class="about-section-head">
+        <div class="about-section-label">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;margin-right:6px;vertical-align:-2px"><rect width="18" height="10" x="3" y="11" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
+          AI AGENT COLLABORATION CREDITS
+        </div>
+        <span class="ai-sublabel">Human-Directed · Agent-Assisted</span>
+      </div>
+      <p class="about-narrative">
+        Architected and guided by <strong>NasirPintu</strong> in active synergy with frontier artificial intelligence models and autonomous coding agents. This project demonstrates the future of human-directed, agent-assisted engineering.
+      </p>
+      <div class="ai-agents-grid">
+        <div class="ai-agent-chip"><div class="ai-agent-dot"></div><div class="ai-agent-text"><strong>Gemini</strong><span class="ai-agent-provider">Google DeepMind</span><span class="ai-agent-role">Architecture &amp; Agentic Workflows</span></div></div>
+        <div class="ai-agent-chip"><div class="ai-agent-dot"></div><div class="ai-agent-text"><strong>Manus</strong><span class="ai-agent-provider">Manus AI</span><span class="ai-agent-role">Autonomous Planning &amp; Synthesis</span></div></div>
+        <div class="ai-agent-chip"><div class="ai-agent-dot"></div><div class="ai-agent-text"><strong>ChatGPT</strong><span class="ai-agent-provider">OpenAI</span><span class="ai-agent-role">Logic Optimization &amp; Reasoning</span></div></div>
+        <div class="ai-agent-chip"><div class="ai-agent-dot"></div><div class="ai-agent-text"><strong>DeepSeek</strong><span class="ai-agent-provider">DeepSeek</span><span class="ai-agent-role">Algorithmic Engineering &amp; Core Logic</span></div></div>
+        <div class="ai-agent-chip"><div class="ai-agent-dot"></div><div class="ai-agent-text"><strong>Claude</strong><span class="ai-agent-provider">Anthropic</span><span class="ai-agent-role">Systems Architecture &amp; Clean Design</span></div></div>
+        <div class="ai-agent-chip"><div class="ai-agent-dot"></div><div class="ai-agent-text"><strong>Vibe by Mistral</strong><span class="ai-agent-provider">Mistral AI</span><span class="ai-agent-role">Fast Generation &amp; Execution</span></div></div>
+      </div>
+    </div>
+
+    <div class="about-section">
+      <div class="about-section-label">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;margin-right:6px;vertical-align:-2px"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        OPEN-SOURCE COMMUNITY CREDITS
+      </div>
+      <div class="oss-grid">
+        <div class="oss-card"><div class="oss-head"><strong>Electron</strong><span>by OpenJS Foundation</span></div><p>Cross-platform Windows desktop shell and auto-update runtime.</p></div>
+        <div class="oss-card"><div class="oss-head"><strong>Capacitor</strong><span>by Ionic</span></div><p>Native Android runtime bridge, filesystem, and share integration.</p></div>
+        <div class="oss-card"><div class="oss-head"><strong>Google Apps Script</strong><span>by Google</span></div><p>Zero-cost serverless cloud sync backend via Google Sheets.</p></div>
+        <div class="oss-card"><div class="oss-head"><strong>Lora &amp; SolaimanLipi</strong><span>Open Font Contributors</span></div><p>High-legibility English serif and Bengali typography.</p></div>
+        <div class="oss-card"><div class="oss-head"><strong>Web Crypto &amp; IndexedDB</strong><span>W3C Web Standards</span></div><p>Client-side AES-GCM encryption and offline-first local storage.</p></div>
+        <div class="oss-card"><div class="oss-head"><strong>Node.js Test Runner</strong><span>by OpenJS Foundation</span></div><p>Zero-dependency automated unit testing for accounting &amp; sync.</p></div>
+      </div>
+    </div>
+
+    <div class="about-modal-footer">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" style="color:#24755f;flex-shrink:0"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+      <span><strong>Privacy Guarantee:</strong> All processing stays strictly on your device. Zero telemetry. Zero server uploads.</span>
+    </div>
+  </div>
+</div>
 
 <script>
 /* --- Module: 01-core.js --- */
@@ -4093,6 +4626,24 @@ function refreshCurrentView(){
 }
 $('refresh').onclick=refreshCurrentView;
 function setRefreshLabel(){var t=lb('Refresh current view','বর্তমান ট্যাব রিফ্রেশ করুন');$('refresh').title=t;$('refresh').setAttribute('aria-label',t)}
+(function(){
+  var modal=$('aboutBrandModal'),btn=$('creatorBrandBtn'),cls=$('aboutModalClose'),verEl=$('aboutAppVer');
+  function openAbout(){
+    if(!modal)return;
+    if(verEl){var v=(typeof APP_VERSION!=='undefined'?APP_VERSION:(window.APP_VERSION||''));verEl.textContent=v?('· v'+v):'';}
+    modal.hidden=false;
+    document.body.style.overflow='hidden';
+  }
+  function closeAbout(){
+    if(!modal||modal.hidden)return;
+    modal.hidden=true;
+    document.body.style.overflow='';
+  }
+  if(btn)btn.addEventListener('click',openAbout);
+  if(cls)cls.addEventListener('click',closeAbout);
+  if(modal)modal.addEventListener('click',function(e){if(e.target===modal)closeAbout();});
+  window.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal&&!modal.hidden)closeAbout();});
+})();
 
 
 /* --- Module: 05c-bug-v12.js --- */
