@@ -1245,8 +1245,20 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
 /* Keep the header to one locale-specific date; the date card contains all calendars. */
 .hw-meta .hw-bng,.hw-meta .hw-hijri,.hw-meta .hw-sep{display:none!important}
 
-/* The header blur creates a fixed-position containing block. The mobile picker is portaled to body. */
-.tpp-panel.tpp-portal{position:fixed!important;top:auto!important;bottom:calc(112px + env(safe-area-inset-bottom,0px))!important;left:12px!important;right:12px!important;width:auto!important;max-height:min(70dvh,calc(100dvh - 136px - env(safe-area-inset-bottom,0px)))!important;overflow-y:auto!important;overscroll-behavior:contain;z-index:1200!important}
+/* The header blur creates a fixed-position containing block. The picker is portaled to body on all sizes. */
+.tpp-panel.tpp-portal{position:fixed!important;top:auto!important;bottom:calc(112px + env(safe-area-inset-bottom,0px))!important;left:12px!important;right:12px!important;width:auto!important;max-height:min(70dvh,calc(100dvh - 136px - env(safe-area-inset-bottom,0px)))!important;overflow-y:auto!important;overscroll-behavior:contain;z-index:9000!important}
+
+/* Desktop portal: position as top-right dropdown near the theme button */
+@media(min-width:900px){
+  .tpp-panel.tpp-portal{
+    top:72px!important;
+    right:16px!important;
+    bottom:auto!important;
+    left:auto!important;
+    width:258px!important;
+    max-height:calc(100vh - 90px)!important;
+  }
+}
 
 /* Mobile header repair: keep controls in one row and move theme picker below it. */
 @media(max-width:899px){

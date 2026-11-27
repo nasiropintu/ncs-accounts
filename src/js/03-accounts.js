@@ -196,8 +196,8 @@ function applyTheme(){
   var btn=$('themeBtn'),panel=$('tppPanel'),wrap=$('tppWrap'),closeBtn=$('tppClose');
   if(!btn||!panel) return;
   var panelHome=panel.parentNode,portal=false;
-  /* Portal only on mobile (<900 px) — on desktop the panel stays as an absolute dropdown */
-  function usePortal(){return window.innerWidth<900;}
+  /* Always portal to body — escapes the .top backdrop-filter stacking context on all sizes */
+  function usePortal(){return true;}
   function open(){
     portal=usePortal();
     if(portal){panel.classList.add('tpp-portal');document.body.appendChild(panel);}
