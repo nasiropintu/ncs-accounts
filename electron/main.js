@@ -2,6 +2,7 @@ const { app, BrowserWindow, Menu, dialog, shell, protocol, net, session, ipcMain
 const { autoUpdater } = require('electron-updater');
 const fs = require('fs');
 const path = require('path');
+const { Readable } = require('stream');
 const { pathToFileURL } = require('url');
 
 // The app files live in "www". Packaged: resources/www. Dev: ../www
@@ -9,7 +10,7 @@ const WWW = app.isPackaged ? path.join(process.resourcesPath, 'www') : path.join
 
 // Serve the app from app://ncs/ (a secure origin: camera, clipboard and fetch behave like on https)
 protocol.registerSchemesAsPrivileged([
-  { scheme: 'app', privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true } }
+  { scheme: 'app', privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true, stream: true } }
 ]);
 
 if (!app.requestSingleInstanceLock()) {
@@ -116,14 +117,64 @@ app.whenReady().then(() => {
     let p = decodeURIComponent(u.pathname);
     if (p === '/' || p === '') p = '/index.html';
 
-    // Admin-selected local video background — serve any video file by absolute path
+    // Admin-selected local video background — serve any video file by absolute path with HTTP Range support
     if (p === '/localvideo') {
       const vp = u.searchParams.get('path');
       if (vp && /\.(mp4|webm|mov|mkv|avi|m4v)$/i.test(vp)) {
         try {
           const abs = path.normalize(vp);
           if (fs.existsSync(abs)) {
-            return net.fetch(pathToFileURL(abs).toString());
+            const stat = fs.statSync(abs);
+            const fileSize = stat.size;
+            const ext = path.extname(abs).toLowerCase();
+            const mimeTypes = {
+              '.mp4': 'video/mp4',
+              '.m4v': 'video/mp4',
+              '.webm': 'video/webm',
+              '.mov': 'video/quicktime',
+              '.mkv': 'video/x-matroska',
+              '.avi': 'video/x-msvideo'
+            };
+            const mimeType = mimeTypes[ext] || 'video/mp4';
+            const rangeHeader = request.headers.get('range');
+            if (rangeHeader) {
+              const m = /^bytes=(\d*)-(\d*)$/i.exec(rangeHeader.trim());
+              if (m) {
+                let start, end;
+                if (m[1] === '' && m[2] !== '') {
+                  const suffix = parseInt(m[2], 10);
+                  start = Math.max(0, fileSize - suffix);
+                  end = fileSize - 1;
+                } else {
+                  start = m[1] ? parseInt(m[1], 10) : 0;
+                  end = m[2] ? Math.min(parseInt(m[2], 10), fileSize - 1) : fileSize - 1;
+                }
+                if (isNaN(start) || isNaN(end) || start < 0 || start >= fileSize || end < start) {
+                  return new Response(null, { status: 416, headers: { 'Content-Range': `bytes */${fileSize}` } });
+                }
+                const nodeStream = fs.createReadStream(abs, { start, end });
+                nodeStream.on('error', () => {});
+                return new Response(Readable.toWeb(nodeStream), {
+                  status: 206,
+                  headers: {
+                    'Content-Type': mimeType,
+                    'Content-Length': String(end - start + 1),
+                    'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+                    'Accept-Ranges': 'bytes'
+                  }
+                });
+              }
+            }
+            const nodeStream = fs.createReadStream(abs);
+            nodeStream.on('error', () => {});
+            return new Response(Readable.toWeb(nodeStream), {
+              status: 200,
+              headers: {
+                'Content-Type': mimeType,
+                'Content-Length': String(fileSize),
+                'Accept-Ranges': 'bytes'
+              }
+            });
           }
         } catch (e) {}
       }

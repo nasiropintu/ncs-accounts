@@ -163,6 +163,7 @@ function syncBgVideo(){
     /* Keep data-video-active set BEFORE switching src to avoid solid-dark flash */
     document.documentElement.dataset.videoActive='1';
     if(vid.getAttribute('src')!==src){
+      vid.onerror=function(){delete document.documentElement.dataset.videoActive;};
       vid.setAttribute('src',src);
       vid.load();
       /* Autoplay may need a canplay nudge on first load */
