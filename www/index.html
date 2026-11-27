@@ -301,7 +301,7 @@ body{padding-bottom:78px}
 /* ===== THEME: Enterprise Surface & Elevation ===== */
 body{background:var(--bg)}
 h1{font-size:24px;font-weight:600}
-.top{position:sticky;top:max(8px,env(safe-area-inset-top,8px));z-index:40;width:calc(100% - 24px);max-width:1360px;margin:10px auto 14px;padding:12px 22px;min-height:94px;background:color-mix(in srgb,var(--card) 90%,transparent);-webkit-backdrop-filter:saturate(1.25) blur(16px);backdrop-filter:saturate(1.25) blur(16px);border:1px solid var(--line);border-radius:24px;box-shadow:0 4px 24px rgba(0,0,0,0.07),0 1px 3px rgba(0,0,0,0.04);box-sizing:border-box}
+.top{position:sticky;top:max(8px,env(safe-area-inset-top,8px));z-index:40;width:calc(100% - 32px);max-width:968px;margin:10px auto 14px;padding:12px 22px;min-height:94px;background:color-mix(in srgb,var(--card) 90%,transparent);-webkit-backdrop-filter:saturate(1.25) blur(16px);backdrop-filter:saturate(1.25) blur(16px);border:1px solid var(--line);border-radius:24px;box-shadow:0 4px 24px rgba(0,0,0,0.07),0 1px 3px rgba(0,0,0,0.04);box-sizing:border-box}
 .card,.stat{background:var(--card);border-radius:14px;box-shadow:var(--sh)}
 .stats .stat:nth-child(1){background:var(--t3)}.stats .stat:nth-child(2){background:var(--t2)}.stats .stat:nth-child(3){background:var(--t1)}
 .stats .stat{border-color:transparent}
@@ -448,6 +448,7 @@ th{color:var(--ink);font-weight:500}
  .tabs button.on::after{content:"";position:absolute;left:2px;top:10px;bottom:10px;width:3px;border-radius:6px;background:var(--acc)}
  .tabs:hover{width:190px;box-shadow:0 8px 30px rgba(0,0,0,.14)}
  .tabs:hover button .t-lbl{display:inline;opacity:1}
+ .top{max-width:1208px}
  .wrap{max-width:1240px;padding-top:20px}}
 
 @media (max-width:980px){
@@ -495,7 +496,7 @@ th{color:var(--ink);font-weight:500}
  .top-sync-pend{border-color:color-mix(in srgb,var(--warn) 30%,transparent);background:color-mix(in srgb,var(--warn) 8%,var(--card));color:var(--warn)}
 }
 @media (max-width:520px){
- .top{--hdr-mark:28px;--hdr-ctl:34px;--hdr-clock:20px;--hdr-shop:16px;--hdr-shop-bn:16px;padding:var(--hdr-pad);gap:6px 8px;margin:8px auto 10px;width:calc(100% - 16px);border-radius:20px}
+ .top{--hdr-mark:28px;--hdr-ctl:34px;--hdr-clock:20px;--hdr-shop:16px;--hdr-shop-bn:16px;padding:var(--hdr-pad);gap:6px 8px;margin:8px auto 10px;width:calc(100% - 32px);border-radius:20px}
  .top-brand{gap:6px}
  .top-brand-mark,.top-brand-svg{width:var(--hdr-mark);height:var(--hdr-mark)}
  .top-brand img{width:var(--hdr-mark);height:var(--hdr-mark)}
@@ -1276,6 +1277,7 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
   .top #topR .hdr-prayer-wrap{display:contents}
   .top #topR .tpp-wrap{position:static}
   .hdr-prayer-btn{display:grid}
+  .hdr-prayer-label,.hdr-prayer-dot{display:none}
   .hdr-prayer-popover{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);right:12px;z-index:59;width:min(320px,calc(100vw - 24px));max-height:70vh}
   .hdr-center{grid-area:center;display:flex;flex-direction:column;gap:3px;align-items:center;justify-content:center;width:100%;margin:0;text-align:center}
   .hdr-greetline{justify-content:center;gap:10px;min-width:0;flex-wrap:nowrap;overflow:hidden;white-space:nowrap}
@@ -9390,7 +9392,9 @@ function animateCounts(){
 function saveCheck(){if(document.documentElement.dataset.rm)return;var d=document.createElement('div');d.className='savechk';d.innerHTML='<svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="22" fill="none" stroke="var(--acc)" stroke-width="3"/><path d="M14 27l8 8 16-16" fill="none" stroke="var(--acc)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';document.body.appendChild(d);setTimeout(function(){d.classList.add('out')},700);setTimeout(function(){d.remove()},1250)}
 (function(){
   var M="Claude Sonnet 5.5 · owner's Claude account";
-  APP_VERSION='11.27.1';
+  APP_VERSION='11.27.2';
+  VERS.unshift({v:'11.27.2',d:'2026-11-28',t:'Header Width Alignment & Mobile Prayer Icon Cleanup',by:'Antigravity',n:['Aligned top header bar width (.top) to match the content cards inside .wrap (1208px desktop, 968px tablet/mobile)','Hid prayer text label and dot on mobile/Android (< 900px) so only the mosque icon is shown']});
+  UPC.unshift({v:'11.27.2',s:'Done',t:['Aligned header bar width with content cards','Mobile/Android prayer button shows icon only']});
   VERS.unshift({v:'11.27.1',d:'2026-11-28',t:'Native Windows 11 Acrylic/Mica, Video Shuffle & Theme-Matched Branding Kit',by:'Antigravity',n:['Added Windows 11 Native Acrylic (live see-through) and Native Mica (wallpaper tint) backdrop modes in Appearance → Glass Backdrop','Added multi-file and folder selection for desktop Ambient Video with random shuffle playback, auto-advance on video end, and a Next button','Aligned NasirPintu branding pill and About & Credits modal to the active theme surface tokens (Light, Dark, Auto, Glass Light, and Glass Dark)']});
   UPC.unshift({v:'11.27.1',s:'Done',t:['Native Windows 11 Acrylic & Mica + Folder/Multi-File Video Shuffle','Theme-matched NasirPintu branding pill and About modal across all themes']});
   VERS.unshift({v:'11.26.1',d:'2026-11-28',t:'Desktop Background Video HTTP Range Streaming Fix',by:'Antigravity',n:['Added stream: true to app:// protocol privileges in electron/main.js','Replaced net.fetch file:// handler for /localvideo with fs.createReadStream + Readable.toWeb supporting HTTP 206 Partial Content Range requests, Content-Length, Accept-Ranges, and explicit video MIME types','Set preload="auto" on #bgVideo and added onerror fallback to clear data-video-active if a video fails to decode']});
