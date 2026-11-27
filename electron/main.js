@@ -1,5 +1,6 @@
-const { app, BrowserWindow, Menu, dialog, shell, protocol, net, session } = require('electron');
+const { app, BrowserWindow, Menu, dialog, shell, protocol, net, session, ipcMain } = require('electron');
 const { autoUpdater } = require('electron-updater');
+const fs = require('fs');
 const path = require('path');
 const { pathToFileURL } = require('url');
 
@@ -27,7 +28,12 @@ function createWindow() {
     title: 'NCS Accounts',
     icon: path.join(WWW, 'icon-512.png'),
     autoHideMenuBar: true,
-    webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true }
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false,
+      sandbox: true
+    }
   });
   win.loadURL('app://ncs/index.html');
 
@@ -116,7 +122,9 @@ app.whenReady().then(() => {
       if (vp && /\.(mp4|webm|mov|mkv|avi|m4v)$/i.test(vp)) {
         try {
           const abs = path.normalize(vp);
-          return net.fetch(pathToFileURL(abs).toString());
+          if (fs.existsSync(abs)) {
+            return net.fetch(pathToFileURL(abs).toString());
+          }
         } catch (e) {}
       }
       return new Response('Not found', { status: 404 });
@@ -130,6 +138,16 @@ app.whenReady().then(() => {
   // Camera (barcode scan) and clipboard only; everything else denied
   session.defaultSession.setPermissionRequestHandler((wc, permission, cb) => {
     cb(['media', 'clipboard-read', 'clipboard-sanitized-write'].includes(permission));
+  });
+
+  ipcMain.handle('ncs:pick-video', async () => {
+    const res = await dialog.showOpenDialog(win || undefined, {
+      title: 'Select Background Video',
+      properties: ['openFile'],
+      filters: [{ name: 'Video Files', extensions: ['mp4', 'webm', 'mov', 'mkv', 'avi', 'm4v'] }]
+    });
+    if (res.canceled || !res.filePaths || !res.filePaths.length) return '';
+    return res.filePaths[0];
   });
 
   buildMenu();

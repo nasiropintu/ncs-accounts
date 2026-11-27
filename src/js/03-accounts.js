@@ -155,6 +155,7 @@ function syncBgVideo(){
   var isDesktop=window.matchMedia&&window.matchMedia('(min-width: 900px)').matches;
   var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var localPath=localStorage.getItem('ncs_local_video')||'';
+  if(localPath&&localPath.indexOf('blob:')===0){localStorage.removeItem('ncs_local_video');localPath='';}
   var active=isDesktop&&!reduced&&(m==='glass-dark'||m==='glass-light')&&gv==='custom'&&!!localPath;
   var vid=$('bgVideo');
   if(active&&vid){
@@ -232,15 +233,28 @@ function applyTheme(){
   var vidSec=$('tppVidSec');
   if(vidSec)vidSec.hidden=!_isElectron;
   var vidInput=$('tppVidInput'),vidChooseBtn=$('tppVidChoose'),vidOff=$('tppVidOff');
-  if(vidChooseBtn&&vidInput){
-    vidChooseBtn.onclick=function(e){e.stopPropagation();vidInput.click();};
+  function applyChosenVideoPath(p){
+    if(!p)return;
+    localStorage.setItem('ncs_local_video',p);
+    S.glassVideo='custom';
+    if(S.theme!=='glass-dark'&&S.theme!=='glass-light')S.theme='glass-dark';
+    save();applyTheme();
+  }
+  if(vidChooseBtn){
+    vidChooseBtn.onclick=function(e){
+      e.stopPropagation();
+      if(window.NCS_ELECTRON&&typeof window.NCS_ELECTRON.pickVideo==='function'){
+        window.NCS_ELECTRON.pickVideo().then(function(p){if(p)applyChosenVideoPath(p);}).catch(function(){if(vidInput)vidInput.click();});
+      }else if(vidInput){
+        vidInput.click();
+      }
+    };
+  }
+  if(vidInput){
     vidInput.onchange=function(){
       var f=vidInput.files[0];if(!f)return;
-      /* f.path = absolute path in Electron; undefined in browser → fall back to blob: URL */
-      localStorage.setItem('ncs_local_video',f.path||URL.createObjectURL(f));
-      S.glassVideo='custom';
-      if(S.theme!=='glass-dark'&&S.theme!=='glass-light')S.theme='glass-dark';
-      save();applyTheme();
+      var p=(window.NCS_ELECTRON&&typeof window.NCS_ELECTRON.getFilePath==='function')?window.NCS_ELECTRON.getFilePath(f):'';
+      applyChosenVideoPath(p||f.path||'');
       vidInput.value='';
     };
   }
