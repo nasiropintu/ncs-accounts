@@ -191,14 +191,43 @@ app.whenReady().then(() => {
     cb(['media', 'clipboard-read', 'clipboard-sanitized-write'].includes(permission));
   });
 
+  const VIDEO_EXT_RE = /\.(mp4|webm|mov|mkv|avi|m4v)$/i;
+  function listVideosInDir(dirPath) {
+    try {
+      if (!dirPath || !fs.existsSync(dirPath)) return [];
+      const st = fs.statSync(dirPath);
+      if (!st.isDirectory()) return [];
+      return fs.readdirSync(dirPath, { withFileTypes: true })
+        .filter((d) => d.isFile() && VIDEO_EXT_RE.test(d.name))
+        .map((d) => path.join(dirPath, d.name))
+        .sort();
+    } catch (e) {
+      return [];
+    }
+  }
+
   ipcMain.handle('ncs:pick-video', async () => {
     const res = await dialog.showOpenDialog(win || undefined, {
-      title: 'Select Background Video',
-      properties: ['openFile'],
+      title: 'Select Background Video(s)',
+      properties: ['openFile', 'multiSelections'],
       filters: [{ name: 'Video Files', extensions: ['mp4', 'webm', 'mov', 'mkv', 'avi', 'm4v'] }]
     });
-    if (res.canceled || !res.filePaths || !res.filePaths.length) return '';
-    return res.filePaths[0];
+    if (res.canceled || !res.filePaths || !res.filePaths.length) return [];
+    return res.filePaths;
+  });
+
+  ipcMain.handle('ncs:pick-video-folder', async () => {
+    const res = await dialog.showOpenDialog(win || undefined, {
+      title: 'Select Background Video Folder',
+      properties: ['openDirectory']
+    });
+    if (res.canceled || !res.filePaths || !res.filePaths.length) return null;
+    const folder = res.filePaths[0];
+    return { folder, files: listVideosInDir(folder) };
+  });
+
+  ipcMain.handle('ncs:list-video-folder', async (_evt, dirPath) => {
+    return listVideosInDir(dirPath);
   });
 
   buildMenu();

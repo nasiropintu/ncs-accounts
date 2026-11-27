@@ -106,11 +106,13 @@
           </div>
           <div class="tpp-vid-sec" id="tppVidSec" hidden>
             <div class="tpp-vid-head"><span>Ambient Video</span><small>Glass modes · Admin</small></div>
-            <input type="file" id="tppVidInput" accept="video/*" style="display:none" tabindex="-1">
+            <input type="file" id="tppVidInput" accept="video/*" multiple style="display:none" tabindex="-1">
             <div class="tpp-vid-local">
               <div class="tpp-vid-label tpp-vid-none" id="tppVidLabel">No video selected</div>
               <div class="tpp-vid-actions">
-                <button type="button" class="tpp-vid-opt tpp-vid-choose" id="tppVidChoose">📁 Choose file</button>
+                <button type="button" class="tpp-vid-opt tpp-vid-choose" id="tppVidChoose">📁 Files</button>
+                <button type="button" class="tpp-vid-opt tpp-vid-choose" id="tppVidFolder">📂 Folder</button>
+                <button type="button" class="tpp-vid-opt" id="tppVidNext" hidden>⏭ Next</button>
                 <button type="button" class="tpp-vid-opt" id="tppVidOff">Off</button>
               </div>
             </div>
