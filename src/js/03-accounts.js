@@ -141,6 +141,14 @@ var _THEMES=['auto','light','dark','glass-dark','glass-light'];
 var _isElectron=(typeof window!=='undefined'&&window.location&&window.location.protocol==='app:');
 function syncBgVideo(){
   var m=S.theme||'auto';
+  /* Video background is EXE (Electron) only — disable completely on PWA and Native */
+  if(!_isElectron){
+    delete document.documentElement.dataset.videoActive;
+    var vidEl=$('bgVideo');
+    if(vidEl&&vidEl.getAttribute('src')){vidEl.pause();vidEl.removeAttribute('src');vidEl.load();}
+    var vidSec=$('tppVidSec');if(vidSec)vidSec.hidden=true;
+    return;
+  }
   var gv=S.glassVideo;
   if(gv!=='custom')gv='none';
   S.glassVideo=gv;
@@ -150,12 +158,19 @@ function syncBgVideo(){
   var active=isDesktop&&!reduced&&(m==='glass-dark'||m==='glass-light')&&gv==='custom'&&!!localPath;
   var vid=$('bgVideo');
   if(active&&vid){
-    var src=localPath;
-    if(_isElectron&&localPath&&!(/^(blob:|https?:)/.test(localPath)))
-      src='app://ncs/localvideo?path='+encodeURIComponent(localPath);
+    var src='app://ncs/localvideo?path='+encodeURIComponent(localPath);
     /* Keep data-video-active set BEFORE switching src to avoid solid-dark flash */
     document.documentElement.dataset.videoActive='1';
-    if(vid.getAttribute('src')!==src){vid.setAttribute('src',src);vid.load();}
+    if(vid.getAttribute('src')!==src){
+      vid.setAttribute('src',src);
+      vid.load();
+      /* Autoplay may need a canplay nudge on first load */
+      vid.addEventListener('canplay',function _cv(){
+        vid.removeEventListener('canplay',_cv);
+        var pp=vid.play();
+        if(pp&&typeof pp.catch==='function')pp.catch(function(){});
+      },{once:true});
+    }
     var p=vid.play();
     if(p&&typeof p.catch==='function')p.catch(function(){});
   }else{
@@ -213,7 +228,9 @@ function applyTheme(){
   panel.querySelectorAll('.tpp-opt').forEach(function(opt){
     opt.onclick=function(e){e.stopPropagation();S.theme=opt.dataset.tv||'auto';save();applyTheme();close();};
   });
-  /* Local video file picker (admin-only section) */
+  /* Local video file picker — EXE only: hide on PWA and Native */
+  var vidSec=$('tppVidSec');
+  if(vidSec)vidSec.hidden=!_isElectron;
   var vidInput=$('tppVidInput'),vidChooseBtn=$('tppVidChoose'),vidOff=$('tppVidOff');
   if(vidChooseBtn&&vidInput){
     vidChooseBtn.onclick=function(e){e.stopPropagation();vidInput.click();};
@@ -421,7 +438,7 @@ function lockUI(mode,msg){
   };
   $('lgo').onclick=go;lk.onkeydown=e=>{if(e.key==='Enter')go()}
 }
-function enter(){LRN=S.rebootN||0;$('lk').hidden=true;$('lk').innerHTML='';$('set').hidden=$('und').hidden=!isA();$('rpb').hidden=!(isA()||role()==='accountant');if($('stf'))$('stf').hidden=!isA();if($('logb'))$('logb').hidden=!(isA()||role()==='accountant');$('who').textContent=isA()?'Admin':U.name+' · '+role();if($('tppVidSec'))$('tppVidSec').hidden=!isA();reset();render();bump();pull();buildTabs();updateSndBtn()}
+function enter(){LRN=S.rebootN||0;$('lk').hidden=true;$('lk').innerHTML='';$('set').hidden=$('und').hidden=!isA();$('rpb').hidden=!(isA()||role()==='accountant');if($('stf'))$('stf').hidden=!isA();if($('logb'))$('logb').hidden=!(isA()||role()==='accountant');$('who').textContent=isA()?'Admin':U.name+' · '+role();if($('tppVidSec'))$('tppVidSec').hidden=!(_isElectron&&isA());reset();render();bump();pull();buildTabs();updateSndBtn()}
 function lock(){try{localStorage.removeItem(SESS)}catch(e){}U=null;$('tabs').hidden=true;$('ov').hidden=true;if($('tppVidSec'))$('tppVidSec').hidden=true;if(S.users)lockUI('login')}
 const bump=()=>{};setInterval(()=>{if(U&&Date.now()>exp)lock()},60000);
 ['click','keydown','touchstart'].forEach(e=>document.addEventListener(e,bump));
