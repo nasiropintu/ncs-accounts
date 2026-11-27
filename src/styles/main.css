@@ -1707,6 +1707,12 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
   :root[data-video-active="1"] .wrap,
   :root[data-video-active="1"] .top{position:relative;z-index:1}
   :root[data-video-active="1"] .tabs{z-index:20}
+
+  :root[data-native-backdrop="acrylic"] html,
+  :root[data-native-backdrop="mica"] html{background:transparent!important}
+  :root[data-theme="glass-dark"][data-native-backdrop="acrylic"] body{background:rgba(4,7,15,0.28)!important;background-image:none!important}
+  :root[data-theme="glass-light"][data-native-backdrop="acrylic"] body{background:rgba(230,242,252,0.22)!important;background-image:none!important}
+  :root[data-native-backdrop="mica"] body{background:transparent!important;background-image:none!important}
 }
 
 /* ===== CUSTOM INVOICE STUDIO & BRANDED INVOICE ENGINE ===== */

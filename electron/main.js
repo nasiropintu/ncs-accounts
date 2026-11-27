@@ -1,6 +1,7 @@
 const { app, BrowserWindow, Menu, dialog, shell, protocol, net, session, ipcMain } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const { Readable } = require('stream');
 const { pathToFileURL } = require('url');
@@ -228,6 +229,36 @@ app.whenReady().then(() => {
 
   ipcMain.handle('ncs:list-video-folder', async (_evt, dirPath) => {
     return listVideosInDir(dirPath);
+  });
+
+  const isWin11BackdropSupported = () => {
+    if (process.platform !== 'win32') return false;
+    const build = parseInt((os.release().split('.')[2] || '0'), 10);
+    return build >= 22621 && typeof BrowserWindow.prototype.setBackgroundMaterial === 'function';
+  };
+
+  ipcMain.handle('ncs:get-backdrop-caps', async () => {
+    return { supported: isWin11BackdropSupported(), platform: process.platform };
+  });
+
+  ipcMain.handle('ncs:set-backdrop-material', async (_evt, material) => {
+    const allowed = ['none', 'acrylic', 'mica'];
+    const mat = allowed.includes(material) ? material : 'none';
+    if (!win || win.isDestroyed() || !isWin11BackdropSupported()) {
+      return { ok: false, material: 'none', supported: false };
+    }
+    try {
+      if (mat === 'acrylic' || mat === 'mica') {
+        win.setBackgroundColor('#00000000');
+        win.setBackgroundMaterial(mat);
+      } else {
+        win.setBackgroundMaterial('none');
+        win.setBackgroundColor('#F7F7F5');
+      }
+      return { ok: true, material: mat, supported: true };
+    } catch (e) {
+      return { ok: false, material: 'none', supported: false };
+    }
   });
 
   buildMenu();

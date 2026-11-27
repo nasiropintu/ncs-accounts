@@ -173,6 +173,7 @@ function pickRandomVidIdx(len,exclude){
 }
 function updateVidPickerUI(gv){
   var vidLabel=$('tppVidLabel'),nextBtn=$('tppVidNext'),offBtn=$('tppVidOff');
+  var bdAcr=$('tppBdAcrylic'),bdMica=$('tppBdMica'),bdVid=$('tppBdVideo'),vidLocal=$('tppVidLocal');
   var hasFiles=gv==='custom'&&_vidState.files.length>0;
   if(vidLabel){
     if(hasFiles){
@@ -191,8 +192,24 @@ function updateVidPickerUI(gv){
     }
     vidLabel.classList.toggle('tpp-vid-none',!hasFiles);
   }
+  if(vidLocal)vidLocal.hidden=(gv==='acrylic'||gv==='mica');
   if(nextBtn)nextBtn.hidden=!(hasFiles&&_vidState.files.length>1);
+  if(bdAcr)bdAcr.classList.toggle('active',gv==='acrylic');
+  if(bdMica)bdMica.classList.toggle('active',gv==='mica');
+  if(bdVid)bdVid.classList.toggle('active',gv==='custom');
   if(offBtn)offBtn.classList.toggle('active',gv==='none');
+}
+function applyNativeBackdrop(mat){
+  var want=(mat==='acrylic'||mat==='mica')?mat:'none';
+  if(want==='none') delete document.documentElement.dataset.nativeBackdrop;
+  else document.documentElement.dataset.nativeBackdrop=want;
+  if(window.NCS_ELECTRON&&typeof window.NCS_ELECTRON.setBackdropMaterial==='function'){
+    window.NCS_ELECTRON.setBackdropMaterial(want).then(function(res){
+      if(want!=='none'&&(!res||!res.ok)) delete document.documentElement.dataset.nativeBackdrop;
+    }).catch(function(){
+      delete document.documentElement.dataset.nativeBackdrop;
+    });
+  }
 }
 function playBgVideoIndex(idx){
   var vid=$('bgVideo');
@@ -237,7 +254,7 @@ function syncBgVideo(){
     return;
   }
   var gv=S.glassVideo;
-  if(gv!=='custom')gv='none';
+  if(gv!=='custom'&&gv!=='acrylic'&&gv!=='mica')gv='none';
   S.glassVideo=gv;
   var isDesktop=window.matchMedia&&window.matchMedia('(min-width: 900px)').matches;
   var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -263,7 +280,10 @@ function syncBgVideo(){
   _vidState.files=pl.files.slice();
   _vidState.folder=pl.folder;
   _vidState.mode=pl.mode;
-  var active=isDesktop&&!reduced&&(m==='glass-dark'||m==='glass-light')&&gv==='custom'&&_vidState.files.length>0;
+  var inGlass=isDesktop&&!reduced&&(m==='glass-dark'||m==='glass-light');
+  var nativeMat=(inGlass&&(gv==='acrylic'||gv==='mica'))?gv:'none';
+  applyNativeBackdrop(nativeMat);
+  var active=inGlass&&gv==='custom'&&_vidState.files.length>0;
   var vid=$('bgVideo');
   if(active&&vid){
     var currentSrc=vid.getAttribute('src')||'';
@@ -325,6 +345,26 @@ function applyTheme(){
   var vidSec=$('tppVidSec');
   if(vidSec)vidSec.hidden=!_isElectron;
   var vidInput=$('tppVidInput'),vidChooseBtn=$('tppVidChoose'),vidFolderBtn=$('tppVidFolder'),vidNextBtn=$('tppVidNext'),vidOff=$('tppVidOff');
+  var bdAcr=$('tppBdAcrylic'),bdMica=$('tppBdMica'),bdVid=$('tppBdVideo');
+  if(_isElectron&&window.NCS_ELECTRON&&typeof window.NCS_ELECTRON.getBackdropCaps==='function'){
+    window.NCS_ELECTRON.getBackdropCaps().then(function(caps){
+      var ok=!!(caps&&caps.supported);
+      if(bdAcr)bdAcr.hidden=!ok;
+      if(bdMica)bdMica.hidden=!ok;
+    }).catch(function(){});
+  }
+  function setBackdropMode(mode){
+    S.glassVideo=mode;
+    if(mode!=='none'&&S.theme!=='glass-dark'&&S.theme!=='glass-light')S.theme='glass-dark';
+    save();applyTheme();
+  }
+  if(bdAcr)bdAcr.onclick=function(e){e.stopPropagation();setBackdropMode('acrylic');};
+  if(bdMica)bdMica.onclick=function(e){e.stopPropagation();setBackdropMode('mica');};
+  if(bdVid)bdVid.onclick=function(e){
+    e.stopPropagation();
+    if(_vidState.files.length>0||readVideoPlaylist().files.length>0){setBackdropMode('custom');}
+    else if(vidChooseBtn){vidChooseBtn.click();}
+  };
   function applyChosenPlaylist(mode,folder,files){
     var clean=(Array.isArray(files)?files:[files]).filter(function(f){return typeof f==='string'&&f;});
     if(!clean.length){

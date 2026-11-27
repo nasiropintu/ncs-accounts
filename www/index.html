@@ -1715,6 +1715,12 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
   :root[data-video-active="1"] .wrap,
   :root[data-video-active="1"] .top{position:relative;z-index:1}
   :root[data-video-active="1"] .tabs{z-index:20}
+
+  :root[data-native-backdrop="acrylic"] html,
+  :root[data-native-backdrop="mica"] html{background:transparent!important}
+  :root[data-theme="glass-dark"][data-native-backdrop="acrylic"] body{background:rgba(4,7,15,0.28)!important;background-image:none!important}
+  :root[data-theme="glass-light"][data-native-backdrop="acrylic"] body{background:rgba(230,242,252,0.22)!important;background-image:none!important}
+  :root[data-native-backdrop="mica"] body{background:transparent!important;background-image:none!important}
 }
 
 /* ===== CUSTOM INVOICE STUDIO & BRANDED INVOICE ENGINE ===== */
@@ -2705,15 +2711,20 @@ body.locked .tab-bug-fab,#lk:not([hidden]) ~ .tab-bug-fab{display:none !importan
             <button type="button" class="tpp-opt tpp-opt-auto" data-tv="auto"><div class="tpp-sw tpb-auto"><div style="background:linear-gradient(to bottom,#fff 50%,#131B2E 50%)"></div><div style="background:linear-gradient(to bottom,#0F766E 50%,#10B981 50%)"></div><div style="background:linear-gradient(to bottom,#E2E8F0 50%,#1E293B 50%)"></div></div><span class="tpp-name">Auto</span><span class="tpp-desc">Follows system</span></button>
           </div>
           <div class="tpp-vid-sec" id="tppVidSec" hidden>
-            <div class="tpp-vid-head"><span>Ambient Video</span><small>Glass modes · Admin</small></div>
+            <div class="tpp-vid-head"><span>Glass Backdrop</span><small>Glass modes · Desktop</small></div>
+            <div class="tpp-vid-actions" id="tppBdModes" style="margin-bottom:7px">
+              <button type="button" class="tpp-vid-opt" id="tppBdAcrylic" data-bd="acrylic" hidden>Acrylic</button>
+              <button type="button" class="tpp-vid-opt" id="tppBdMica" data-bd="mica" hidden>Mica</button>
+              <button type="button" class="tpp-vid-opt" id="tppBdVideo" data-bd="custom">Video</button>
+              <button type="button" class="tpp-vid-opt" id="tppVidOff" data-bd="none">Off</button>
+            </div>
             <input type="file" id="tppVidInput" accept="video/*" multiple style="display:none" tabindex="-1">
-            <div class="tpp-vid-local">
+            <div class="tpp-vid-local" id="tppVidLocal">
               <div class="tpp-vid-label tpp-vid-none" id="tppVidLabel">No video selected</div>
               <div class="tpp-vid-actions">
                 <button type="button" class="tpp-vid-opt tpp-vid-choose" id="tppVidChoose">📁 Files</button>
                 <button type="button" class="tpp-vid-opt tpp-vid-choose" id="tppVidFolder">📂 Folder</button>
                 <button type="button" class="tpp-vid-opt" id="tppVidNext" hidden>⏭ Next</button>
-                <button type="button" class="tpp-vid-opt" id="tppVidOff">Off</button>
               </div>
             </div>
           </div>
@@ -3548,6 +3559,7 @@ function pickRandomVidIdx(len,exclude){
 }
 function updateVidPickerUI(gv){
   var vidLabel=$('tppVidLabel'),nextBtn=$('tppVidNext'),offBtn=$('tppVidOff');
+  var bdAcr=$('tppBdAcrylic'),bdMica=$('tppBdMica'),bdVid=$('tppBdVideo'),vidLocal=$('tppVidLocal');
   var hasFiles=gv==='custom'&&_vidState.files.length>0;
   if(vidLabel){
     if(hasFiles){
@@ -3566,8 +3578,24 @@ function updateVidPickerUI(gv){
     }
     vidLabel.classList.toggle('tpp-vid-none',!hasFiles);
   }
+  if(vidLocal)vidLocal.hidden=(gv==='acrylic'||gv==='mica');
   if(nextBtn)nextBtn.hidden=!(hasFiles&&_vidState.files.length>1);
+  if(bdAcr)bdAcr.classList.toggle('active',gv==='acrylic');
+  if(bdMica)bdMica.classList.toggle('active',gv==='mica');
+  if(bdVid)bdVid.classList.toggle('active',gv==='custom');
   if(offBtn)offBtn.classList.toggle('active',gv==='none');
+}
+function applyNativeBackdrop(mat){
+  var want=(mat==='acrylic'||mat==='mica')?mat:'none';
+  if(want==='none') delete document.documentElement.dataset.nativeBackdrop;
+  else document.documentElement.dataset.nativeBackdrop=want;
+  if(window.NCS_ELECTRON&&typeof window.NCS_ELECTRON.setBackdropMaterial==='function'){
+    window.NCS_ELECTRON.setBackdropMaterial(want).then(function(res){
+      if(want!=='none'&&(!res||!res.ok)) delete document.documentElement.dataset.nativeBackdrop;
+    }).catch(function(){
+      delete document.documentElement.dataset.nativeBackdrop;
+    });
+  }
 }
 function playBgVideoIndex(idx){
   var vid=$('bgVideo');
@@ -3612,7 +3640,7 @@ function syncBgVideo(){
     return;
   }
   var gv=S.glassVideo;
-  if(gv!=='custom')gv='none';
+  if(gv!=='custom'&&gv!=='acrylic'&&gv!=='mica')gv='none';
   S.glassVideo=gv;
   var isDesktop=window.matchMedia&&window.matchMedia('(min-width: 900px)').matches;
   var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -3638,7 +3666,10 @@ function syncBgVideo(){
   _vidState.files=pl.files.slice();
   _vidState.folder=pl.folder;
   _vidState.mode=pl.mode;
-  var active=isDesktop&&!reduced&&(m==='glass-dark'||m==='glass-light')&&gv==='custom'&&_vidState.files.length>0;
+  var inGlass=isDesktop&&!reduced&&(m==='glass-dark'||m==='glass-light');
+  var nativeMat=(inGlass&&(gv==='acrylic'||gv==='mica'))?gv:'none';
+  applyNativeBackdrop(nativeMat);
+  var active=inGlass&&gv==='custom'&&_vidState.files.length>0;
   var vid=$('bgVideo');
   if(active&&vid){
     var currentSrc=vid.getAttribute('src')||'';
@@ -3700,6 +3731,26 @@ function applyTheme(){
   var vidSec=$('tppVidSec');
   if(vidSec)vidSec.hidden=!_isElectron;
   var vidInput=$('tppVidInput'),vidChooseBtn=$('tppVidChoose'),vidFolderBtn=$('tppVidFolder'),vidNextBtn=$('tppVidNext'),vidOff=$('tppVidOff');
+  var bdAcr=$('tppBdAcrylic'),bdMica=$('tppBdMica'),bdVid=$('tppBdVideo');
+  if(_isElectron&&window.NCS_ELECTRON&&typeof window.NCS_ELECTRON.getBackdropCaps==='function'){
+    window.NCS_ELECTRON.getBackdropCaps().then(function(caps){
+      var ok=!!(caps&&caps.supported);
+      if(bdAcr)bdAcr.hidden=!ok;
+      if(bdMica)bdMica.hidden=!ok;
+    }).catch(function(){});
+  }
+  function setBackdropMode(mode){
+    S.glassVideo=mode;
+    if(mode!=='none'&&S.theme!=='glass-dark'&&S.theme!=='glass-light')S.theme='glass-dark';
+    save();applyTheme();
+  }
+  if(bdAcr)bdAcr.onclick=function(e){e.stopPropagation();setBackdropMode('acrylic');};
+  if(bdMica)bdMica.onclick=function(e){e.stopPropagation();setBackdropMode('mica');};
+  if(bdVid)bdVid.onclick=function(e){
+    e.stopPropagation();
+    if(_vidState.files.length>0||readVideoPlaylist().files.length>0){setBackdropMode('custom');}
+    else if(vidChooseBtn){vidChooseBtn.click();}
+  };
   function applyChosenPlaylist(mode,folder,files){
     var clean=(Array.isArray(files)?files:[files]).filter(function(f){return typeof f==='string'&&f;});
     if(!clean.length){
@@ -9340,8 +9391,8 @@ function saveCheck(){if(document.documentElement.dataset.rm)return;var d=documen
 (function(){
   var M="Claude Sonnet 5.5 · owner's Claude account";
   APP_VERSION='11.27.0';
-  VERS.unshift({v:'11.27.0',d:'2026-11-28',t:'Desktop Video Shuffle (Folder & Multi-File) + Theme-Matched Branding Kit',by:'Antigravity',n:['Added multi-file and folder selection for desktop Ambient Video with random shuffle playback, auto-advance on video end, and a Next button','Automatically refreshes folder video list on startup when a folder is selected','Aligned NasirPintu branding pill and About & Credits modal to the active theme surface tokens (Light, Dark, Auto, Glass Light, and Glass Dark)']});
-  UPC.unshift({v:'11.27.0',s:'Done',t:['Folder & multi-file shuffle for desktop background video with Next button','Theme-matched NasirPintu branding pill and About modal across all themes']});
+  VERS.unshift({v:'11.27.0',d:'2026-11-28',t:'Native Windows 11 Acrylic/Mica, Video Shuffle & Theme-Matched Branding Kit',by:'Antigravity',n:['Added Windows 11 Native Acrylic (live see-through) and Native Mica (wallpaper tint) backdrop modes in Appearance → Glass Backdrop','Added multi-file and folder selection for desktop Ambient Video with random shuffle playback, auto-advance on video end, and a Next button','Aligned NasirPintu branding pill and About & Credits modal to the active theme surface tokens (Light, Dark, Auto, Glass Light, and Glass Dark)']});
+  UPC.unshift({v:'11.27.0',s:'Done',t:['Native Windows 11 Acrylic & Mica + Folder/Multi-File Video Shuffle','Theme-matched NasirPintu branding pill and About modal across all themes']});
   VERS.unshift({v:'11.26.1',d:'2026-11-28',t:'Desktop Background Video HTTP Range Streaming Fix',by:'Antigravity',n:['Added stream: true to app:// protocol privileges in electron/main.js','Replaced net.fetch file:// handler for /localvideo with fs.createReadStream + Readable.toWeb supporting HTTP 206 Partial Content Range requests, Content-Length, Accept-Ranges, and explicit video MIME types','Set preload="auto" on #bgVideo and added onerror fallback to clear data-video-active if a video fails to decode']});
   UPC.unshift({v:'11.26.1',s:'Done',t:['Fixed desktop background video loading via HTTP 206 Range streaming in Electron','Added #bgVideo preload="auto" and decode error fallback']});
   BUGS.unshift({d:'2026-11-28 00:27 (UTC+6)',v:'11.26.1',w:'Antigravity',a:'Desktop background video did not load at all for selected local MP4/video files despite data-video-active="1"',b:'app:// protocol lacked stream: true and /localvideo used net.fetch(file://...) without Content-Length, Accept-Ranges, or 206 Partial Content support required by Chromium for seeking/moov-at-end MP4s',c:'Enabled stream: true on app:// scheme and implemented byte-range streaming via fs.createReadStream + Readable.toWeb in electron/main.js'});
