@@ -104,14 +104,15 @@
             <button type="button" class="tpp-opt" data-tv="glass-light"><div class="tpp-sw tpb-glight"><div></div><div></div><div></div></div><span class="tpp-name">Glass Light</span><span class="tpp-desc">Frosted pearl</span></button>
             <button type="button" class="tpp-opt tpp-opt-auto" data-tv="auto"><div class="tpp-sw tpb-auto"><div style="background:linear-gradient(to bottom,#fff 50%,#131B2E 50%)"></div><div style="background:linear-gradient(to bottom,#0F766E 50%,#10B981 50%)"></div><div style="background:linear-gradient(to bottom,#E2E8F0 50%,#1E293B 50%)"></div></div><span class="tpp-name">Auto</span><span class="tpp-desc">Follows system</span></button>
           </div>
-          <div class="tpp-vid-sec" id="tppVidSec">
-            <div class="tpp-vid-head"><span>Desktop Video</span><small>Glass modes</small></div>
-            <div class="tpp-vid-grid">
-              <button type="button" class="tpp-vid-opt" data-gv="suggested">Aurora</button>
-              <button type="button" class="tpp-vid-opt" data-gv="calm">Calm Mind</button>
-              <button type="button" class="tpp-vid-opt" data-gv="energetic">Energetic</button>
-              <button type="button" class="tpp-vid-opt" data-gv="economy">Economy</button>
-              <button type="button" class="tpp-vid-opt" data-gv="none">Off</button>
+          <div class="tpp-vid-sec" id="tppVidSec" hidden>
+            <div class="tpp-vid-head"><span>Ambient Video</span><small>Glass modes · Admin</small></div>
+            <input type="file" id="tppVidInput" accept="video/*" style="display:none" tabindex="-1">
+            <div class="tpp-vid-local">
+              <div class="tpp-vid-label tpp-vid-none" id="tppVidLabel">No video selected</div>
+              <div class="tpp-vid-actions">
+                <button type="button" class="tpp-vid-opt tpp-vid-choose" id="tppVidChoose">📁 Choose file</button>
+                <button type="button" class="tpp-vid-opt" id="tppVidOff">Off</button>
+              </div>
             </div>
           </div>
         </div>

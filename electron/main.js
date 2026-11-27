@@ -109,6 +109,19 @@ app.whenReady().then(() => {
     const u = new URL(request.url);
     let p = decodeURIComponent(u.pathname);
     if (p === '/' || p === '') p = '/index.html';
+
+    // Admin-selected local video background — serve any video file by absolute path
+    if (p === '/localvideo') {
+      const vp = u.searchParams.get('path');
+      if (vp && /\.(mp4|webm|mov|mkv|avi|m4v)$/i.test(vp)) {
+        try {
+          const abs = path.normalize(vp);
+          return net.fetch(pathToFileURL(abs).toString());
+        } catch (e) {}
+      }
+      return new Response('Not found', { status: 404 });
+    }
+
     const file = path.normalize(path.join(WWW, p));
     if (!file.startsWith(WWW)) return new Response('Forbidden', { status: 403 });
     return net.fetch(pathToFileURL(file).toString());
